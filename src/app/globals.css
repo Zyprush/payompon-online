@@ -2,32 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+* {
+  box-sizing: border-box;
+  /* border: red solid 1px; */
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  .custom-input {
+    @apply bg-gray-100 bg-opacity-50 text-gray-700 border-0 rounded-md p-2 focus:bg-gray-200 focus:bg-opacity-70 focus:outline-none focus:ring-1 focus:ring-secondary transition ease-in-out duration-150 text-sm;
+  }
+  .custom-textarea {
+    @apply textarea textarea-bordered w-auto resize-none text-xs bg-zinc-50 focus:outline-primary focus:border-primary;
+  }
+}
+
+
+/* Hide the spin buttons in Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide the spin buttons in Firefox */
+input[type="number"] {
+  appearance: textfield;
 }
