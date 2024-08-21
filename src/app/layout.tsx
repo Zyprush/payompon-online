@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <main className="flex justify-center items-start bg-accent ">{children}</main>
+        <main className="flex justify-center items-start bg-[#fbfaf7]">{children}</main>
       </body>
     </html>
   );

@@ -1,12 +1,16 @@
-import { FaUserAlt } from "react-icons/fa";
-import { MdPayments, MdSpaceDashboard, MdAccessTimeFilled, MdAssignment } from "react-icons/md";
+import { IconBrandApplePodcast, IconChecklist, IconInfoSquare, IconLayoutDashboard, IconMail, IconNotification, IconPremiumRights, IconSettings, IconUsers } from "@tabler/icons-react";
 
 const navItems = [
-    { href: "/dashboard", icon: MdSpaceDashboard, label: "Dashboard" },
-    { href: "/employee", icon: FaUserAlt, label: "Clearance" },
-    { href: "/attendance", icon: MdAssignment, label: "Settings" },
-    { href: "/payroll", icon: MdPayments, label: "Account" },
-    { href: "/history", icon: MdAccessTimeFilled, label: "History" },
+    { href: "/admin/dashboard", icon: IconLayoutDashboard, label: "Dashboard" },
+    { href: "/admin/certificate", icon: IconChecklist, label: "Certificate" },
+    { href: "/admin/documents", icon: IconChecklist, label: "Documents" },
+    { href: "/admin/officials", icon: IconUsers, label: "Officials" },
+    { href: "/admin/resident", icon: IconBrandApplePodcast, label: "Resident" },
+    { href: "/admin/announce", icon: IconInfoSquare, label: "Announcement" },
+    { href: "/admin/message", icon: IconMail, label: "Message" },
+    { href: "/admin/notification", icon: IconNotification, label: "Notification" },
+    { href: "/admin/revenue", icon: IconPremiumRights, label: "Revenue" },
+    { href: "/admin/settings", icon: IconSettings, label: "Settings" },
 ];
 
 export default navItems;
