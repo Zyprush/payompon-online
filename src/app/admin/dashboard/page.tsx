@@ -4,7 +4,7 @@ import React from "react";
 const Dashboard: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
-      <div>page</div>
+      <div>Dashboard page</div>
     </NavLayout>
   );
 };
