@@ -10,6 +10,7 @@ import { FirebaseError } from "firebase/app"; // Import FirebaseError
 import { SignedOut } from "@/components/signed-out";
 import { SignedIn } from "@/components/signed-in";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { LoggedIn } from "@/components/LoggedIn";
 
 export default function Page() {
   const router = useRouter();
@@ -116,7 +117,7 @@ export default function Page() {
                   </button>
                 </SignedOut>
                 <SignedIn>
-                  {/*<LoggedIn />*/}
+                  <LoggedIn />
                   <button
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                     type="submit"

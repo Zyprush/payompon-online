@@ -6,6 +6,7 @@ import { auth } from "@/firebase";
 import React from "react";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import Link from "next/link";
+import { LoggedIn } from "@/components/LoggedIn";
 
 const Home = () => {
 
@@ -15,6 +16,7 @@ const Home = () => {
   return (
     <main className="flex h-screen w-screen items-center justify-center p-6 bg-gray-700">
       <SignedIn>
+        <LoggedIn/>
         <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg text-center dark:bg-gray-800">
           <h1 className="text-4xl font-bold text-primary-500 mb-4 dark:text-primary-400">
             Welcome!
