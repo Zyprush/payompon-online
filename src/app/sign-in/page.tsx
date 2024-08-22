@@ -19,8 +19,8 @@ export default function Page() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // State for loading
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -28,6 +28,14 @@ export default function Page() {
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!email || !password) {
+      toast.error("Email and password are required.");
+      return;
+    }
+
+    setLoading(true); // Set loading to true
+
     try {
       const userCredential = await signInUserWithEmailAndPassword(email, password);
 
@@ -75,13 +83,15 @@ export default function Page() {
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
+    } finally {
+      setLoading(false); // Set loading to false regardless of success or error
     }
   };
 
   return (
     <section>
       <div className="flex h-screen w-screen custom-bg items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8">
-        <div className="xl:mx-auto xl:w-full shadow-md p-4 xl:max-w-sm 2xl:max-w-md rounded-xl bg-white">
+        <div className="xl:mx-auto xl:w-full min-w-[20rem] shadow-md p-4 xl:max-w-sm 2xl:max-w-md rounded-xl bg-white">
           <h2 className="text-center text-2xl font-bold leading-tight text-black">
             Sign in
           </h2>
@@ -128,19 +138,21 @@ export default function Page() {
               <div>
                 <SignedOut>
                   <button
-                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 mt-5"
                     type="submit"
+                    disabled={loading} // Disable button while loading
                   >
-                    Sign In
+                    {loading ? "Signing In..." : "Sign In"} {/* Show loading text */}
                   </button>
                 </SignedOut>
                 <SignedIn>
                   <LoggedIn />
                   <button
-                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 mt-5"
                     type="submit"
+                    disabled={loading} // Disable button while loading
                   >
-                    Signing In
+                    {loading ? "Signing In..." : "Sign In"} {/* Show loading text */}
                   </button>
                 </SignedIn>
               </div>
