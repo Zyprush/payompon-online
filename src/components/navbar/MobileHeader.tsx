@@ -4,10 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import Account from "./Account";
-import { CiMenuKebab } from "react-icons/ci";
-import { GoX } from "react-icons/go";
 import navItems from "./navItems";
 import { NavLink } from "./NavLink";
+import { IconDotsVertical, IconX } from "@tabler/icons-react";
 
 
 
@@ -24,7 +23,7 @@ const MobileHeader: React.FC = () => {
   return (
     <div className="h-auto w-screen md:hidden flex flex-col dark:bg-gray-900">
       {/* topbar */}
-      <span className="w-full h-14 z-50  bg-white dark:bg-gray-800 justify-between px-3 items-center border-b border-zinc-300 dark:border-zinc-700 flex fixed top-0">
+      <span className="w-full h-14 z-50  bg-white justify-between px-3 items-center border-b border-zinc-300 flex fixed top-0">
         <details className="dropdown dropdown-start">
           <summary
             tabIndex={0}
@@ -46,7 +45,7 @@ const MobileHeader: React.FC = () => {
           onClick={toggleMenu}
           className="text-2xl text-zinc-700 dark:text-zinc-300 p-2"
         >
-          {isMenuOpen ? <GoX /> : <CiMenuKebab />}
+          {isMenuOpen ? <IconX /> : <IconDotsVertical />}
         </button>
       </span>
       {/* sidebar */}
@@ -57,7 +56,7 @@ const MobileHeader: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "-100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed h-screen top-14 bottom-0 flex flex-col p-5 gap-2 z-50 items-start justify-start w-3/5 border-r border-zinc-300 dark:border-zinc-700 bg-white dark:bg-gray-800"
+            className="fixed h-screen top-14 bottom-0 flex flex-col p-5 gap-2 z-50 items-start justify-start w-3/5 border-r border-zinc-300  bg-white"
           >
             {navItems.map((item) => (
               <NavLink

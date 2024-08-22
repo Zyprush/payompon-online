@@ -2,9 +2,10 @@
 import NavLayout from "@/components/NavLayout";
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { ref, deleteObject } from "firebase/storage"; // Import for deleting files
-import { db, storage } from "@/firebase"; // Ensure this path is correct
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from "@/firebase"; 
 import AddAnnounce from "./AddAnnounce";
+import { format } from "date-fns";
 
 interface Announcement {
   id: string;
@@ -19,6 +20,7 @@ const Announce: React.FC = (): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAnnouncements, setSelectedAnnouncements] = useState<string[]>([]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -26,7 +28,7 @@ const Announce: React.FC = (): JSX.Element => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    fetchAnnouncements(); // Fetch updated announcements after adding a new one
+    fetchAnnouncements();
   };
 
   const fetchAnnouncements = async () => {
@@ -41,24 +43,38 @@ const Announce: React.FC = (): JSX.Element => {
   };
 
   const deleteAnnouncement = async (id: string, files: string[]) => {
+    try {
+      await deleteDoc(doc(db, "announce", id));
+      for (const fileUrl of files) {
+        const fileRef = ref(storage, fileUrl);
+        await deleteObject(fileRef);
+      }
+    } catch (error) {
+      console.error("Error deleting announcement or files: ", error);
+    }
+  };
+
+  const handleCheckboxChange = (id: string) => {
+    setSelectedAnnouncements((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((selectedId) => selectedId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this announcement?"
+      "Are you sure you want to delete the selected announcements?"
     );
     if (confirmed) {
-      try {
-        // Delete the announcement document
-        await deleteDoc(doc(db, "announce", id));
-
-        // Delete associated files from Firebase Storage
-        for (const fileUrl of files) {
-          const fileRef = ref(storage, fileUrl);
-          await deleteObject(fileRef);
+      for (const id of selectedAnnouncements) {
+        const announcement = announcements.find((announce) => announce.id === id);
+        if (announcement) {
+          await deleteAnnouncement(announcement.id, announcement.files);
         }
-
-        fetchAnnouncements(); // Refresh the announcements after deletion
-      } catch (error) {
-        console.error("Error deleting announcement or files: ", error);
       }
+      setSelectedAnnouncements([]);
+      fetchAnnouncements();
     }
   };
 
@@ -69,12 +85,18 @@ const Announce: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
       <div>
-        <h1 className="text-xl font-semibold mb-4">Announcements</h1>
         <button
           onClick={openModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4"
+          className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-md mb-4"
         >
           Add Announcement
+        </button>
+        <button
+          onClick={handleDeleteSelected}
+          disabled={selectedAnnouncements.length === 0}
+          className="btn-error btn btn-sm text-xs font-base text-white px-4 rounded-md mb-4 ml-4"
+        >
+          Delete
         </button>
 
         {loading ? (
@@ -82,27 +104,39 @@ const Announce: React.FC = (): JSX.Element => {
         ) : announcements.length === 0 ? (
           <p>No announcements available.</p>
         ) : (
-          <ul className="space-y-4">
-            {announcements.map((announce) => (
-              <li
-                key={announce.id}
-                className="p-4 bg-white shadow rounded-md flex justify-between items-center"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold">{announce.what}</h2>
-                  <p>
-                    <strong>When:</strong> {announce.when}
-                  </p>
-                  <p>
-                    <strong>Who:</strong> {announce.who}
-                  </p>
-                  <p>
-                    <strong>Where:</strong> {announce.where}
-                  </p>
-                  {announce.files.length > 0 && (
-                    <div className="mt-2">
-                      <strong>Attachments:</strong>
-                      <ul className="list-disc pl-5">
+          <table className="min-w-full bg-white shadow rounded-md">
+            <thead>
+              <tr>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800"></th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800">What</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800">When</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800">Who</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800">Where</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800">Attachments</th>
+              </tr>
+            </thead>
+            <tbody>
+              {announcements.map((announce) => (
+                <tr key={announce.id} className="text-sm text-start">
+                  <td className="p-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedAnnouncements.includes(announce.id)}
+                      onChange={() => handleCheckboxChange(announce.id)}
+                    />
+                  </td>
+                  <td className="p-4">{announce.what}</td>
+                  <td className="p-4">
+                    {format(
+                      new Date(announce.when),
+                      "MMM dd, yyyy 'at' hh:mm a"
+                    )}
+                  </td>
+                  <td className="p-4">{announce.who}</td>
+                  <td className="p-4">{announce.where}</td>
+                  <td className="p-4 w-40">
+                    {announce.files.length > 0 ? (
+                      <ul className="list-none pl-5">
                         {announce.files.map((file, index) => (
                           <li key={index}>
                             <a
@@ -116,18 +150,14 @@ const Announce: React.FC = (): JSX.Element => {
                           </li>
                         ))}
                       </ul>
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={() => deleteAnnouncement(announce.id, announce.files)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
       {isModalOpen && <AddAnnounce onClose={closeModal} />}

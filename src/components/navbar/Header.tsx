@@ -1,10 +1,37 @@
-import React, { useState } from 'react';
-import { IoLogoSlack } from 'react-icons/io';
+import React, { useState, useEffect } from 'react';
+import { auth, db } from "@/firebase"; // Import your firebase config
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { onAuthStateChanged } from 'firebase/auth';
 import Account from './Account';
 
 const Header = () => {
     const [userData, setUserData] = useState<any>(null);
     const [showNotif, setShowNotif] = useState<boolean>(false);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    // Create a query to match the 'id' field with the current user's uid
+                    const q = query(collection(db, "users"), where("id", "==", user.uid));
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        // Assuming only one document matches
+                        setUserData(querySnapshot.docs[0].data());
+                    } else {
+                        console.log("No matching user data found!");
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data: ", error);
+                }
+            } else {
+                setUserData(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     return (
         <span className="w-full h-14 bg-gray-100 justify-between px-5 items-center border-b border-gray-300 hidden md:flex">
@@ -15,13 +42,14 @@ const Header = () => {
                         role="button"
                         className="h-10 w-10 flex items-center justify-center overflow-hidden border-2 border-primary bg-primary rounded-full"
                     >
-                        {/* <img
-                            src={userData?.profilePicUrl || "/img/profile-admin.jpg"}
+                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={userData?.profilePicUrl || "/img/profile.jpg"}
                             alt="profile"
                             width={40}
                             height={40}
                             className="h-full w-full object-cover"
-                        /> */}
+                        />
                     </summary>
                     <Account userData={userData} />
                 </details>

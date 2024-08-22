@@ -14,7 +14,7 @@ const Home = () => {
   const [signOut] = useSignOut(auth);
 
   return (
-    <main className="flex h-screen w-screen items-center justify-center p-6 bg-gray-700">
+    <main className="flex h-screen w-screen items-center justify-center p-6 custom-bg">
       <SignedIn>
         <LoggedIn/>
         <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg text-center dark:bg-gray-800">

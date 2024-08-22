@@ -5,14 +5,15 @@ import { usePathname } from "next/navigation";
 import { IoIosArrowBack, IoLogoSlack } from "react-icons/io";
 import navItems from "./navItems";
 import { NavLink } from "./NavLink";
+import Image from "next/image";
 
 const SideNavbar: React.FC = () => {
   const pathname = usePathname();
   const [isMinimized, setIsMinimized] = useState(false);
 
-  const toggleNavbar = () => {
-    setIsMinimized((prev: boolean) => !prev);
-  };
+  // const toggleNavbar = () => {
+  //   setIsMinimized((prev: boolean) => !prev);
+  // };
 
   return (
     <div
@@ -24,7 +25,7 @@ const SideNavbar: React.FC = () => {
         className={`h-14 bg-gray-100 justify-between px-5 items-center border-r border-b border-gray-300 hidden transition-width duration-300 md:flex`}
       >
         <span className="flex items-center text-primary font-semibold rounded-md gap-2">
-          <IoLogoSlack className="text-3xl text-gray-700" />
+          <p className="bg-secondary p-2 rounded text-white shadow-sm">Payompon Online</p>
         </span>
       </span>
       <div className="w-full overflow-y-auto h-full flex">
@@ -43,14 +44,14 @@ const SideNavbar: React.FC = () => {
               isActive={pathname === item.href}
             />
           ))}
-          <button
+          {/* <button
             onClick={toggleNavbar}
             className={`flex items-center p-1 border bg-inherit border-gray-400 absolute bottom-4 text-gray-500 rounded-lg transition-all duration-500 ${
               isMinimized ? "transform rotate-180" : ""
             }`}
           >
             <IoIosArrowBack className="text-xl" />
-          </button>
+          </button> */}
         </nav>
       </div>
     </div>

@@ -1,16 +1,17 @@
 "use client";
 
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase"; // Ensure you import your Firebase config
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FirebaseError } from "firebase/app"; // Import FirebaseError
+import { FirebaseError } from "firebase/app";
 import { SignedOut } from "@/components/signed-out";
 import { SignedIn } from "@/components/signed-in";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { LoggedIn } from "@/components/LoggedIn";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 export default function Page() {
   const router = useRouter();
@@ -28,11 +29,32 @@ export default function Page() {
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      await signInUserWithEmailAndPassword(email, password);
-      router.push("/admin/dashboard");
+      const userCredential = await signInUserWithEmailAndPassword(email, password);
+
+      if (userCredential && userCredential.user) {
+        const user = userCredential.user;
+        
+        // Query Firestore to get the user role based on UID
+        const q = query(collection(db, "users"), where("id", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const userData = querySnapshot.docs[0].data();
+          const userRole = userData.role; // Assuming the role field is called "role"
+          
+          if (userRole === "admin" || userRole === "staff") {
+            router.push("/admin/dashboard");
+          } else if (userRole === "resident") {
+            router.push("/user/dashboard");
+          } else {
+            toast.error("Invalid user role. Please contact support.");
+          }
+        } else {
+          toast.error("No user data found for this account.");
+        }
+      }
     } catch (error: any) {
       if (error instanceof FirebaseError) {
-        // Define custom error messages based on Firebase error codes
         const errorMessages: { [key: string]: string } = {
           "auth/invalid-credential":
             "Invalid email or password. Please try again.",
@@ -44,16 +66,13 @@ export default function Page() {
             "The password is incorrect. Please try again.",
           "auth/user-not-found":
             "No user found with this email. Please check and try again.",
-          // Add more error codes and messages as needed
         };
 
-        // Display the appropriate error message
         toast.error(
           errorMessages[error.code] ||
           "An unexpected error occurred. Please try again."
         );
       } else {
-        // Display a generic error message for unexpected errors
         toast.error("An unexpected error occurred. Please try again.");
       }
     }
@@ -61,9 +80,8 @@ export default function Page() {
 
   return (
     <section>
-      <div className="flex h-screen w-screen bg-gray-700 items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8">
-        <div className="xl:mx-auto xl:w-full shadow-md p-4 xl:max-w-sm 2xl:max-w-md bg-white">
-          <div className="mb-2 flex justify-center"></div>
+      <div className="flex h-screen w-screen custom-bg items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8">
+        <div className="xl:mx-auto xl:w-full shadow-md p-4 xl:max-w-sm 2xl:max-w-md rounded-xl bg-white">
           <h2 className="text-center text-2xl font-bold leading-tight text-black">
             Sign in
           </h2>
@@ -130,7 +148,6 @@ export default function Page() {
           </form>
         </div>
       </div>
-      {/* Add ToastContainer to display toasts */}
       <ToastContainer />
     </section>
   );
