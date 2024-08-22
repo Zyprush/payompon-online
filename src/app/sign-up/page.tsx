@@ -47,6 +47,10 @@ export default function Page() {
       toast.error("Passwords do not match!");
       return false;
     }
+    if (number.length !== 11 || !/^\d{11}$/.test(number)) {
+      toast.error("Contact number must be 11 digits!");
+      return false;
+    }
     return true;
   };
 
@@ -115,7 +119,7 @@ export default function Page() {
               <div>
                 <div className="mt-2">
                   <input
-                    placeholder="Number"
+                    placeholder="Contact Number"
                     type="text"
                     onChange={(e) => setNumber(e.target.value)}
                     value={number}
@@ -149,13 +153,16 @@ export default function Page() {
               </div>
               <div>
                 <div className="mt-2">
-                  <input
-                    placeholder="Civil Status"
-                    type="text"
+                  <select
                     onChange={(e) => setCivilStatus(e.target.value)}
                     value={civilStatus}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
+                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">Select Civil Status</option>
+                    <option value="single">Single</option>
+                    <option value="widow">Widow</option>
+                    <option value="married">Married</option>
+                  </select>
                 </div>
               </div>
               <div>
@@ -201,19 +208,17 @@ export default function Page() {
                   disabled={loading}
                 >
                   {loading ? (
-                    <div className="flex gap-2 items-center text-sm">
-                      <IconLoader2 className="animate-spin w-5 h-5" /> Signing up...
-                    </div>
+                    <IconLoader2 className="animate-spin" />
                   ) : (
-                    "Sign up"
+                    "Create account"
                   )}
                 </button>
               </div>
+              <ToastContainer />
             </div>
           </form>
         </div>
       </div>
-      <ToastContainer />
     </section>
   );
 }

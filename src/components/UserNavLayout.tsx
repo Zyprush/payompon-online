@@ -4,23 +4,23 @@ import React, { ReactNode } from "react";
 import SideNavbar from "./navbar/SideNavbar";
 import Header from "./navbar/Header";
 import MobileHeader from "./navbar/MobileHeader";
-import { adminNavItems } from "./navbar/navItems";
+import { userNavItems } from "./navbar/navItems";
 
 interface NavbarProps {
   children: ReactNode;
 }
 
-const NavLayout: React.FC<NavbarProps> = ({ children }) => {
+const UserNavLayout: React.FC<NavbarProps> = ({ children }) => {
   return (
     <div className="flex gap-0 w-full">
-      <SideNavbar navItems={adminNavItems}/>
+      <SideNavbar navItems={userNavItems} />
       <div className="flex flex-col w-full">
         <Header />
-        <MobileHeader navItems={adminNavItems}/>
+        <MobileHeader navItems={userNavItems} />
         <main className="md:pt-10 pt-20 p-5 bg-[#fbfaf7] md:h-full h-screen">{children}</main>
       </div>
     </div>
   );
 };
 
-export default NavLayout;
+export default UserNavLayout;

@@ -2,12 +2,9 @@
 "use client";
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-import { IoIosArrowBack, IoLogoSlack } from "react-icons/io";
-import navItems from "./navItems";
 import { NavLink } from "./NavLink";
-import Image from "next/image";
 
-const SideNavbar: React.FC = () => {
+const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
   const pathname = usePathname();
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -34,7 +31,7 @@ const SideNavbar: React.FC = () => {
             isMinimized ? "w-20" : "w-56"
           } bg-gray-100 shadow-lg border-r border-gray-300 relative h-auto transition-width duration-300 flex-col items-start justify-start pt-5 p-4 gap-2`}
         >
-          {navItems.map((item) => (
+          {navItems.map((item:any) => (
             <NavLink
               key={item.href}
               href={item.href}

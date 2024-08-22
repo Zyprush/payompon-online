@@ -1,6 +1,6 @@
-import { IconBrandApplePodcast, IconChecklist, IconInfoSquare, IconLayoutDashboard, IconMail, IconNotification, IconPremiumRights, IconSettings, IconUsers } from "@tabler/icons-react";
+import { IconBrandApplePodcast, IconChecklist, IconHelpHexagon, IconInfoSquare, IconLayoutDashboard, IconMail, IconNotification, IconPremiumRights, IconSettings, IconUsers } from "@tabler/icons-react";
 
-const navItems = [
+export const adminNavItems = [
     { href: "/admin/dashboard", icon: IconLayoutDashboard, label: "Dashboard" },
     { href: "/admin/certificate", icon: IconChecklist, label: "Certificate" },
     { href: "/admin/documents", icon: IconChecklist, label: "Documents" },
@@ -13,4 +13,14 @@ const navItems = [
     { href: "/admin/settings", icon: IconSettings, label: "Settings" },
 ];
 
-export default navItems;
+export const userNavItems = [
+    { href: "/user/home", icon: IconLayoutDashboard, label: "Home" },
+    { href: "/user/request", icon: IconChecklist, label: "Request" },
+    { href: "/user/officials", icon: IconUsers, label: "Officials" },
+    { href: "/user/announce", icon: IconInfoSquare, label: "Announcement" },
+    { href: "/user/message", icon: IconMail, label: "Message" },
+    { href: "/user/notification", icon: IconNotification, label: "Notification" },
+    { href: "/user/about", icon: IconHelpHexagon, label: "About" },
+];
+
+

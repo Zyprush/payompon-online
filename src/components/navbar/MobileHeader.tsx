@@ -4,13 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import React, { ReactNode, useState } from "react";
 import Account from "./Account";
-import navItems from "./navItems";
 import { NavLink } from "./NavLink";
 import { IconDotsVertical, IconX } from "@tabler/icons-react";
 
 
 
-const MobileHeader: React.FC = () => {
+const MobileHeader: React.FC<{navItems:any}> = ({navItems}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const [userData, setUserData] = useState<any>(null);
@@ -58,7 +57,7 @@ const MobileHeader: React.FC = () => {
             transition={{ duration: 0.3 }}
             className="fixed h-screen top-14 bottom-0 flex flex-col p-5 gap-2 z-50 items-start justify-start w-3/5 border-r border-zinc-300  bg-white"
           >
-            {navItems.map((item) => (
+            {navItems.map((item:any) => (
               <NavLink
                 key={item.href}
                 href={item.href}
