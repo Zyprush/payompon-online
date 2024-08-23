@@ -22,7 +22,7 @@ const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
         className={`h-14 bg-gray-100 justify-between px-5 items-center border-r border-b border-gray-300 hidden transition-width duration-300 md:flex`}
       >
         <span className="flex items-center text-primary font-semibold rounded-md gap-2">
-          <p className="bg-secondary p-2 rounded text-white shadow-sm">Payompon Online</p>
+          <p className="p-2 text-primary drop-shadow font-bold rounded-md">Payompon Online</p>
         </span>
       </span>
       <div className="w-full overflow-y-auto h-full flex">

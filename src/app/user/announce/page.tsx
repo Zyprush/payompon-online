@@ -23,7 +23,6 @@ const Announce: React.FC = (): JSX.Element => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        // Create a query with ordering by timestamp in descending order
         const q = query(
           collection(db, "announce"),
           orderBy("when", "desc"),
@@ -53,19 +52,17 @@ const Announce: React.FC = (): JSX.Element => {
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4 text-primary drop-shadow">Announcements</h2>
 
-        {/* Conditional rendering for loading and error states */}
         {loading && <p>Loading announcements...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* Render announcements table if data is available */}
         {!loading && !error && announcements.length === 0 && (
           <p>No announcements available.</p>
         )}
 
         {!loading && !error && announcements.length > 0 && (
-          <table className="min-w-full bg-white shadow rounded-md">
+          <table className="min-w-full bg-white shadow rounded-md border">
             <thead>
-              <tr>
+              <tr className="border-b">
                 <th className="p-4 text-left text-sm font-semibold text-gray-800">What</th>
                 <th className="p-4 text-left text-sm font-semibold text-gray-800">When</th>
                 <th className="p-4 text-left text-sm font-semibold text-gray-800">Who</th>
@@ -75,14 +72,14 @@ const Announce: React.FC = (): JSX.Element => {
             </thead>
             <tbody>
               {announcements.map((announce) => (
-                <tr key={announce.id} className="text-sm text-start">
-                  <td className="p-4">{announce.what}</td>
-                  <td className="p-4">
+                <tr key={announce.id} className="text-sm text-start border-b">
+                  <td className="p-4 align-top">{announce.what}</td>
+                  <td className="p-4 align-top">
                     {format(new Date(announce.when), "MMM dd, yyyy 'at' hh:mm a")}
                   </td>
-                  <td className="p-4">{announce.who}</td>
-                  <td className="p-4">{announce.where}</td>
-                  <td className="p-4 w-40">
+                  <td className="p-4 align-top">{announce.who}</td>
+                  <td className="p-4 align-top">{announce.where}</td>
+                  <td className="p-4 w-40 align-top">
                     {announce.files.length > 0 ? (
                       <ul className="list-none pl-5">
                         {announce.files.map((file, index) => (

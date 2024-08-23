@@ -104,37 +104,37 @@ const Announce: React.FC = (): JSX.Element => {
         ) : announcements.length === 0 ? (
           <p>No announcements available.</p>
         ) : (
-          <table className="min-w-full bg-white shadow rounded-md">
+          <table className="min-w-full bg-white shadow rounded-md border border-gray-300 border-collapse">
             <thead>
               <tr>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800"></th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800">What</th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800">When</th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800">Who</th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800">Where</th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800">Attachments</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300"></th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">What</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">When</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">Who</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">Where</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">Attachments</th>
               </tr>
             </thead>
             <tbody>
               {announcements.map((announce) => (
-                <tr key={announce.id} className="text-sm text-start">
-                  <td className="p-4">
+                <tr key={announce.id} className="text-sm text-start align-top">
+                  <td className="p-4 border-b border-gray-300 align-top">
                     <input
                       type="checkbox"
                       checked={selectedAnnouncements.includes(announce.id)}
                       onChange={() => handleCheckboxChange(announce.id)}
                     />
                   </td>
-                  <td className="p-4">{announce.what}</td>
-                  <td className="p-4">
+                  <td className="p-4 border-b border-gray-300 align-top">{announce.what}</td>
+                  <td className="p-4 border-b border-gray-300 align-top">
                     {format(
                       new Date(announce.when),
                       "MMM dd, yyyy 'at' hh:mm a"
                     )}
                   </td>
-                  <td className="p-4">{announce.who}</td>
-                  <td className="p-4">{announce.where}</td>
-                  <td className="p-4 w-40">
+                  <td className="p-4 border-b border-gray-300 align-top">{announce.who}</td>
+                  <td className="p-4 border-b border-gray-300 align-top">{announce.where}</td>
+                  <td className="p-4 border-b border-gray-300 align-top w-40">
                     {announce.files.length > 0 ? (
                       <ul className="list-none pl-5">
                         {announce.files.map((file, index) => (

@@ -17,11 +17,11 @@ const Home = () => {
     <main className="flex h-screen w-screen items-center justify-center p-6 custom-bg">
       <SignedIn>
         <LoggedIn/>
-        <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg text-center dark:bg-gray-800">
-          <h1 className="text-4xl font-bold text-primary-500 mb-4 dark:text-primary-400">
+        <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg text-center">
+          <h1 className="text-4xl font-bold text-primary-500 mb-4 ">
             Welcome!
           </h1>
-          <p className="text-xl text-gray-700 dark:text-gray-300">
+          <p className="text-xl text-gray-700">
             Signed in as <span className="font-semibold">{user?.email}</span>
           </p>
           <p className="mt-2 text-lg">

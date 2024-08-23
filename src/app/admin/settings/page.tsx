@@ -160,7 +160,7 @@ const Settings: React.FC = (): JSX.Element => {
 
   return (
     <NavLayout>
-      <div className="bg-white rounded-xl border p-10 m-10 shadow-sm">
+      <div className="bg-white rounded-xl border p-10 md:m-10 shadow-sm">
         {loading ? (
           <div className="flex justify-center items-center h-32">
             <div className="loader">Loading...</div> {/* Add your loading indicator here */}

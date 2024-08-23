@@ -24,23 +24,40 @@ const RequestTable: React.FC<{
     <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
       <thead>
         <tr>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Request Type</th>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">GCash Ref No</th>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Proof of Payment</th>
-          {showEditButton && <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Actions</th>}
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+            Request Type
+          </th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+            GCash Ref No
+          </th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+            Proof of Payment
+          </th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+            {showEditButton ? "Actions" : "Status"}
+          </th>
         </tr>
       </thead>
       <tbody>
         {requests.map((request) => (
           <tr key={request.id}>
-            <td className="py-2 px-4 border-b text-left text-xs">{request.requestType}</td>
-            <td className="py-2 px-4 border-b text-left text-xs">{request.gcashRefNo}</td>
             <td className="py-2 px-4 border-b text-left text-xs">
-              <a href={request.proofOfPaymentURL} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+              {request.requestType}
+            </td>
+            <td className="py-2 px-4 border-b text-left text-xs">
+              {request.gcashRefNo}
+            </td>
+            <td className="py-2 px-4 border-b text-left text-xs">
+              <a
+                href={request.proofOfPaymentURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500"
+              >
                 View Proof
               </a>
             </td>
-            {showEditButton && (
+            {showEditButton ? (
               <td className="py-2 px-4 border-b text-left text-xs">
                 <button
                   onClick={() => handleOpenEdit(request)}
@@ -48,6 +65,10 @@ const RequestTable: React.FC<{
                 >
                   Edit
                 </button>
+              </td>
+            ) : (
+              <td className="py-2 px-4 border-b text-left text-xs">
+                {request.requestType}
               </td>
             )}
           </tr>
@@ -62,7 +83,9 @@ const Request: React.FC = (): JSX.Element => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<RequestData[]>([]);
-  const [editRequestData, setEditRequestData] = useState<RequestData | null>(null);
+  const [editRequestData, setEditRequestData] = useState<RequestData | null>(
+    null
+  );
   const [selectedTab, setSelectedTab] = useState<string>("pending");
   const [userUid, setUserUid] = useState<string | null>(null);
 
@@ -82,7 +105,10 @@ const Request: React.FC = (): JSX.Element => {
   useEffect(() => {
     const fetchRequests = async () => {
       if (userUid) {
-        const q = query(collection(db, "request"), where("submittedBy", "==", userUid));
+        const q = query(
+          collection(db, "request"),
+          where("submittedBy", "==", userUid)
+        );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
         querySnapshot.forEach((doc) => {
@@ -96,7 +122,9 @@ const Request: React.FC = (): JSX.Element => {
   }, [userUid, openAddModal, openEditModal]);
 
   useEffect(() => {
-    const filtered = requests.filter((request) => request.status === selectedTab);
+    const filtered = requests.filter(
+      (request) => request.status === selectedTab
+    );
     setFilteredRequests(filtered);
   }, [requests, selectedTab]);
 
@@ -138,7 +166,10 @@ const Request: React.FC = (): JSX.Element => {
             checked={selectedTab === "pending"}
             onChange={() => setSelectedTab("pending")}
           />
-          <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          <div
+            role="tabpanel"
+            className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+          >
             <RequestTable
               requests={filteredRequests}
               handleOpenEdit={handleOpenEdit}
@@ -155,7 +186,10 @@ const Request: React.FC = (): JSX.Element => {
             checked={selectedTab === "approved"}
             onChange={() => setSelectedTab("approved")}
           />
-          <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          <div
+            role="tabpanel"
+            className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+          >
             <RequestTable
               requests={filteredRequests}
               handleOpenEdit={handleOpenEdit}
@@ -172,7 +206,10 @@ const Request: React.FC = (): JSX.Element => {
             checked={selectedTab === "declined"}
             onChange={() => setSelectedTab("declined")}
           />
-          <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+          <div
+            role="tabpanel"
+            className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+          >
             <RequestTable
               requests={filteredRequests}
               handleOpenEdit={handleOpenEdit}
