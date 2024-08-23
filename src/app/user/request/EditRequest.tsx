@@ -31,9 +31,8 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
 
     if (!gcashRefNo) {
       errors.gcashRefNo = "GCash reference number is required";
-    } else if (!/^\d+$/.test(gcashRefNo)) {
-      errors.gcashRefNo = "GCash reference number must be a number";
-    }
+    } 
+    
 
     setErrors(errors);
     return Object.keys(errors).length === 0;

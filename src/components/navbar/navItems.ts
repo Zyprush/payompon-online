@@ -14,7 +14,7 @@ export const adminNavItems = [
 ];
 
 export const userNavItems = [
-    { href: "/user/home", icon: IconLayoutDashboard, label: "Home" },
+    { href: "/user/dashboard", icon: IconLayoutDashboard, label: "Home" },
     { href: "/user/request", icon: IconChecklist, label: "Request" },
     { href: "/user/officials", icon: IconUsers, label: "Officials" },
     { href: "/user/announce", icon: IconInfoSquare, label: "Announcement" },

@@ -91,7 +91,7 @@ const Request: React.FC = (): JSX.Element => {
                 <td className="py-2 px-4 border-b text-left text-xs">
                   <button
                     onClick={() => handleOpenEdit(request)}
-                    className="btn-outline btn text-neutral rounded-md mr-2 mb-auto mt-0"
+                    className="btn-outline btn btn-sm text-neutral rounded-md mr-2 mb-auto mt-0"
                   >
                     edit
                   </button>

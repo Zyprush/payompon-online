@@ -99,7 +99,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">GCash Reference Number</label>
             <input
-              type="number"
+              type="text"
               value={gcashRefNo}
               onChange={(e) => setGcashRefNo(e.target.value)}
               className="w-full px-3 py-2 border rounded-md"

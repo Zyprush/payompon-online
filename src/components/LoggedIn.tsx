@@ -25,7 +25,7 @@ export const LoggedIn: React.FC = () => {
             const userDoc = querySnapshot.docs[0].data();
             // Check if user role is 'resident'
             if (userDoc.role === 'resident') {
-              router.push('/user/home');
+              router.push('/user/dashboard');
             } else {
               router.push('/admin/dashboard');
             }
