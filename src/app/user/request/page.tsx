@@ -12,13 +12,58 @@ interface RequestData {
   requestType: string;
   gcashRefNo: string;
   proofOfPaymentURL: string;
+  status: string;
 }
+
+const RequestTable: React.FC<{
+  requests: RequestData[];
+  handleOpenEdit: (requestData: RequestData) => void;
+  showEditButton: boolean;
+}> = ({ requests, handleOpenEdit, showEditButton }) => {
+  return (
+    <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
+      <thead>
+        <tr>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Request Type</th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">GCash Ref No</th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Proof of Payment</th>
+          {showEditButton && <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Actions</th>}
+        </tr>
+      </thead>
+      <tbody>
+        {requests.map((request) => (
+          <tr key={request.id}>
+            <td className="py-2 px-4 border-b text-left text-xs">{request.requestType}</td>
+            <td className="py-2 px-4 border-b text-left text-xs">{request.gcashRefNo}</td>
+            <td className="py-2 px-4 border-b text-left text-xs">
+              <a href={request.proofOfPaymentURL} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                View Proof
+              </a>
+            </td>
+            {showEditButton && (
+              <td className="py-2 px-4 border-b text-left text-xs">
+                <button
+                  onClick={() => handleOpenEdit(request)}
+                  className="btn-outline btn btn-sm text-neutral rounded-md"
+                >
+                  Edit
+                </button>
+              </td>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 const Request: React.FC = (): JSX.Element => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [requests, setRequests] = useState<RequestData[]>([]);
+  const [filteredRequests, setFilteredRequests] = useState<RequestData[]>([]);
   const [editRequestData, setEditRequestData] = useState<RequestData | null>(null);
+  const [selectedTab, setSelectedTab] = useState<string>("pending");
   const [userUid, setUserUid] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,6 +95,11 @@ const Request: React.FC = (): JSX.Element => {
     fetchRequests();
   }, [userUid, openAddModal, openEditModal]);
 
+  useEffect(() => {
+    const filtered = requests.filter((request) => request.status === selectedTab);
+    setFilteredRequests(filtered);
+  }, [requests, selectedTab]);
+
   const handleOpenAdd = () => setOpenAddModal(true);
   const handleCloseAdd = () => setOpenAddModal(false);
 
@@ -64,42 +114,10 @@ const Request: React.FC = (): JSX.Element => {
       <div className="p-4">
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2 bg-primary text-xs font-semibold text-white rounded-md"
+          className="px-4 py-2 bg-primary text-xs mb-4 font-semibold text-white rounded-md"
         >
           New Request
         </button>
-
-        <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b text-left text-sm">Request Type</th>
-              <th className="py-2 px-4 border-b text-left text-sm">GCash Ref No</th>
-              <th className="py-2 px-4 border-b text-left text-sm">Proof of Payment</th>
-              <th className="py-2 px-4 border-b text-left text-sm">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {requests.map((request) => (
-              <tr key={request.id}>
-                <td className="py-2 px-4 border-b text-left text-xs">{request.requestType}</td>
-                <td className="py-2 px-4 border-b text-left text-xs">{request.gcashRefNo}</td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  <a href={request.proofOfPaymentURL} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                    View Proof
-                  </a>
-                </td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  <button
-                    onClick={() => handleOpenEdit(request)}
-                    className="btn-outline btn btn-sm text-neutral rounded-md mr-2 mb-auto mt-0"
-                  >
-                    edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
 
         <AddRequest open={openAddModal} handleClose={handleCloseAdd} />
         {editRequestData && (
@@ -109,6 +127,59 @@ const Request: React.FC = (): JSX.Element => {
             requestData={editRequestData}
           />
         )}
+
+        <div role="tablist" className="tabs tabs-lifted">
+          <input
+            type="radio"
+            name="request_tabs"
+            role="tab"
+            className="tab text-primary font-semibold"
+            aria-label="Pending"
+            checked={selectedTab === "pending"}
+            onChange={() => setSelectedTab("pending")}
+          />
+          <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+            <RequestTable
+              requests={filteredRequests}
+              handleOpenEdit={handleOpenEdit}
+              showEditButton={selectedTab === "pending"}
+            />
+          </div>
+
+          <input
+            type="radio"
+            name="request_tabs"
+            role="tab"
+            className="tab text-primary font-semibold"
+            aria-label="Approved"
+            checked={selectedTab === "approved"}
+            onChange={() => setSelectedTab("approved")}
+          />
+          <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+            <RequestTable
+              requests={filteredRequests}
+              handleOpenEdit={handleOpenEdit}
+              showEditButton={selectedTab === "pending"}
+            />
+          </div>
+
+          <input
+            type="radio"
+            name="request_tabs"
+            role="tab"
+            className="tab text-primary font-semibold"
+            aria-label="Declined"
+            checked={selectedTab === "declined"}
+            onChange={() => setSelectedTab("declined")}
+          />
+          <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
+            <RequestTable
+              requests={filteredRequests}
+              handleOpenEdit={handleOpenEdit}
+              showEditButton={selectedTab === "pending"}
+            />
+          </div>
+        </div>
       </div>
     </UserNavLayout>
   );

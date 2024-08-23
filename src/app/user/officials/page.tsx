@@ -11,6 +11,7 @@ interface Official {
   address: string;
   chairmanship?: string;
   position: string;
+  contact: string; // Added contact field
 }
 
 const Officials: React.FC = (): JSX.Element => {
@@ -55,7 +56,7 @@ const Officials: React.FC = (): JSX.Element => {
   return (
     <UserNavLayout>
       <div className="p-1 md:p-4">
-        <h2 className="text-2xl font-bold mb-4">Active Officials</h2>
+        <h2 className="text-xl font-bold mb-4 text-primary drop-shadow">Active Officials</h2>
         {loading ? (
           <p>Loading...</p>
         ) : officials.length > 0 ? (
@@ -63,23 +64,23 @@ const Officials: React.FC = (): JSX.Element => {
             <table className="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 border-b text-left text-sm">Name</th>
-                  <th className="px-4 py-2 border-b text-left text-sm">Status</th>
-                  <th className="px-4 py-2 border-b text-left text-sm">Address</th>
-                  <th className="px-4 py-2 border-b text-left text-sm">Chairmanship</th>
-                  <th className="px-4 py-2 border-b text-left text-sm">Position</th>
+                  <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Name</th>
+                  <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Position</th>
+                  <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Status</th>
+                  <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Contact</th> {/* Updated header */}
+                  <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Chairmanship</th>
                 </tr>
               </thead>
               <tbody>
                 {officials.map((official) => (
                   <tr key={official.id}>
                     <td className="px-4 py-2 border-b text-xs">{official.name}</td>
+                    <td className="px-4 py-2 border-b text-xs">{official.position}</td>
                     <td className="px-4 py-2 border-b text-xs">{official.status}</td>
-                    <td className="px-4 py-2 border-b text-xs">{official.address}</td>
+                    <td className="px-4 py-2 border-b text-xs">{official.contact}</td> {/* Updated cell */}
                     <td className="px-4 py-2 border-b text-xs">
                       {official.chairmanship || "N/A"}
                     </td>
-                    <td className="px-4 py-2 border-b text-xs">{official.position}</td>
                   </tr>
                 ))}
               </tbody>

@@ -57,6 +57,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         gcashRefNo,
         proofOfPaymentURL: downloadURL,
         timestamp: new Date(),
+        status: "pending",
       });
 
       alert("Request submitted successfully!");
@@ -78,7 +79,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
           <h2 className="text-xl font-semibold mb-4">Submit a Request</h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Request Type</label>
+            <label className="block text-sm font-medium mb-2">
+              Request Type
+            </label>
             <select
               value={requestType}
               onChange={(e) => setRequestType(e.target.value)}
@@ -89,7 +92,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
               <option value="Barangay clearance">Barangay clearance</option>
               <option value="Indigency">Indigency</option>
               <option value="Business permit">Business permit</option>
-              <option value="Certificate of residency">Certificate of residency</option>
+              <option value="Certificate of residency">
+                Certificate of residency
+              </option>
               <option value="Certificate of late registration">
                 Certificate of late registration
               </option>
@@ -97,7 +102,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">GCash Reference Number</label>
+            <label className="block text-sm font-medium mb-2">
+              GCash Reference Number
+            </label>
             <input
               type="text"
               value={gcashRefNo}
@@ -108,7 +115,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Proof of Payment (Screenshot)</label>
+            <label className="block text-sm font-medium mb-2">
+              Proof of Payment (Screenshot)
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -130,7 +139,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-primary text-sm font-semibold text-white rounded-md"
+              className="px-4 py-2 btn btn-primary text-sm font-semibold text-white rounded-md"
               disabled={loading}
             >
               {loading ? "Submitting..." : "Submit"}

@@ -13,6 +13,7 @@ interface OfficialData {
   address: string;
   chairmanship?: string;
   position: string;
+  contact: string; // Updated to string
 }
 
 const Official: React.FC = (): JSX.Element => {
@@ -43,7 +44,7 @@ const Official: React.FC = (): JSX.Element => {
     };
 
     fetchOfficials();
-  }, [isModalOpen, editModalOpen ]);
+  }, [isModalOpen, editModalOpen]);
 
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this official?");
@@ -80,7 +81,14 @@ const Official: React.FC = (): JSX.Element => {
           isOpen={editModalOpen}
           onClose={() => setEditModalOpen(false)}
           officialId={currentOfficial?.id || ""}
-          initialData={currentOfficial || { name: "", status: "", address: "", position: "" }}
+          initialData={{ 
+            name: currentOfficial?.name || "",
+            status: currentOfficial?.status || "",
+            address: currentOfficial?.address || "",
+            chairmanship: currentOfficial?.chairmanship || "",
+            position: currentOfficial?.position || "",
+            contact: currentOfficial?.contact || ""
+          }}
         />
 
         <div className="mt-8">
@@ -101,6 +109,7 @@ const Official: React.FC = (): JSX.Element => {
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Address</th>
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Chairmanship</th>
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Position</th>
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Contact</th> {/* Updated header */}
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Actions</th>
                 </tr>
               </thead>
@@ -112,6 +121,7 @@ const Official: React.FC = (): JSX.Element => {
                     <td className="py-2 px-4 border-b text-xs">{official.address}</td>
                     <td className="py-2 px-4 border-b text-xs">{official.chairmanship || "N/A"}</td>
                     <td className="py-2 px-4 border-b text-xs">{official.position}</td>
+                    <td className="py-2 px-4 border-b text-xs">{official.contact}</td> {/* Updated cell */}
                     <td className="py-2 px-4 border-b flex space-x-2">
                       <button
                         className="btn btn-xs text-neutral btn-outline rounded-sm"

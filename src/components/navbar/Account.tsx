@@ -24,7 +24,7 @@ const Account: React.FC<AccountProps> = ({ userData }) => {
     <React.Fragment>
       <ul
         tabIndex={0}
-        className="flex flex-col mt-2 dropdown-content menu bg-base-100 rounded-2xl border border-zinc-300 z-50 h-auto shadow-2xl w-[13rem] p-0 absolute"
+        className="flex flex-col mt-2 dropdown-content menu bg-base-100 rounded-lg border border-zinc-300 z-50 h-auto shadow-2xl w-[13rem] p-0 absolute"
       >
         <span className="w-full h-auto border-b-2 gap-3 p-3 flex justify-start items-center">
           {/* <div
@@ -44,7 +44,7 @@ const Account: React.FC<AccountProps> = ({ userData }) => {
             />
           </div> */}
           <span className="w-auto">
-            <h1 className="font-bold text-primary drop-shadow-md">
+            <h1 className="font-bold text-primary">
               Hello, {memoizedUserData?.name}!
             </h1>
           </span>
@@ -67,7 +67,7 @@ const Account: React.FC<AccountProps> = ({ userData }) => {
         ) : null} */}
 
         <button
-          className="flex gap-2 w-full border-b-2 p-3 font-semibold text-red-700 hover:bg-primary rounded-br-2xl rounded-bl-2xl hover:text-white"
+          className="flex gap-2 w-full border-b-2 p-3 font-semibold text-red-700 hover:bg-primary rounded-br-lg rounded-bl-lg hover:text-white"
           onClick={handleSignOut}
         >
           <IoCaretBackCircle className="text-lg" /> <h1>Sign Out</h1>

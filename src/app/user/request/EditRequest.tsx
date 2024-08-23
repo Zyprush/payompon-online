@@ -115,7 +115,7 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">
-              Proof of Payment (Screenshot)
+              Proof of Payment
             </label>
             <input
               type="file"
@@ -130,14 +130,14 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
           <div className="flex justify-end">
             <button
               onClick={handleClose}
-              className="px-4 py-2 bg-gray-500 text-white rounded-md mr-2"
+              className="px-4 py-2 btn btn-outline text-neutral rounded-md mr-2"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md"
+              className="px-4 py-2 btn-primary btn text-white rounded-md"
               disabled={loading}
             >
               {loading ? "Updating..." : "Update"}

@@ -13,6 +13,7 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
   const [address, setAddress] = useState("");
   const [chairmanship, setChairmanship] = useState("");
   const [position, setPosition] = useState("");
+  const [contact, setContact] = useState(""); // New state for contact number
   const [loading, setLoading] = useState(false); // State to track loading
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,6 +22,12 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
     // Input validation
     if (!name || !status || !address || !position) {
       alert("Please fill in all required fields.");
+      return;
+    }
+
+    // Contact number validation (must be 11 digits)
+    if (!/^\d{11}$/.test(contact)) {
+      alert("Please enter a valid 11-digit contact number.");
       return;
     }
 
@@ -33,6 +40,7 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
         address,
         chairmanship: chairmanship || null, // Optional field
         position,
+        contact, // Save the contact number to Firestore
       });
       onClose(); // Close the modal after submission
       setName("");
@@ -40,6 +48,7 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
       setAddress("");
       setChairmanship("");
       setPosition("");
+      setContact(""); // Reset contact number
     } catch (error) {
       console.error("Error adding document: ", error);
       alert("An error occurred while adding the official. Please try again.");
@@ -105,6 +114,18 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Contact Number</label>
+            <input
+              type="text"
+              className="mt-1 p-2 w-full border rounded"
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              required
+              pattern="\d{11}" // Optional HTML5 pattern validation
+              maxLength={11} // Limit input length
             />
           </div>
           <div className="flex justify-end">

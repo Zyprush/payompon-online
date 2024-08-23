@@ -2,7 +2,7 @@
 
 import UserNavLayout from "@/components/UserNavLayout";
 import React, { useState, useEffect } from "react";
-import { collection, query, orderBy, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, limit } from "firebase/firestore";
 import { db } from "@/firebase";
 import { format } from "date-fns";
 
@@ -26,7 +26,8 @@ const Announce: React.FC = (): JSX.Element => {
         // Create a query with ordering by timestamp in descending order
         const q = query(
           collection(db, "announce"),
-          orderBy("createdAt", "desc") // Ensure this field exists in your documents
+          orderBy("when", "desc"),
+          limit(30)
         );
 
         const querySnapshot = await getDocs(q);
@@ -50,7 +51,7 @@ const Announce: React.FC = (): JSX.Element => {
   return (
     <UserNavLayout>
       <div className="p-4">
-        <h2 className="text-2xl font-bold mb-4">Announcements</h2>
+        <h2 className="text-xl font-bold mb-4 text-primary drop-shadow">Announcements</h2>
 
         {/* Conditional rendering for loading and error states */}
         {loading && <p>Loading announcements...</p>}
