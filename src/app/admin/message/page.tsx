@@ -1,8 +1,7 @@
 "use client";
-import UserNavLayout from "@/components/UserNavLayout";
+import NavLayout from "@/components/NavLayout";
 import { auth } from "@/firebase";
 import { useMessageStore } from "@/state/message";
-import { IconAt } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
 
 const Message: React.FC = (): JSX.Element => {
@@ -53,13 +52,13 @@ const Message: React.FC = (): JSX.Element => {
   );
 
   return (
-    <UserNavLayout>
-      <div className="flex flex-col">
-        <div className="w-full p-4">
-          <div className="flex space-x-2">
+    <NavLayout>
+      <div className="flex flex-col md:flex-row">
+        <div className="w-full md:w-1/4 p-4 border-b md:border-b-0 md:border-r">
+          <div className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2">
             <button
               onClick={() => setFilter("received")}
-              className={`w-1/2 py-2 px-4 ${
+              className={`w-1/2 md:w-full py-2 px-4 ${
                 filter === "received"
                   ? "btn btn-primary text-white rounded-none"
                   : "btn btn-outline text-neutral rounded-none"
@@ -69,7 +68,7 @@ const Message: React.FC = (): JSX.Element => {
             </button>
             <button
               onClick={() => setFilter("sent")}
-              className={`w-1/2 py-2 px-4 ${
+              className={`w-1/2 md:w-full py-2 px-4 ${
                 filter === "sent"
                   ? "btn btn-primary text-white rounded-none"
                   : "btn btn-outline text-neutral rounded-none"
@@ -90,17 +89,18 @@ const Message: React.FC = (): JSX.Element => {
                     >
                       <div className="font-semibold">{msg.sender}</div>
                       <div className="truncate">{msg.content}</div>{" "}
+                      {/* Adjust based on your data structure */}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <span className="border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center"> <IconAt/> No messages available</span>
+                <p>No messages available</p>
               )}
             </div>
           </div>
         </div>
 
-        {/* Modal for viewing message */}
+        {/* Modal for Mobile View */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3">
@@ -113,6 +113,7 @@ const Message: React.FC = (): JSX.Element => {
               <div className="mt-2">
                 <h2 className="text-gray-700 font-bold mb-2">From:</h2>
                 <h2 className="text-zinc-600 mb-5">
+                  {/* {selectedMessage.sender} */}
                   Barangay Admin
                 </h2>
                 <p className="text-sm text-gray-500 mb-2">
@@ -123,13 +124,39 @@ const Message: React.FC = (): JSX.Element => {
                   <p className="text-zinc-500 text-sm">
                     {selectedMessage?.message}
                   </p>{" "}
+                  {/* Adjust based on your data structure */}
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        {/* Desktop View */}
+        <div className="hidden md:block w-full md:w-3/4 p-4">
+          {selectedMessage ? (
+            <div className="bg-white shadow-sm rounded-md p-4">
+              <h2 className="text-gray-700 font-bold mb-2">From:</h2>
+              <h2 className="text-zinc-600 mb-5">
+                {/* {selectedMessage.sender} */}
+                Barangay Admin
+              </h2>
+              <p className="text-sm text-gray-500 mb-2">
+                {selectedMessage?.time}
+              </p>
+              <div className="mb-4">
+                <h2 className="text-gray-700 font-bold mb-2">Message:</h2>
+                <p className="text-zinc-500 text-sm">
+                  {selectedMessage?.message}
+                </p>{" "}
+                {/* Adjust based on your data structure */}
+              </div>
+            </div>
+          ) : (
+            <p>Select a message to view details</p>
+          )}
+        </div>
       </div>
-    </UserNavLayout>
+    </NavLayout>
   );
 };
 

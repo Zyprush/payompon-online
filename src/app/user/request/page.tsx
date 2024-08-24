@@ -6,6 +6,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import EditRequest from "./EditRequest";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { IconMessage2Question } from "@tabler/icons-react";
 
 interface RequestData {
   id: string;
@@ -68,7 +69,7 @@ const RequestTable: React.FC<{
               </td>
             ) : (
               <td className="py-2 px-4 border-b text-left text-xs">
-                {request.requestType}
+                {request.status}
               </td>
             )}
           </tr>
@@ -170,11 +171,17 @@ const Request: React.FC = (): JSX.Element => {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            <RequestTable
-              requests={filteredRequests}
-              handleOpenEdit={handleOpenEdit}
-              showEditButton={selectedTab === "pending"}
-            />
+            {filteredRequests.length === 0 ? (
+              <span className="max-w-[15rem] mx-auto border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center">
+                <IconMessage2Question /> No request data
+              </span>
+            ) : (
+              <RequestTable
+                requests={filteredRequests}
+                handleOpenEdit={handleOpenEdit}
+                showEditButton={selectedTab === "pending"}
+              />
+            )}
           </div>
 
           <input
@@ -190,11 +197,17 @@ const Request: React.FC = (): JSX.Element => {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            <RequestTable
-              requests={filteredRequests}
-              handleOpenEdit={handleOpenEdit}
-              showEditButton={selectedTab === "pending"}
-            />
+            {filteredRequests.length === 0 ? (
+              <span className="max-w-[15rem] mx-auto border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center">
+                <IconMessage2Question /> No request data
+              </span>
+            ) : (
+              <RequestTable
+                requests={filteredRequests}
+                handleOpenEdit={handleOpenEdit}
+                showEditButton={selectedTab === "pending"}
+              />
+            )}
           </div>
 
           <input
@@ -210,11 +223,17 @@ const Request: React.FC = (): JSX.Element => {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            <RequestTable
-              requests={filteredRequests}
-              handleOpenEdit={handleOpenEdit}
-              showEditButton={selectedTab === "pending"}
-            />
+            {filteredRequests.length === 0 ? (
+              <span className="max-w-[15rem] mx-auto border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center">
+                <IconMessage2Question /> No request data
+              </span>
+            ) : (
+              <RequestTable
+                requests={filteredRequests}
+                handleOpenEdit={handleOpenEdit}
+                showEditButton={selectedTab === "pending"}
+              />
+            )}
           </div>
         </div>
       </div>

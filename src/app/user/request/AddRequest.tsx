@@ -73,7 +73,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg w-96">
         <div className="px-6 py-4">
           <h2 className="text-xl font-semibold mb-4">Submit a Request</h2>
