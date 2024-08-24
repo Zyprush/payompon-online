@@ -10,6 +10,7 @@ import {
   doc,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { useMessageStore } from "@/state/message";
 
 interface User {
   id: string;
@@ -26,6 +27,11 @@ interface User {
 const Resident: React.FC = (): JSX.Element => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [declineMessage, setDeclineMessage] = useState<string>('');
+  const [sending, setSending] = useState<boolean>(false);
+  const { addMessage, loadingMessage } = useMessageStore();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -47,6 +53,15 @@ const Resident: React.FC = (): JSX.Element => {
     await updateDoc(doc(db, "users", userId), {
       verified: isVerified,
     });
+    const currentTime = new Date().toISOString(); // Get current time in ISO format
+
+    addMessage({
+      message: "Your account has been verified. You can now access services like requesting certification and permit",
+      sender: "admin",
+      receiver: userId,
+      seen: false,
+      time: currentTime,
+    });
 
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
@@ -56,15 +71,24 @@ const Resident: React.FC = (): JSX.Element => {
   };
 
   const handleDeclined = async (userId: string) => {
-    await updateDoc(doc(db, "users", userId), {
-      verified: false,
-    });
+    if (declineMessage.trim() === '') {
+      alert("Please enter a message before sending.");
+      return;
+    }
+    setSending(true); // Set sending state to true
 
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, verified: false } : user
-      )
-    );
+    const currentTime = new Date().toISOString(); // Get current time in ISO format
+
+    await addMessage({
+      message: declineMessage,
+      sender: "admin",
+      receiver: userId,
+      seen: false,
+      time: currentTime, // Include time in the message
+    });
+    setSending(false); // Set sending state back to false
+    setShowDeclineModal(false);
+    setDeclineMessage('');
   };
 
   return (
@@ -134,7 +158,10 @@ const Resident: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b flex gap-3">
                     <button
-                      onClick={() => handleDeclined(user.id)}
+                      onClick={() => {
+                        setSelectedUser(user.id);
+                        setShowDeclineModal(true);
+                      }}
                       className="btn-xs btn-outline text-neutral btn rounded"
                     >
                       Decline
@@ -150,6 +177,38 @@ const Resident: React.FC = (): JSX.Element => {
               ))}
             </tbody>
           </table>
+        )}
+
+        {/* Decline Modal */}
+        {showDeclineModal && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+              <h2 className="text-lg font-bold mb-1 text-gray-700">Decline Message</h2>
+              <h2 className="text-sm mb-4 text-gray-500">State here why you declined permission for this account and provide additional instructions if necessary.</h2>
+              <textarea
+                value={declineMessage}
+                onChange={(e) => setDeclineMessage(e.target.value)}
+                placeholder="Enter your message here..."
+                rows={5}
+                className="w-full p-2 border border-gray-300 rounded mb-4 text-sm"
+              />
+              <div className="flex justify-end space-x-2">
+                <button
+                  onClick={() => setShowDeclineModal(false)}
+                  className="btn btn-outline btn-neutral"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => selectedUser && handleDeclined(selectedUser)}
+                  disabled={sending}
+                  className={`btn btn-primary text-white px-6 ${sending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {sending ? 'Sending...' : 'Send'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </NavLayout>

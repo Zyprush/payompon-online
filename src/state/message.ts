@@ -10,29 +10,28 @@ import {
 } from "firebase/firestore";
 
 
-
 interface MessageStore {
-  sentMessages: Array<any> | null;
-  receivedMessages: Array<any> | null;
+  messages: Array<any> | null;
   loadingMessage: boolean;
-  fetchMessageByUser: (userId: string) => Promise<void>;
-  fetchMessageByAdmin: () => Promise<void>;
+  fetchMessageReceivedUser: (userId: string) => Promise<void>;
+  fetchMessageSentUser: (userId: string) => Promise<void>;
+  fetchMessageReceivedAdmin: () => Promise<void>;
+  fetchMessageSentAdmin: () => Promise<void>;
   addMessage: (data: object) => Promise<void>;
 }
 
 export const useMessageStore = create<MessageStore>((set) => ({
-  sentMessages: null,
-  receivedMessages: null,
+  messages: null,
   loadingMessage: false,
 
   addMessage: async (data: object) => {
     set({ loadingMessage: true });
     try {
-      const submittedDoc = await addDoc(collection(db, "message"), data);
+      const submittedDoc = await addDoc(collection(db, "messages"), data);
       console.log("Upload successful");
       set((state) => ({
-        sentMessages: state.sentMessages
-          ? [...state.sentMessages, { id: submittedDoc.id, ...data }]
+        messages: state.messages
+          ? [...state.messages, { id: submittedDoc.id, ...data }]
           : [{ id: submittedDoc.id, ...data }],
         loadingMessage: false,
       }));
@@ -41,18 +40,11 @@ export const useMessageStore = create<MessageStore>((set) => ({
     }
     set({ loadingMessage: false });
   },
-  
-  fetchMessageByUser: async (userId) => {
+
+  fetchMessageReceivedUser: async (userId: string) => {
     set({ loadingMessage: true });
     try {
-      const messagesRef = collection(db, "message");
-  
-      // Query for messages where the user is the sender
-      const sentMessagesQuery = query(
-        messagesRef,
-        where("sender", "==", userId),
-        orderBy("time", "desc")
-      );
+      const messagesRef = collection(db, "messages");
   
       // Query for messages where the user is the receiver
       const receivedMessagesQuery = query(
@@ -61,26 +53,17 @@ export const useMessageStore = create<MessageStore>((set) => ({
         orderBy("time", "desc")
       );
   
-      // Execute both queries in parallel
-      const [sentMessagesSnap, receivedMessagesSnap] = await Promise.all([
-        getDocs(sentMessagesQuery),
-        getDocs(receivedMessagesQuery),
-      ]);
+      // Execute the query
+      const receivedMessagesSnap = await getDocs(receivedMessagesQuery);
   
-      // Map and set sent and received messages separately
-      const sentMessages = sentMessagesSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
+      // Map and set received messages
       const receivedMessages = receivedMessagesSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-
+  
       set({
-        sentMessages,
-        receivedMessages,
+        messages: receivedMessages,
         loadingMessage: false,
       });
     } catch (error: any) {
@@ -88,11 +71,73 @@ export const useMessageStore = create<MessageStore>((set) => ({
       set({ loadingMessage: false });
     }
   },
-  
-  fetchMessageByAdmin: async () => {
+
+  fetchMessageSentUser: async (userId: string) => {
     set({ loadingMessage: true });
     try {
-      const messagesRef = collection(db, "message");
+      const messagesRef = collection(db, "messages");
+  
+      // Query for messages where the user is the sender
+      const sentMessagesQuery = query(
+        messagesRef,
+        where("sender", "==", userId),
+        orderBy("time", "desc")
+      );
+  
+      // Execute the query
+      const sentMessagesSnap = await getDocs(sentMessagesQuery);
+  
+      // Map and set sent messages
+      const sentMessages = sentMessagesSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+  
+      set({
+        messages: sentMessages,
+        loadingMessage: false,
+      });
+    } catch (error: any) {
+      console.log("error", error);
+      set({ loadingMessage: false });
+    }
+  },
+
+  fetchMessageReceivedAdmin: async () => {
+    set({ loadingMessage: true });
+    try {
+      const messagesRef = collection(db, "messages");
+  
+      // Query for messages where the receiver is 'admin'
+      const receivedMessagesQuery = query(
+        messagesRef,
+        where("receiver", "in", ["admin", "staff"]),
+        orderBy("time", "desc")
+      );
+  
+      // Execute the query
+      const receivedMessagesSnap = await getDocs(receivedMessagesQuery);
+  
+      // Map and set received messages
+      const receivedMessages = receivedMessagesSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+  
+      set({
+        messages: receivedMessages,
+        loadingMessage: false,
+      });
+    } catch (error: any) {
+      console.log("error", error);
+      set({ loadingMessage: false });
+    }
+  },
+
+  fetchMessageSentAdmin: async () => {
+    set({ loadingMessage: true });
+    try {
+      const messagesRef = collection(db, "messages");
   
       // Query for messages where the sender is 'admin' or 'staff'
       const sentMessagesQuery = query(
@@ -109,10 +154,9 @@ export const useMessageStore = create<MessageStore>((set) => ({
         id: doc.id,
         ...doc.data(),
       }));
-
+  
       set({
-        sentMessages,
-        receivedMessages: null, // Clear or set receivedMessages as null if not needed
+        messages: sentMessages,
         loadingMessage: false,
       });
     } catch (error: any) {

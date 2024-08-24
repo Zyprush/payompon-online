@@ -4,7 +4,7 @@ import React from "react";
 const Certificate: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
-      <div>Dashboard page</div>
+      <div>Certificate page</div>
     </NavLayout>
   );
 };
