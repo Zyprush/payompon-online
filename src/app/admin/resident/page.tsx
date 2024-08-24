@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useMessageStore } from "@/state/message";
+import { toTitleCase } from "@/helper/tools";
 
 interface User {
   id: string;
@@ -93,7 +94,7 @@ const Resident: React.FC = (): JSX.Element => {
 
   return (
     <NavLayout>
-      <div className="p-4">
+      <div className="md:px-4">
         <h1 className="text-xl text-primary drop-shadow font-bold mb-4">
           Unverified Resident
         </h1>
@@ -134,13 +135,13 @@ const Resident: React.FC = (): JSX.Element => {
             <tbody>
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td className="py-2 px-4 border-b text-xs">{user.name}</td>
+                  <td className="py-2 px-4 border-b text-xs">{toTitleCase(user.name)}</td>
                   <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                   <td className="py-2 px-4 border-b text-xs">{user.number}</td>
-                  <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
-                  <td className="py-2 px-4 border-b text-xs">{user.sitio}</td>
+                  <td className="py-2 px-4 border-b text-xs">{toTitleCase(user.gender)}</td>
+                  <td className="py-2 px-4 border-b text-xs">{toTitleCase(user.sitio)}</td>
                   <td className="py-2 px-4 border-b text-xs">
-                    {user.civilStatus}
+                    {toTitleCase(user.civilStatus)}
                   </td>
                   <td className="py-2 px-4 border-b text-xs">
                     {user.validID ? (

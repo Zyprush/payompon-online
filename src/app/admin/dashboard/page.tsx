@@ -5,27 +5,74 @@ const Dashboard: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
       <div>
-        {" "}
-        <div className="flex-1 p-6 bg-gray-100">
-          <div className="text-2xl font-bold">Dashboard Overview</div>
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200">
-              <h3 className="font-semibold text-lg">Card 1</h3>
-              <p className="text-gray-600">Placeholder content for card 1.</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200">
-              <h3 className="font-semibold text-lg">Card 2</h3>
-              <p className="text-gray-600">Placeholder content for card 2.</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200">
-              <h3 className="font-semibold text-lg">Card 3</h3>
-              <p className="text-gray-600">Placeholder content for card 3.</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200">
-              <h3 className="font-semibold text-lg">Card 4</h3>
-              <p className="text-gray-600">Placeholder content for card 4.</p>
-            </div>
-          </div>
+        <div className="p-6 bg-white rounded-lg shadow-md">
+          <h2 className="text-xl font-bold text-primary mb-4">Recent Orders</h2>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  className="py-3 px-6 text-left  font-bold text-gray-700 text-xs uppercase tracking-wider"
+                >
+                  Document
+                </th>
+                <th
+                  scope="col"
+                  className="py-3 px-6 text-left  font-bold text-gray-700 text-xs uppercase tracking-wider"
+                >
+                  Price
+                </th>
+                <th
+                  scope="col"
+                  className="py-3 px-6 text-left  font-bold text-gray-700 text-xs uppercase tracking-wider"
+                >
+                  Date
+                </th>
+                <th
+                  scope="col"
+                  className="py-3 px-6 text-left  font-bold text-gray-700 text-xs uppercase tracking-wider"
+                >
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              <tr>
+                <td className="py-4 px-6 whitespace-nowrap">
+                Barangay clearance
+                </td>
+                <td className="py-4 px-6 whitespace-nowrap">$99</td>
+                <td className="py-4 px-6 whitespace-nowrap">23 Aug 2024</td>
+                <td className="py-4 px-6 whitespace-nowrap">
+                  <span className="text-green-500">Delivered</span>
+                </td>
+              </tr>
+              <tr>
+                <td className="py-4 px-6 whitespace-nowrap">Barangay clearance</td>
+                <td className="py-4 px-6 whitespace-nowrap">$99</td>
+                <td className="py-4 px-6 whitespace-nowrap">20 Aug 2024</td>
+                <td className="py-4 px-6 whitespace-nowrap">
+                  <span className="text-yellow-500">On Going</span>
+                </td>
+              </tr>
+              <tr>
+                <td className="py-4 px-6 whitespace-nowrap">Business permit</td>
+                <td className="py-4 px-6 whitespace-nowrap">$99</td>
+                <td className="py-4 px-6 whitespace-nowrap">19 Aug 2024</td>
+                <td className="py-4 px-6 whitespace-nowrap">
+                  <span className="text-green-500">Delivered</span>
+                </td>
+              </tr>
+              <tr>
+                <td className="py-4 px-6 whitespace-nowrap">Indigency</td>
+                <td className="py-4 px-6 whitespace-nowrap">$99</td>
+                <td className="py-4 px-6 whitespace-nowrap">21 Aug 2024</td>
+                <td className="py-4 px-6 whitespace-nowrap">
+                  <span className="text-red-500">Cancelled</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </NavLayout>

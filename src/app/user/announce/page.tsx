@@ -49,7 +49,7 @@ const Announce: React.FC = (): JSX.Element => {
 
   return (
     <UserNavLayout>
-      <div className="p-4">
+      <div className="p-4 pt-0">
         <h2 className="text-xl font-bold mb-4 text-primary drop-shadow">Announcements</h2>
 
         {loading && <p>Loading announcements...</p>}

@@ -55,7 +55,7 @@ const Officials: React.FC = (): JSX.Element => {
 
   return (
     <UserNavLayout>
-      <div className="p-1 md:p-4">
+      <div className="p-1 md:p-4 md:pt-0">
         <h2 className="text-xl font-bold mb-4 text-primary drop-shadow">Active Officials</h2>
         {loading ? (
           <p>Loading...</p>

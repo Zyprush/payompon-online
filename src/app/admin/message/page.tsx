@@ -1,40 +1,24 @@
 "use client";
 import NavLayout from "@/components/NavLayout";
-import { auth } from "@/firebase";
 import { useMessageStore } from "@/state/message";
+import { IconAt } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
 
 const Message: React.FC = (): JSX.Element => {
-  const { messages, fetchMessageReceivedUser, fetchMessageSentUser } =
-    useMessageStore((state) => ({
-      messages: state.messages,
-      fetchMessageReceivedUser: state.fetchMessageReceivedUser,
-      fetchMessageSentUser: state.fetchMessageSentUser,
-    }));
+  const { messages, fetchMessageReceivedAdmin, fetchMessageSentAdmin } =
+    useMessageStore();
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const user = auth.currentUser;
 
   useEffect(() => {
-    if (user) {
-      setCurrentUserId(user.uid);
+    if (filter === "sent") {
+      fetchMessageSentAdmin();
     } else {
-      console.error("No current user found");
+      fetchMessageReceivedAdmin();
     }
-  }, [user]);
-
-  useEffect(() => {
-    if (currentUserId) {
-      if (filter === "sent") {
-        fetchMessageSentUser(currentUserId);
-      } else {
-        fetchMessageReceivedUser(currentUserId);
-      }
-    }
-  }, [filter, currentUserId, fetchMessageReceivedUser, fetchMessageSentUser]);
+  }, [filter, fetchMessageReceivedAdmin, fetchMessageSentAdmin]);
 
   const openModal = (msg: any) => {
     setSelectedMessage(msg);
@@ -45,20 +29,18 @@ const Message: React.FC = (): JSX.Element => {
     setShowModal(false);
   };
 
-  const filteredMessages = messages?.filter((msg) =>
-    filter === "sent"
-      ? msg.sender === currentUserId
-      : msg.receiver === currentUserId
+  const filteredMessages = messages?.filter(
+    (msg) => filter === "sent" && msg.sender === "admin"
   );
 
   return (
     <NavLayout>
-      <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/4 p-4 border-b md:border-b-0 md:border-r">
-          <div className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2">
+      <div className="flex flex-col">
+        <div className="w-full p-4 pt-0">
+          <div className="flex space-x-2">
             <button
               onClick={() => setFilter("received")}
-              className={`w-1/2 md:w-full py-2 px-4 ${
+              className={`py-2 px-4 w-40 ${
                 filter === "received"
                   ? "btn btn-primary text-white rounded-none"
                   : "btn btn-outline text-neutral rounded-none"
@@ -68,7 +50,7 @@ const Message: React.FC = (): JSX.Element => {
             </button>
             <button
               onClick={() => setFilter("sent")}
-              className={`w-1/2 md:w-full py-2 px-4 ${
+              className={`w-40 py-2 px-4 ${
                 filter === "sent"
                   ? "btn btn-primary text-white rounded-none"
                   : "btn btn-outline text-neutral rounded-none"
@@ -78,44 +60,46 @@ const Message: React.FC = (): JSX.Element => {
             </button>
           </div>
           <div className="mt-4">
-            <div className="bg-white shadow-sm rounded-md">
+            <div className="">
               {filteredMessages && filteredMessages.length > 0 ? (
-                <ul className="list-none">
+                <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
                   {filteredMessages.map((msg) => (
-                    <li
+                    <span
                       key={msg.id}
                       onClick={() => openModal(msg)}
-                      className="p-4 cursor-pointer border-b hover:bg-gray-100"
+                      className="p-4 cursor-pointer border-b flex gap-5 bg-white shadow w-full"
                     >
-                      <div className="font-semibold">{msg.sender}</div>
-                      <div className="truncate">{msg.content}</div>{" "}
-                      {/* Adjust based on your data structure */}
-                    </li>
+                      <div className="avatar">
+                        <div className="w-16 rounded-full border-primary border-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        </div>
+                      </div>
+                      <div className="flex flex-col truncate pr-5">
+                        <div className="font-semibold">{msg.sender}</div>
+                        <div className="truncate mt-auto mb-0 text-sm text-zinc-500">
+                          {msg.message}
+                        </div>
+                      </div>
+                    </span>
                   ))}
-                </ul>
+                </div>
               ) : (
-                <p>No messages available</p>
+                <span className="border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center">
+                  <IconAt /> No messages available
+                </span>
               )}
             </div>
           </div>
         </div>
 
-        {/* Modal for Mobile View */}
+        {/* Modal for viewing message */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3">
-              <button
-                className="text-right text-gray-500"
-                onClick={closeModal}
-              >
-                &times;
-              </button>
               <div className="mt-2">
                 <h2 className="text-gray-700 font-bold mb-2">From:</h2>
-                <h2 className="text-zinc-600 mb-5">
-                  {/* {selectedMessage.sender} */}
-                  Barangay Admin
-                </h2>
+                <h2 className="text-zinc-600 mb-5">Barangay Admin</h2>
                 <p className="text-sm text-gray-500 mb-2">
                   {selectedMessage?.time}
                 </p>
@@ -123,38 +107,18 @@ const Message: React.FC = (): JSX.Element => {
                   <h2 className="text-gray-700 font-bold mb-2">Message:</h2>
                   <p className="text-zinc-500 text-sm">
                     {selectedMessage?.message}
-                  </p>{" "}
-                  {/* Adjust based on your data structure */}
+                  </p>
                 </div>
               </div>
+              <button
+                className="btn btn-outline text-neutral"
+                onClick={closeModal}
+              >
+                close
+              </button>
             </div>
           </div>
         )}
-
-        {/* Desktop View */}
-        <div className="hidden md:block w-full md:w-3/4 p-4">
-          {selectedMessage ? (
-            <div className="bg-white shadow-sm rounded-md p-4">
-              <h2 className="text-gray-700 font-bold mb-2">From:</h2>
-              <h2 className="text-zinc-600 mb-5">
-                {/* {selectedMessage.sender} */}
-                Barangay Admin
-              </h2>
-              <p className="text-sm text-gray-500 mb-2">
-                {selectedMessage?.time}
-              </p>
-              <div className="mb-4">
-                <h2 className="text-gray-700 font-bold mb-2">Message:</h2>
-                <p className="text-zinc-500 text-sm">
-                  {selectedMessage?.message}
-                </p>{" "}
-                {/* Adjust based on your data structure */}
-              </div>
-            </div>
-          ) : (
-            <p>Select a message to view details</p>
-          )}
-        </div>
       </div>
     </NavLayout>
   );
