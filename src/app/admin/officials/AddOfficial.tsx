@@ -124,6 +124,7 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               required
+              title="Please enter a valid 11-digit number"
               pattern="\d{11}" // Optional HTML5 pattern validation
               maxLength={11} // Limit input length
             />
