@@ -11,7 +11,8 @@ import { SignedOut } from "@/components/signed-out";
 import { SignedIn } from "@/components/signed-in";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { LoggedIn } from "@/components/LoggedIn";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -37,19 +38,22 @@ export default function Page() {
     setLoading(true); // Set loading to true
 
     try {
-      const userCredential = await signInUserWithEmailAndPassword(email, password);
+      const userCredential = await signInUserWithEmailAndPassword(
+        email,
+        password
+      );
 
       if (userCredential && userCredential.user) {
         const user = userCredential.user;
-        
-        // Query Firestore to get the user role based on UID
-        const q = query(collection(db, "users"), where("id", "==", user.uid));
-        const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-          const userData = querySnapshot.docs[0].data();
-          const userRole = userData.role; // Assuming the role field is called "role"
-          
+        // Directly reference the user document using UID
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          const userRole = userData?.role; // Assuming the role field is called "role"
+          console.log("userRole", userRole);
           if (userRole === "admin" || userRole === "staff") {
             router.push("/admin/dashboard");
           } else if (userRole === "resident") {
@@ -70,15 +74,14 @@ export default function Page() {
             "This account has been disabled. Please contact support.",
           "auth/too-many-requests":
             "Too many failed login attempts. Please try again later.",
-          "auth/wrong-password":
-            "The password is incorrect. Please try again.",
+          "auth/wrong-password": "The password is incorrect. Please try again.",
           "auth/user-not-found":
             "No user found with this email. Please check and try again.",
         };
 
         toast.error(
           errorMessages[error.code] ||
-          "An unexpected error occurred. Please try again."
+            "An unexpected error occurred. Please try again."
         );
       } else {
         toast.error("An unexpected error occurred. Please try again.");
@@ -98,7 +101,7 @@ export default function Page() {
           <form className="mt-8" method="POST" onSubmit={onSubmit}>
             <div className="space-y-5">
               <div>
-                <label className="text-base font-medium text-gray-900">
+                <label className="text-sm font-medium text-gray-900">
                   Email address
                 </label>
                 <div className="mt-2">
@@ -113,11 +116,11 @@ export default function Page() {
               </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <label className="text-base font-medium text-gray-900">
+                  <label className="text-sm font-medium text-gray-900">
                     Password
                   </label>
                 </div>
-                <div className="mt-2 relative">
+                <div className="mt-2 relative mb-5">
                   <input
                     placeholder="Password"
                     type={showPassword ? "text" : "password"}
@@ -125,6 +128,7 @@ export default function Page() {
                     value={password}
                     className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                   />
+
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
@@ -133,16 +137,24 @@ export default function Page() {
                     {showPassword ? <IconEye /> : <IconEyeOff />}
                   </button>
                 </div>
+
+                <Link
+                  href={"/sign-up"}
+                  className="text-sm underline text-zinc-500 mt-5"
+                >
+                  Don&apos;t have an account? Sign up
+                </Link>
               </div>
 
               <div>
                 <SignedOut>
                   <button
-                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 mt-5"
+                    className="inline-flex w-full items-center justify-center rounded-md btn btn-primary px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 mt-5"
                     type="submit"
                     disabled={loading} // Disable button while loading
                   >
-                    {loading ? "Signing In..." : "Sign In"} {/* Show loading text */}
+                    {loading ? "Signing in..." : "Sign in"}{" "}
+                    {/* Show loading text */}
                   </button>
                 </SignedOut>
                 <SignedIn>
@@ -152,7 +164,8 @@ export default function Page() {
                     type="submit"
                     disabled={loading} // Disable button while loading
                   >
-                    {loading ? "Signing In..." : "Sign In"} {/* Show loading text */}
+                    {loading ? "Signing In..." : "Sign In"}{" "}
+                    {/* Show loading text */}
                   </button>
                 </SignedIn>
               </div>

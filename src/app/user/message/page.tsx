@@ -1,7 +1,7 @@
 "use client";
 import UserNavLayout from "@/components/UserNavLayout";
 import { auth } from "@/firebase";
-import { toTitleCase } from "@/helper/tools";
+import { toTitleCase } from "@/helper/string";
 import { useMessageStore } from "@/state/message";
 import { IconAt } from "@tabler/icons-react";
 import { format } from "date-fns";
@@ -92,7 +92,7 @@ const Message: React.FC = (): JSX.Element => {
                       className="p-4 cursor-pointer border-b flex gap-5 bg-white rounded shadow-sm border w-full"
                     >
                       <div className="avatar">
-                        <div className="w-16 rounded-full">
+                        <div className="w-16 custom-shadow rounded-full">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <Image
                             alt="brgy-logo.png"

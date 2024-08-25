@@ -43,14 +43,14 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
           uploadedFiles.push(downloadURL);
         }
       }
-
+      const currentTime = new Date().toISOString(); // Get current time in ISO format
       await addDoc(collection(db, "announce"), {
         what,
         when,
         who,
         where,
         files: uploadedFiles,
-        createdAt: new Date(),
+        createdAt: currentTime,
       });
 
       setWhat("");

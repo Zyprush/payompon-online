@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '@/firebase'; // Import `db` to access Firestore
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const LoggedIn: React.FC = () => {
   const router = useRouter();
@@ -14,15 +14,12 @@ export const LoggedIn: React.FC = () => {
     const userCheck = async () => {
       if (user) {
         try {
-          // Query the users collection where the id field matches the current user's UID
-          const userQuery = query(
-            collection(db, 'users'),
-            where('id', '==', user.uid)
-          );
-          const querySnapshot = await getDocs(userQuery);
+          // Access the document directly using the user's UID as the document ID
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
 
-          if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0].data();
+          if (docSnap.exists()) {
+            const userDoc = docSnap.data();
             // Check if user role is 'resident'
             if (userDoc.role === 'resident') {
               router.push('/user/dashboard');
@@ -38,6 +35,10 @@ export const LoggedIn: React.FC = () => {
           console.error('Error fetching user data:', error);
           router.push('/admin/dashboard');
         }
+      } else {
+        // Handle case where user is not authenticated
+        console.error('User not authenticated');
+        router.push('/admin/dashboard');
       }
     };
 

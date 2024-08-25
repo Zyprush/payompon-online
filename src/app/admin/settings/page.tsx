@@ -3,35 +3,28 @@ import NavLayout from "@/components/NavLayout";
 import React, { useState, useEffect } from "react";
 import { db, storage } from "@/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
 import DetailItem from "./DetailItem";
 import SignatureUpload from "./SignatureUpload";
 
 const Settings: React.FC = (): JSX.Element => {
-  const [originalBarangayInfo, setOriginalBarangayInfo] = useState("");
-  const [originalAddress, setOriginalAddress] = useState("");
-  const [originalContact, setOriginalContact] = useState("");
-  const [originalEmail, setOriginalEmail] = useState("");
-  const [originalCaptainSignature, setOriginalCaptainSignature] = useState("");
-  const [barangayInfo, setBarangayInfo] = useState("");
-  const [address, setAddress] = useState("");
-  const [contact, setContact] = useState("");
-  const [email, setEmail] = useState("");
-  const [captainSignature, setCaptainSignature] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [signaturePreviewUrl, setSignaturePreviewUrl] = useState<string | null>(
-    null
-  );
-  const [loading, setLoading] = useState(false); // Loading state for data fetching
+  const [originalBarangayInfo, setOriginalBarangayInfo] = useState<string>("");
+  const [originalAddress, setOriginalAddress] = useState<string>("");
+  const [originalContact, setOriginalContact] = useState<string>("");
+  const [originalEmail, setOriginalEmail] = useState<string>("");
+  const [originalCaptainSignature, setOriginalCaptainSignature] = useState<string>("");
+  const [barangayInfo, setBarangayInfo] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [contact, setContact] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [captainSignature, setCaptainSignature] = useState<string>("");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [signaturePreviewUrl, setSignaturePreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
-      setLoading(true); // Set loading state to true before fetching data
+      setLoading(true);
       try {
         const docRef = doc(db, "settings", "barangayInfo");
         const docSnap = await getDoc(docRef);
@@ -44,14 +37,16 @@ const Settings: React.FC = (): JSX.Element => {
           setOriginalEmail(data.email || "");
           setOriginalCaptainSignature(data.captainSignature || "");
 
-          // Set current state to original values
           setBarangayInfo(data.barangayInfo || "");
           setAddress(data.address || "");
           setContact(data.contact || "");
           setEmail(data.email || "");
           setCaptainSignature(data.captainSignature || "");
+
+          if (data.captainSignature) {
+            setSignaturePreviewUrl(data.captainSignature);
+          }
         } else {
-          // Create default document if not exists
           await setDoc(docRef, {
             barangayInfo: "",
             address: "",
@@ -60,7 +55,6 @@ const Settings: React.FC = (): JSX.Element => {
             captainSignature: "",
           });
 
-          // Set default values
           setBarangayInfo("");
           setAddress("");
           setContact("");
@@ -68,9 +62,10 @@ const Settings: React.FC = (): JSX.Element => {
           setCaptainSignature("");
         }
       } catch (error) {
+        alert("Error fetching settings. Please try again later.");
         console.error("Error fetching settings:", error);
       } finally {
-        setLoading(false); // Set loading state to false after fetching data
+        setLoading(false);
       }
     };
 
@@ -96,7 +91,7 @@ const Settings: React.FC = (): JSX.Element => {
       address.trim() !== "" &&
       contact.trim() !== "" &&
       email.trim() !== "" &&
-      (isEditing ? signaturePreviewUrl !== null : true) // Ensure signature is set if editing
+      (isEditing ? signaturePreviewUrl !== null : true)
     );
   };
 
@@ -106,15 +101,21 @@ const Settings: React.FC = (): JSX.Element => {
       return;
     }
 
-    setLoading(true); // Set loading state to true while saving
+    setLoading(true);
 
     try {
       let newSignatureUrl = captainSignature;
 
       if (signaturePreviewUrl) {
         if (captainSignature) {
-          const oldSignatureRef = ref(storage, captainSignature);
-          await deleteObject(oldSignatureRef);
+          try {
+            const oldSignatureRef = ref(storage, captainSignature);
+            await deleteObject(oldSignatureRef);
+          } catch (error) {
+            if ((error as { code: string }).code !== 'storage/object-not-found') {
+              throw error;
+            }
+          }
         }
 
         const file = await fetch(signaturePreviewUrl).then((res) => res.blob());
@@ -123,7 +124,6 @@ const Settings: React.FC = (): JSX.Element => {
         newSignatureUrl = await getDownloadURL(storageRef);
       }
 
-      // Create or update the document
       await setDoc(doc(db, "settings", "barangayInfo"), {
         barangayInfo,
         address,
@@ -132,7 +132,6 @@ const Settings: React.FC = (): JSX.Element => {
         captainSignature: newSignatureUrl,
       });
 
-      // Update original values
       setOriginalBarangayInfo(barangayInfo);
       setOriginalAddress(address);
       setOriginalContact(contact);
@@ -140,11 +139,12 @@ const Settings: React.FC = (): JSX.Element => {
       setOriginalCaptainSignature(newSignatureUrl);
 
       setIsEditing(false);
-      setSignaturePreviewUrl(null); // Clear the preview URL
+      setSignaturePreviewUrl(null);
     } catch (error) {
+      alert("Error updating settings. Please try again later.");
       console.error("Error updating settings:", error);
     } finally {
-      setLoading(false); // Set loading state to false after saving
+      setLoading(false);
     }
   };
 
@@ -163,7 +163,7 @@ const Settings: React.FC = (): JSX.Element => {
       <div className="bg-white rounded-xl border p-10 md:m-10 shadow-sm">
         {loading ? (
           <div className="flex justify-center items-center h-32">
-            <div className="loader">Loading...</div> {/* Add your loading indicator here */}
+            <div className="loader">Loading...</div>
           </div>
         ) : (
           <>

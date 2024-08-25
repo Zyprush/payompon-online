@@ -8,7 +8,7 @@ import {
   useCreateUserWithEmailAndPassword,
   useSendEmailVerification,
 } from "react-firebase-hooks/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -66,6 +66,7 @@ export default function Page() {
     return true;
   };
 
+
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!validateInputs()) return;
@@ -89,8 +90,8 @@ export default function Page() {
       const validIDURL = await getDownloadURL(validIDRef);
       await sendEmailVerification();
   
-      await addDoc(collection(db, "users"), {
-        id: user.uid,
+      // Create a document reference within the 'users' collection using user.uid
+      await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         name: name,
         number: number,
@@ -100,16 +101,18 @@ export default function Page() {
         validID: validIDURL,
         role: "resident",
         verified: false,
+        submitted: "submitted",
       });
   
       router.push("/user/dashboard");
     } catch (error: any) {
-      console.error("Error details:", error); // Log the error details
+      console.error("Error details:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+  
   
 
   return (

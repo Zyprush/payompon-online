@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from "@/firebase"; // Import your firebase config
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from 'firebase/auth';
 import Account from './Account';
 
@@ -12,13 +12,12 @@ const Header = () => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
-                    // Create a query to match the 'id' field with the current user's uid
-                    const q = query(collection(db, "users"), where("id", "==", user.uid));
-                    const querySnapshot = await getDocs(q);
+                    // Fetch the document directly using the user.uid as the document ID
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnapshot = await getDoc(docRef);
 
-                    if (!querySnapshot.empty) {
-                        // Assuming only one document matches
-                        setUserData(querySnapshot.docs[0].data());
+                    if (docSnapshot.exists()) {
+                        setUserData(docSnapshot.data());
                     } else {
                         console.log("No matching user data found!");
                     }
@@ -40,11 +39,11 @@ const Header = () => {
                     <summary
                         tabIndex={0}
                         role="button"
-                        className="h-10 w-10 flex items-center justify-center overflow-hidden border-2 border-primary bg-primary rounded-full"
+                        className="h-10 w-10 flex items-center justify-center overflow-hidden custom-shadow border-zinc-700 border bg-white rounded-full"
                     >
-                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                            src={userData?.profilePicUrl || "/img/profile.jpg"}
+                            src={userData?.profilePicUrl || "/img/brgy-logo.png"}
                             alt="profile"
                             width={40}
                             height={40}

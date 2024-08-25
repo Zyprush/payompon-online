@@ -84,7 +84,8 @@ const Announce: React.FC = (): JSX.Element => {
 
   return (
     <NavLayout>
-      <div>
+      <div className="flex flex-col">
+        <div className="flex self-start">
         <button
           onClick={openModal}
           className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-md mb-4"
@@ -98,11 +99,13 @@ const Announce: React.FC = (): JSX.Element => {
         >
           Delete
         </button>
+        </div>
+
 
         {loading ? (
-          <p>Loading announcements...</p>
+          <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto"><span className="loading loading-spinner loading-md"></span> Loading announcements...</span>
         ) : announcements.length === 0 ? (
-          <p>No announcements available.</p>
+          <span className="text-sm font-semibold text-zinc-600 border rounded-sm p-2 px-6 block m-auto md:ml-0 md:mr-auto"> No announcements available.</span>
         ) : (
           <table className="min-w-full bg-white shadow rounded-md border border-gray-300 border-collapse">
             <thead>
@@ -125,7 +128,7 @@ const Announce: React.FC = (): JSX.Element => {
                       onChange={() => handleCheckboxChange(announce.id)}
                     />
                   </td>
-                  <td className="p-4 border-b border-gray-300 align-top">{announce.what}</td>
+                  <td className="p-4 border-b border-gray-300 align-top w-40">{announce.what}</td>
                   <td className="p-4 border-b border-gray-300 align-top">
                     {format(
                       new Date(announce.when),
