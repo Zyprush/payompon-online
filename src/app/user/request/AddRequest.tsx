@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage, db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useNotifStore } from "@/state/notif";
+import { currentTime } from "@/helper/time";
 
 interface AddRequestProps {
   open: boolean;
@@ -18,13 +20,17 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [gcashRefNo, setGcashRefNo] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const addNotif = useNotifStore((state) => state.addNotif); // Get the addNotif function
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserUid(user.uid);
+        fetchUserData(user.uid);
       } else {
         setUserUid(null);
       }
@@ -33,8 +39,24 @@ const AddRequest: React.FC<AddRequestProps> = ({
     return () => unsubscribe();
   }, []);
 
+  const fetchUserData = async (uid: string) => {
+    try {
+      const userDocRef = doc(db, "users", uid); // Assuming you have a 'users' collection
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserName(userData?.name || null); // Assuming the user's name is stored under 'name'
+      } else {
+        console.error("No such user!");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!userUid) {
+    if (!userUid || !userName) {
       alert("You must be logged in to submit a request.");
       return;
     }
@@ -52,12 +74,22 @@ const AddRequest: React.FC<AddRequestProps> = ({
       const downloadURL = await getDownloadURL(snapshot.ref);
 
       await addDoc(collection(db, "request"), {
+        submittedName: userName,
         submittedBy: userUid,
         requestType,
         gcashRefNo,
         proofOfPaymentURL: downloadURL,
-        timestamp: new Date(),
+        timestamp: currentTime,
         status: "pending",
+      });
+
+      // Create a notification
+      await addNotif({
+        userId: userUid,
+        message: `${userName} Request for ${requestType}`,
+        time: currentTime,
+        type: "admin",
+        read: false,
       });
 
       alert("Request submitted successfully!");
@@ -79,9 +111,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
           <h2 className="text-xl font-semibold mb-4">Submit a Request</h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">
-              Request Type
-            </label>
+            <label className="block text-sm font-medium mb-2">Request Type</label>
             <select
               value={requestType}
               onChange={(e) => setRequestType(e.target.value)}
@@ -92,12 +122,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
               <option value="Barangay clearance">Barangay clearance</option>
               <option value="Indigency">Indigency</option>
               <option value="Business permit">Business permit</option>
-              <option value="Certificate of residency">
-                Certificate of residency
-              </option>
-              <option value="Certificate of late registration">
-                Certificate of late registration
-              </option>
+              <option value="Certificate of residency">Certificate of residency</option>
+              <option value="Certificate of late registration">Certificate of late registration</option>
             </select>
           </div>
 

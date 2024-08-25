@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import UserNavLayout from "@/components/UserNavLayout";
 import AddRequest from "./AddRequest";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/firebase";
+import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
+import { db, storage } from "@/firebase";
 import EditRequest from "./EditRequest";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { IconMessage2Question } from "@tabler/icons-react";
+import { ref, deleteObject } from "firebase/storage";
 
 interface RequestData {
   id: string;
@@ -19,21 +20,16 @@ interface RequestData {
 const RequestTable: React.FC<{
   requests: RequestData[];
   handleOpenEdit: (requestData: RequestData) => void;
+  handleDelete: (requestId: string, proofOfPaymentURL: string) => void;
   showEditButton: boolean;
-}> = ({ requests, handleOpenEdit, showEditButton }) => {
+}> = ({ requests, handleOpenEdit, handleDelete, showEditButton }) => {
   return (
     <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
       <thead>
         <tr>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-            Request Type
-          </th>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-            GCash Ref No
-          </th>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-            Proof of Payment
-          </th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Request Type</th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">GCash Ref No</th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">Proof of Payment</th>
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             {showEditButton ? "Actions" : "Status"}
           </th>
@@ -42,18 +38,14 @@ const RequestTable: React.FC<{
       <tbody>
         {requests.map((request) => (
           <tr key={request.id}>
+            <td className="py-2 px-4 border-b text-left text-xs">{request.requestType}</td>
+            <td className="py-2 px-4 border-b text-left text-xs">{request.gcashRefNo}</td>
             <td className="py-2 px-4 border-b text-left text-xs">
-              {request.requestType}
-            </td>
-            <td className="py-2 px-4 border-b text-left text-xs">
-              {request.gcashRefNo}
-            </td>
-            <td className="py-2 px-4 border-b text-left text-xs font-semibold">
               <a
                 href={request.proofOfPaymentURL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500"
+                className="text-blue-500 font-semibold"
               >
                 View Proof
               </a>
@@ -62,15 +54,19 @@ const RequestTable: React.FC<{
               <td className="py-2 px-4 border-b text-left text-xs">
                 <button
                   onClick={() => handleOpenEdit(request)}
-                  className="btn-outline btn btn-sm text-neutral rounded-md"
+                  className="btn-outline btn btn-xs text-neutral rounded-md mr-2"
                 >
                   Edit
                 </button>
+                <button
+                  onClick={() => handleDelete(request.id, request.proofOfPaymentURL)}
+                  className="btn-error btn btn-xs text-white rounded-md"
+                >
+                  Delete
+                </button>
               </td>
             ) : (
-              <td className="py-2 px-4 border-b text-left text-xs">
-                {request.status}
-              </td>
+              <td className="py-2 px-4 border-b text-left text-xs">{request.status}</td>
             )}
           </tr>
         ))}
@@ -79,14 +75,13 @@ const RequestTable: React.FC<{
   );
 };
 
+
 const Request: React.FC = (): JSX.Element => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<RequestData[]>([]);
-  const [editRequestData, setEditRequestData] = useState<RequestData | null>(
-    null
-  );
+  const [editRequestData, setEditRequestData] = useState<RequestData | null>(null);
   const [selectedTab, setSelectedTab] = useState<string>("pending");
   const [userUid, setUserUid] = useState<string | null>(null);
 
@@ -138,6 +133,29 @@ const Request: React.FC = (): JSX.Element => {
   };
   const handleCloseEdit = () => setOpenEditModal(false);
 
+  const handleDelete = async (requestId: string, proofOfPaymentURL: string) => {
+    if (window.confirm("Are you sure you want to delete this request?")) {
+      try {
+        // Delete the file from storage
+        const storageRef = ref(storage, proofOfPaymentURL);
+        await deleteObject(storageRef);
+
+        // Delete the document from Firestore
+        const requestDocRef = doc(db, "request", requestId);
+        await deleteDoc(requestDocRef);
+
+        // Update the state to remove the deleted request
+        setRequests((prevRequests) =>
+          prevRequests.filter((request) => request.id !== requestId)
+        );
+        alert("Request deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting request:", error);
+        alert("Error deleting request. Please try again.");
+      }
+    }
+  };
+
   return (
     <UserNavLayout>
       <div className="p-4">
@@ -179,6 +197,7 @@ const Request: React.FC = (): JSX.Element => {
               <RequestTable
                 requests={filteredRequests}
                 handleOpenEdit={handleOpenEdit}
+                handleDelete={handleDelete}
                 showEditButton={selectedTab === "pending"}
               />
             )}
@@ -205,6 +224,7 @@ const Request: React.FC = (): JSX.Element => {
               <RequestTable
                 requests={filteredRequests}
                 handleOpenEdit={handleOpenEdit}
+                handleDelete={handleDelete}
                 showEditButton={selectedTab === "pending"}
               />
             )}
@@ -231,6 +251,7 @@ const Request: React.FC = (): JSX.Element => {
               <RequestTable
                 requests={filteredRequests}
                 handleOpenEdit={handleOpenEdit}
+                handleDelete={handleDelete}
                 showEditButton={selectedTab === "pending"}
               />
             )}

@@ -49,6 +49,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     fetchUsers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submittedSearchTerm]);
 
   const handleSearch = () => {

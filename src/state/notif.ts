@@ -42,23 +42,40 @@ export const useNotifStore = create<NotifStore>((set) => ({
   fetchNotif: async () => {
     set({ loadingNotif: true });
     try {
-      const notifQuery = query(
+      // Fetch unread notifications first
+      const unreadNotifQuery = query(
         collection(db, "notif"),
+        where("read", "==", false),
         orderBy("time", "desc")
       );
 
-      const notifDocSnap = await getDocs(notifQuery);
-      if (notifDocSnap) {
-        set({
-          notif: notifDocSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })),
-          loadingNotif: false,
-        });
-      } else {
-        set({ loadingNotif: false });
-      }
+      const unreadNotifDocSnap = await getDocs(unreadNotifQuery);
+
+      // Fetch read notifications
+      const readNotifQuery = query(
+        collection(db, "notif"),
+        where("read", "==", true),
+        orderBy("time", "desc")
+      );
+
+      const readNotifDocSnap = await getDocs(readNotifQuery);
+
+      // Combine unread and read notifications
+      const allNotifications = [
+        ...unreadNotifDocSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+        ...readNotifDocSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      ];
+
+      set({
+        notif: allNotifications,
+        loadingNotif: false,
+      });
     } catch (error: any) {
       console.log("error", error);
     }
@@ -68,23 +85,40 @@ export const useNotifStore = create<NotifStore>((set) => ({
   fetchNotifByUser: async (userId) => {
     set({ loadingNotif: true });
     try {
-      const notifByUserQuery = query(
+      // Fetch unread notifications for the user first
+      const unreadNotifByUserQuery = query(
         collection(db, "notif"),
         where("userId", "==", userId),
+        where("read", "==", false),
         orderBy("time", "desc")
       );
-      const notifDocSnap = await getDocs(notifByUserQuery);
-      if (notifDocSnap) {
-        set({
-          notif: notifDocSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })),
-          loadingNotif: false,
-        });
-      } else {
-        set({ loadingNotif: false });
-      }
+      const unreadNotifDocSnap = await getDocs(unreadNotifByUserQuery);
+
+      // Fetch read notifications for the user
+      const readNotifByUserQuery = query(
+        collection(db, "notif"),
+        where("userId", "==", userId),
+        where("read", "==", true),
+        orderBy("time", "desc")
+      );
+      const readNotifDocSnap = await getDocs(readNotifByUserQuery);
+
+      // Combine unread and read notifications
+      const allNotifications = [
+        ...unreadNotifDocSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+        ...readNotifDocSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      ];
+
+      set({
+        notif: allNotifications,
+        loadingNotif: false,
+      });
     } catch (error: any) {
       console.log("error", error);
     }
@@ -94,23 +128,40 @@ export const useNotifStore = create<NotifStore>((set) => ({
   fetchNotifByAdmin: async () => {
     set({ loadingNotif: true });
     try {
-      const notifByUserQuery = query(
+      // Fetch unread notifications for the admin first
+      const unreadNotifByAdminQuery = query(
         collection(db, "notif"),
         where("type", "in", ["admin"]),
+        where("read", "==", false),
         orderBy("time", "desc")
       );
-      const notifDocSnap = await getDocs(notifByUserQuery);
-      if (notifDocSnap) {
-        set({
-          notif: notifDocSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })),
-          loadingNotif: false,
-        });
-      } else {
-        set({ loadingNotif: false });
-      }
+      const unreadNotifDocSnap = await getDocs(unreadNotifByAdminQuery);
+
+      // Fetch read notifications for the admin
+      const readNotifByAdminQuery = query(
+        collection(db, "notif"),
+        where("type", "in", ["admin"]),
+        where("read", "==", true),
+        orderBy("time", "desc")
+      );
+      const readNotifDocSnap = await getDocs(readNotifByAdminQuery);
+
+      // Combine unread and read notifications
+      const allNotifications = [
+        ...unreadNotifDocSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+        ...readNotifDocSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      ];
+
+      set({
+        notif: allNotifications,
+        loadingNotif: false,
+      });
     } catch (error: any) {
       console.log("error", error);
     }

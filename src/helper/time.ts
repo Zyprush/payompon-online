@@ -12,3 +12,6 @@ export const getRelativeTime = (timestamp: string): string => {
     return "Invalid date";
   }
 };
+
+
+export const currentTime = new Date().toISOString(); // Get current time in ISO format
