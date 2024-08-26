@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+@font-face {
+  font-family: 'Bernard MT';
+  src: url('/fonts/bernardMT.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,6 +28,13 @@
   .contain-indicator {
     @apply text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto
   }
+  .courier-prime {
+    font-family: 'Courier Prime', monospace;
+  }
+  .bernard-mt {
+    font-family: 'Bernard MT', serif;
+  }
+  
 }
 
 /* Hide the spin buttons in Chrome, Safari, Edge, and Opera */

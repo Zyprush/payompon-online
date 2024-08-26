@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import NavLayout from "@/components/NavLayout";
+
 import { db } from "@/firebase";
+import UpdateCertificate from "./UpdateCertificate";
 
 interface RequestData {
   id: string;
@@ -15,6 +16,9 @@ interface RequestData {
 const PendingCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -39,10 +43,16 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     fetchRequests();
   }, []);
 
+  const handleRowClick = (request: RequestData) => {
+    setSelectedRequest(request);
+  };
+
   return (
     <div className="certificate-list">
       {loading ? (
-        <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">Loading...</span>
+        <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
+          Loading...
+        </span>
       ) : requests.length > 0 ? (
         <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
           <thead>
@@ -63,7 +73,11 @@ const PendingCertificate: React.FC = (): JSX.Element => {
           </thead>
           <tbody>
             {requests.map((request) => (
-              <tr key={request.id}>
+              <tr
+                key={request.id}
+                onClick={() => handleRowClick(request)}
+                className="cursor-pointer hover:bg-gray-100"
+              >
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.requestType}
                 </td>
@@ -76,6 +90,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500"
+                    onClick={(e) => e.stopPropagation()} // Prevents row click when link is clicked
                   >
                     View Proof
                   </a>
@@ -88,7 +103,16 @@ const PendingCertificate: React.FC = (): JSX.Element => {
           </tbody>
         </table>
       ) : (
-        <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-80">No pending certificates found.</p>
+        <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-80">
+          No pending certificates found.
+        </p>
+      )}
+
+      {selectedRequest && (
+        <UpdateCertificate
+          selectedRequest={selectedRequest}
+          onClose={() => setSelectedRequest(null)}
+        />
       )}
     </div>
   );
