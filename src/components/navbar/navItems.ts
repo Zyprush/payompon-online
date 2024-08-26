@@ -1,10 +1,10 @@
-import { IconBrandApplePodcast, IconChecklist, IconDeviceFloppy, IconHelpHexagon, IconInfoSquare, IconLayoutDashboard, IconMail, IconNotification, IconPremiumRights, IconSettings, IconUsers } from "@tabler/icons-react";
+import { IconChecklist, IconDeviceFloppy, IconHelpHexagon, IconInfoSquare, IconLayoutDashboard, IconMail, IconNotification, IconPremiumRights, IconSettings, IconUserHexagon, IconUsers } from "@tabler/icons-react";
 
 export const adminNavItems = [
     { href: "/admin/dashboard", icon: IconLayoutDashboard, label: "Dashboard" },
     { href: "/admin/certificate", icon: IconChecklist, label: "Certificate" },
     { href: "/admin/officials", icon: IconUsers, label: "Officials" },
-    { href: "/admin/resident", icon: IconBrandApplePodcast, label: "Resident" },
+    { href: "/admin/resident", icon: IconUserHexagon, label: "Resident" },
     { href: "/admin/announce", icon: IconInfoSquare, label: "Announcement" },
     { href: "/admin/message", icon: IconMail, label: "Message" },
     { href: "/admin/notification", icon: IconNotification, label: "Notification" },

@@ -107,7 +107,7 @@ const Request: React.FC = (): JSX.Element => {
     const fetchRequests = async () => {
       if (userUid) {
         const q = query(
-          collection(db, "request"),
+          collection(db, "requests"),
           where("submittedBy", "==", userUid)
         );
         const querySnapshot = await getDocs(q);

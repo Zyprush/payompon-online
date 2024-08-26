@@ -6,6 +6,7 @@ import { storage, db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
+import { format } from "util";
 
 interface AddRequestProps {
   open: boolean;
@@ -73,7 +74,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       const snapshot = await uploadBytes(storageRef, proofOfPayment);
       const downloadURL = await getDownloadURL(snapshot.ref);
 
-      await addDoc(collection(db, "request"), {
+      await addDoc(collection(db, "requests"), {
         submittedName: userName,
         submittedBy: userUid,
         requestType,
@@ -85,7 +86,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
 
       // Create a notification
       await addNotif({
-        userId: userUid,
+        for: "admin",
         message: `${userName} Request for ${requestType}`,
         time: currentTime,
         type: "admin",

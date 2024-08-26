@@ -1,14 +1,14 @@
 "use client";
 import NavLayout from "@/components/NavLayout";
 import React, { useState } from "react";
-import UnverifiedResident from "./UnverifiedResident";
-import VerifiedResident from "./VerifiedResident";
+import PendingCertificate from "./PendingCertificate";
+import CompletedCertificate from "./CompletedCertificate";
 
-const Resident: React.FC = (): JSX.Element => {
+const Certificate: React.FC = (): JSX.Element => {
   const [filter, setFilter] = useState<"unverified" | "verified">("unverified");
 
   return (
-    <NavLayout>
+    <NavLayout >
       <div className="md:px-4 flex flex-col">
         <div className="flex gap-4 mb-6">
           <button
@@ -19,7 +19,7 @@ const Resident: React.FC = (): JSX.Element => {
                 : "btn btn-outline text-neutral rounded-none"
             }`}
           >
-            Unverified
+            Pending
           </button>
           <button
             onClick={() => setFilter("verified")}
@@ -29,16 +29,16 @@ const Resident: React.FC = (): JSX.Element => {
                 : "btn btn-outline text-neutral rounded-none"
             }`}
           >
-            Verified
+            Completed
           </button>
         </div>
         <hr className="w-full mb-5" />
 
         {/* Render the selected component */}
-        {filter === "unverified" ? <UnverifiedResident /> : <VerifiedResident />}
+        {filter === "unverified" ? <PendingCertificate /> : <CompletedCertificate />}
       </div>
     </NavLayout>
   );
 };
 
-export default Resident;
+export default Certificate;

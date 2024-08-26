@@ -17,6 +17,9 @@
   .custom-textarea {
     @apply textarea textarea-bordered w-auto resize-none text-xs bg-zinc-50 focus:outline-primary focus:border-primary;
   }
+  .contain-indicator {
+    @apply text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto
+  }
 }
 
 /* Hide the spin buttons in Chrome, Safari, Edge, and Opera */

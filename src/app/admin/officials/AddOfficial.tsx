@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase"; // Ensure this path is correct
 
 interface OfficialModalProps {
@@ -29,6 +29,17 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
     if (!/^\d{11}$/.test(contact)) {
       alert("Please enter a valid 11-digit contact number.");
       return;
+    }
+
+    // Check if the position already exists in Firestore
+    const restrictedPositions = ["Punong Barangay", "Treasurer", "Secretary", "SK Chairman"];
+    if (restrictedPositions.includes(position)) {
+      const q = query(collection(db, "officials"), where("position", "==", position));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        alert(`${position} already exists. You cannot add more than one.`);
+        return;
+      }
     }
 
     setLoading(true); // Start loading
@@ -108,13 +119,20 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Position</label>
-            <input
-              type="text"
+            <select
               className="mt-1 p-2 w-full border rounded"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               required
-            />
+            >
+              <option value="">Select Position</option>
+              <option value="Punong Barangay">Punong Barangay</option>
+              <option value="Barangay Kagawad">Barangay Kagawad</option>
+              <option value="Tanod">Tanod</option>
+              <option value="Treasurer">Treasurer</option>
+              <option value="Secretary">Secretary</option>
+              <option value="SK Chairman">SK Chairman</option>
+            </select>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Contact Number</label>

@@ -64,16 +64,15 @@ const VerifiedResident: React.FC = (): JSX.Element => {
           placeholder="Search by name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="input input-bordered w-full max-w-xs"
+          className="input input-sm input-bordered w-full max-w-xs"
         />
         <button
           onClick={handleSearch}
-          className="btn btn-primary text-white"
+          className="btn btn-primary btn-sm text-white"
         >
           Search
         </button>
       </div>
-
       {loading ? (
         <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto">
           <span className="loading loading-spinner loading-md"></span> Loading

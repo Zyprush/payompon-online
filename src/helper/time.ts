@@ -6,7 +6,7 @@ export const getRelativeTime = (timestamp: string): string => {
     const parsedDate = parseISO(timestamp);
     
     // Get the relative time
-    return formatDistanceToNow(parsedDate, { addSuffix: true });
+    return formatDistanceToNow(parsedDate, { addSuffix: true, });
   } catch (error) {
     console.error("Error parsing date:", error);
     return "Invalid date";

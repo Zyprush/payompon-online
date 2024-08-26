@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase"; // Ensure this path is correct
+import { doc, updateDoc, getDocs, query, where, collection } from "firebase/firestore";
+import { db } from "@/firebase";
 
 interface EditOfficialProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ interface EditOfficialProps {
     address: string;
     chairmanship?: string;
     position: string;
-    contact: string; // Include contact in initialData
+    contact: string;
   };
 }
 
@@ -29,35 +29,42 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
     initialData.chairmanship || ""
   );
   const [position, setPosition] = useState(initialData.position);
-  const [contact, setContact] = useState(initialData.contact); // New state for contact number
-  const [loading, setLoading] = useState(false); // State to track loading
+  const [contact, setContact] = useState(initialData.contact);
+  const [loading, setLoading] = useState(false);
 
-  // Update state when initialData changes
   useEffect(() => {
     setName(initialData.name);
     setStatus(initialData.status);
     setAddress(initialData.address);
     setChairmanship(initialData.chairmanship || "");
     setPosition(initialData.position);
-    setContact(initialData.contact); // Set contact number
+    setContact(initialData.contact);
   }, [initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Input validation
     if (!name || !status || !address || !position) {
       alert("Please fill in all required fields.");
       return;
     }
 
-    // Contact number validation (must be 11 digits)
     if (!/^\d{11}$/.test(contact)) {
       alert("Please enter a valid 11-digit contact number.");
       return;
     }
 
-    setLoading(true); // Start loading
+    const restrictedPositions = ["Punong Barangay", "Treasurer", "Secretary", "SK Chairman"];
+    if (restrictedPositions.includes(position) && position !== initialData.position) {
+      const q = query(collection(db, "officials"), where("position", "==", position));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        alert(`${position} already exists. You cannot assign this position to another official.`);
+        return;
+      }
+    }
+
+    setLoading(true);
 
     try {
       await updateDoc(doc(db, "officials", officialId), {
@@ -66,14 +73,14 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
         address,
         chairmanship: chairmanship || null,
         position,
-        contact, // Update the contact number in Firestore
+        contact,
       });
-      onClose(); // Close the modal after submission
+      onClose();
     } catch (error) {
       console.error("Error updating document: ", error);
       alert("An error occurred while updating the official. Please try again.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -102,7 +109,7 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
               onChange={(e) => setStatus(e.target.value)}
               required
             >
-              <option value="">Status</option>
+              <option value="">Select Status</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
@@ -118,9 +125,7 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">
-              Chairmanship (Optional)
-            </label>
+            <label className="block text-gray-700">Chairmanship (Optional)</label>
             <input
               type="text"
               className="mt-1 p-2 w-full border rounded"
@@ -130,13 +135,20 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Position</label>
-            <input
-              type="text"
+            <select
               className="mt-1 p-2 w-full border rounded"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               required
-            />
+            >
+              <option value="">Select Position</option>
+              <option value="Punong Barangay">Punong Barangay</option>
+              <option value="Barangay Kagawad">Barangay Kagawad</option>
+              <option value="Treasurer">Treasurer</option>
+              <option value="Secretary">Secretary</option>
+              <option value="SK Chairman">SK Chairman</option>
+              <option value="Tanod">Tanod</option>
+            </select>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Contact Number</label>
@@ -146,8 +158,8 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               required
-              pattern="\d{11}" // Optional HTML5 pattern validation
-              maxLength={11} // Limit input length
+              pattern="\d{11}"
+              maxLength={11}
             />
           </div>
           <div className="flex justify-end">
@@ -155,14 +167,14 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
               type="button"
               className="mr-4 py-2 px-4 btn-outline btn-sm text-neutral rounded"
               onClick={onClose}
-              disabled={loading} // Disable button while loading
+              disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="py-2 px-4 btn-primary btn btn-sm text-white rounded flex items-center justify-center"
-              disabled={loading} // Disable button while loading
+              disabled={loading}
             >
               {loading ? "loading..." : "Save Changes"}
             </button>

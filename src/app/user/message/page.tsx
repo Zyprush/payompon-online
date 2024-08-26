@@ -93,7 +93,6 @@ const Message: React.FC = (): JSX.Element => {
                     >
                       <div className="avatar">
                         <div className="w-16 custom-shadow rounded-full">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <Image
                             alt="brgy-logo.png"
                             width={100}

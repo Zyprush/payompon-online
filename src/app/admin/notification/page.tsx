@@ -4,6 +4,7 @@ import NavLayout from "@/components/NavLayout";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useNotifStore } from "@/state/notif";
+import { format } from "date-fns";
 
 interface Notification {
   id: string;
@@ -121,7 +122,10 @@ const Notifications: React.FC = (): JSX.Element => {
                     />
                   </th>
                   <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                    Message
+                    Notifications
+                  </th>
+                  <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
+                    Date
                   </th>
                   <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                     Time
@@ -145,7 +149,10 @@ const Notifications: React.FC = (): JSX.Element => {
                       {notification.message}
                     </td>
                     <td className="py-2 px-4 border-b text-xs">
-                      {new Date(notification.time).toLocaleString()}
+                      {format(new Date(notification.time),"MMM dd, yyyy")}
+                    </td>
+                    <td className="py-2 px-4 border-b text-xs">
+                      {format(new Date(notification.time),"hh:mm a")}
                     </td>
                     <td className="py-2 px-4 border-b text-xs">
                       {notification.read ? <span className="btn btn-xs text-primary btn-outline">Read</span> : <span className="btn btn-xs text-white btn-error">new</span> }
