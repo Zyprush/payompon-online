@@ -87,8 +87,8 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 <span className="text-gray-600 text-justify">
                   <b>IN WITNESS WHEREOF</b> I have hereunto set my hand and
                   affixed the Official seal of this office. Done at
-                  <b className="text-green-800">
-                    Barangay Payompon, Mamburao, Occidental Mindoro
+                  <b className="text-green-800 ml-2">
+                  Barangay Payompon, Mamburao, Occidental Mindoro
                   </b>
                   , Issued {formatIssueDate(request?.issueOn)}.
                 </span>

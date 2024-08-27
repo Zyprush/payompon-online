@@ -162,7 +162,17 @@ const Message: React.FC = (): JSX.Element => {
                     {selectedMessage?.message}
                   </p>
                   {selectedMessage?.certLink ? (
-                    <QRCode value={selectedMessage.certLink} size={100} />
+                    <div className="flex mt-4 flex-col gap-2">
+                      <QRCode value={selectedMessage.certLink} size={100} />
+                      <a
+                        href={selectedMessage?.certLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 text-sm underline"
+                      >
+                        View Proof
+                      </a>
+                    </div>
                   ) : null}
                 </div>
               </div>

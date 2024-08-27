@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import QRCode from 'qrcode.react';
-import { db } from '@/firebase';
-import { useRequestStore } from '@/state/request';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from "react";
+import QRCode from "qrcode.react";
+import { db } from "@/firebase";
+import { useRequestStore } from "@/state/request";
+import { doc, getDoc } from "firebase/firestore";
+import { format } from "date-fns";
 
 const QrCode = () => {
   // Get the current URL or define any URL you want to encode in the QR code
@@ -37,10 +38,11 @@ const QrCode = () => {
     <span className="flex flex-col mt-auto mb-0 text-sm text-green-800 font-serif italic">
       {/* Display the QR code here */}
       <QRCode value={qrValue} size={100} />
-      <p className='mt-2'>Not Valid Without Official Seal</p>
+      <p className="mt-2">Not Valid Without Official Seal</p>
       <p>Paid Under O.R: {request?.orNo}</p>
       <p>Res. Cert. No: {request?.certNo}</p>
-      <p>Issued on: Issued at: Barangay Payompon Mamburao, Occ. Mindoro</p>
+      <p>Issued on: {request?.issueOn} </p>
+      <p>Issued at: Barangay Payompon Mamburao, Occ. Mindoro</p>
     </span>
   );
 };
