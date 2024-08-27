@@ -37,7 +37,6 @@ export const getOfficials = async (): Promise<OfficialsResult> => {
   };
 
   officialsData.forEach((official) => {
-    console.log("Processing Official:", official); // Add this line to debug
     switch (official.position) {
       case "Punong Barangay":
         result.punongBarangay = official.name;
@@ -59,9 +58,6 @@ export const getOfficials = async (): Promise<OfficialsResult> => {
         break;
     }
   });
-
-  console.log("Final Officials Result:", result); // Add this line to debug
-
   return result;
 };
 

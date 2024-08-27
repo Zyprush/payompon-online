@@ -1,10 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Adjust the path as needed
+import { db } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useRequestStore } from "@/state/request";
+interface InfoProps {
+  params: {
+    id: string;
+  };
+}
 
-const DocumentComponent: React.FC = () => {
+const DocumentComponent: React.FC<InfoProps> = ({ params }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const { setId } = useRequestStore();
+  const { id } = params;
+  console.log("id", id);
+  useEffect(() => {
+    setId(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleZoomIn = () => {
     setZoomLevel((prevZoomLevel) => Math.min(prevZoomLevel + 0.1, 3)); // Max zoom 300%
@@ -45,7 +60,7 @@ const DocumentComponent: React.FC = () => {
               Print
             </button>
           )}
-          content={() => document.getElementById('document') as HTMLDivElement}
+          content={() => document.getElementById("document") as HTMLDivElement}
         />
       </div>
       <div className="flex">
@@ -57,6 +72,6 @@ const DocumentComponent: React.FC = () => {
   );
 };
 
-DocumentComponent.displayName = 'DocumentComponent';
+DocumentComponent.displayName = "DocumentComponent";
 
 export default DocumentComponent;
