@@ -79,7 +79,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   AS PER REQUIREMENT AND/OR TO SUPPORT HIS/HER
                 </span>
                 <span className="text-gray-600 text-justify font-bold">
-                  {request?.certType}
+                  {request?.requestType}
                 </span>
               </div>
 

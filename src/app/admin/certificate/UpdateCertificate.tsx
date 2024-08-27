@@ -38,7 +38,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
       // TODO: display the qr code in message
       const currentTime = new Date().toISOString();
       await addMessage({
-        message: `Your certification request (${selectedRequest.certType}) has been approve. OR NO: ${orNo}, CERT NO: ${certNo}`,
+        message: `Your certification request (${selectedRequest.requestType}) has been approve. OR NO: ${orNo}, CERT NO: ${certNo}`,
         certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
         sender: "admin",
         receiver: selectedRequest.submittedBy,
