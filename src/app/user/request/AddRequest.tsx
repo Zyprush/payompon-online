@@ -21,6 +21,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const addNotif = useNotifStore((state) => state.addNotif); // Get the addNotif function
@@ -47,6 +48,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       if (userDoc.exists()) {
         const userData = userDoc.data();
         setUserName(userData?.name || null); // Assuming the user's name is stored under 'name'
+        setUserSitio(userData?.sitio || null); // Assuming the user's name is stored under 'name'
       } else {
         console.error("No such user!");
       }
@@ -75,6 +77,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
 
       await addDoc(collection(db, "requests"), {
         submittedName: userName,
+        sitio: userSitio,
         submittedBy: userUid,
         requestType,
         gcashRefNo,
