@@ -7,6 +7,7 @@ import { IconAt } from "@tabler/icons-react";
 import { format } from "date-fns";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import QRCode from "qrcode.react";
 
 const Message: React.FC = (): JSX.Element => {
   const { messages, fetchMessageReceivedUser, fetchMessageSentUser } =
@@ -148,16 +149,21 @@ const Message: React.FC = (): JSX.Element => {
                     </div>
                     <div className="text-zinc-700 text-sm font-semibold items-center flex gap-4">
                       {format(new Date(selectedMessage.time), "MMM dd, yyyy")} :
-                      <p className="">{format(new Date(selectedMessage.time), "hh:mm a")}</p>
+                      <p className="">
+                        {format(new Date(selectedMessage.time), "hh:mm a")}
+                      </p>
                     </div>
                   </div>
                 </div>
-        
+
                 <div className="my-5">
                   <h2 className="text-gray-700 font-bold mb-2">Message:</h2>
-                  <p className="text-zinc-500 text-sm">
+                  <p className="text-zinc-500 text-sm mb-4">
                     {selectedMessage?.message}
                   </p>
+                  {selectedMessage?.certLink ? (
+                    <QRCode value={selectedMessage.certLink} size={100} />
+                  ) : null}
                 </div>
               </div>
               <button

@@ -7,9 +7,7 @@ import Account from "./Account";
 import { NavLink } from "./NavLink";
 import { IconDotsVertical, IconX } from "@tabler/icons-react";
 
-
-
-const MobileHeader: React.FC<{navItems:any}> = ({navItems}) => {
+const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const [userData, setUserData] = useState<any>(null);
@@ -17,7 +15,6 @@ const MobileHeader: React.FC<{navItems:any}> = ({navItems}) => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
 
   return (
     <div className="h-auto w-screen md:hidden flex flex-col dark:bg-gray-900">
@@ -29,13 +26,14 @@ const MobileHeader: React.FC<{navItems:any}> = ({navItems}) => {
             role="button"
             className="h-10 w-10 flex items-center justify-center overflow-hidden border-2 border-primary bg-primary rounded-full"
           >
-            {/* <img
-              src={userData?.profilePicUrl || "/img/profile-admin.jpg"}
-              alt=""
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={userData?.profilePicUrl || "/img/brgy-logo.png"}
+              alt="profile"
               width={40}
               height={40}
               className="h-full w-full object-cover"
-            /> */}
+            />
           </summary>
           <Account userData={userData} />
         </details>
@@ -57,7 +55,7 @@ const MobileHeader: React.FC<{navItems:any}> = ({navItems}) => {
             transition={{ duration: 0.3 }}
             className="fixed h-screen top-14 bottom-0 flex flex-col p-5 gap-2 z-50 items-start justify-start w-3/5 border-r border-zinc-300  bg-white"
           >
-            {navItems.map((item:any) => (
+            {navItems.map((item: any) => (
               <NavLink
                 key={item.href}
                 href={item.href}
@@ -70,7 +68,6 @@ const MobileHeader: React.FC<{navItems:any}> = ({navItems}) => {
           </motion.nav>
         )}
       </AnimatePresence>
-
     </div>
   );
 };

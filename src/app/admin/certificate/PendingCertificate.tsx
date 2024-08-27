@@ -4,6 +4,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 
 import { db } from "@/firebase";
 import UpdateCertificate from "./UpdateCertificate";
+import DeclineModal from "./DeclineModal";
 
 interface RequestData {
   id: string;
@@ -17,6 +18,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(
+    null
+  );
+  const [declineRequest, setDeclineRequest] = useState<RequestData | null>(
     null
   );
 
@@ -41,10 +45,14 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     };
 
     fetchRequests();
-  }, []);
+  }, [selectedRequest, declineRequest]);
 
-  const handleRowClick = (request: RequestData) => {
+  const handleUpdate = (request: RequestData) => {
     setSelectedRequest(request);
+  };
+
+  const handleDecline = (request: RequestData) => {
+    setDeclineRequest(request);
   };
 
   return (
@@ -73,11 +81,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
           </thead>
           <tbody>
             {requests.map((request) => (
-              <tr
-                key={request.id}
-                onClick={() => handleRowClick(request)}
-                className="cursor-pointer hover:bg-gray-100"
-              >
+              <tr key={request.id} className="cursor-pointer hover:bg-gray-100">
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.requestType}
                 </td>
@@ -95,8 +99,13 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                     View Proof
                   </a>
                 </td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.status}
+                <td className="py-2 px-4 border-b text-left text-xs space-x-3">
+                  <button onClick={() => handleUpdate(request)} className="btn-xs rounded-sm btn-primary btn text-white">
+                    Approve
+                  </button>
+                  <button onClick={() => handleDecline(request)}  className="btn-xs rounded-sm btn-outline btn text-error">
+                    Decline
+                  </button>
                 </td>
               </tr>
             ))}
@@ -112,6 +121,13 @@ const PendingCertificate: React.FC = (): JSX.Element => {
         <UpdateCertificate
           selectedRequest={selectedRequest}
           onClose={() => setSelectedRequest(null)}
+        />
+      )}
+
+      {declineRequest && (
+        <DeclineModal
+          declineRequest={declineRequest}
+          onClose={() => setDeclineRequest(null)}
         />
       )}
     </div>

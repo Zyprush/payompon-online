@@ -12,7 +12,7 @@ interface RequestData {
   status: string;
 }
 
-const CompletedCertificate: React.FC = (): JSX.Element => {
+const ApprovedCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -21,7 +21,7 @@ const CompletedCertificate: React.FC = (): JSX.Element => {
       try {
         const q = query(
           collection(db, "requests"),
-          where("status", "!=", "pending")
+          where("status", "==", "approved")
         );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
@@ -72,12 +72,12 @@ const CompletedCertificate: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                     <a
-                      href={request.proofOfPaymentURL}
+                      href={`https://payompon-online.vercel.app/document/${request.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500"
                     >
-                      View Proof
+                      View Doc
                     </a>
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs">
@@ -94,4 +94,4 @@ const CompletedCertificate: React.FC = (): JSX.Element => {
   );
 };
 
-export default CompletedCertificate;
+export default ApprovedCertificate;
