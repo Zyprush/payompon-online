@@ -61,3 +61,23 @@ export const getOfficials = async (): Promise<OfficialsResult> => {
   return result;
 };
 
+
+export const getCaptain = async (): Promise<string> => {
+  const querySnapshot = await getDocs(collection(db, "officials"));
+  const officialsData = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as OfficialData[];
+
+  console.log("Fetched Officials Data:", officialsData); // Add this line to debug
+
+  let captain: string = "";
+
+  officialsData.forEach((official) => {
+    if (official.position === "Punong Barangay") {
+      captain = official.name;
+    }
+  });
+  return captain;
+};
+

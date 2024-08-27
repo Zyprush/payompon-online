@@ -38,7 +38,6 @@ const QrCode = () => {
     <span className="flex flex-col mt-auto mb-0 text-sm text-green-800 font-serif italic">
       {/* Display the QR code here */}
       <QRCode value={qrValue} size={100} />
-      <p className="mt-2">Not Valid Without Official Seal</p>
       <p>Paid Under O.R: {request?.orNo}</p>
       <p>Res. Cert. No: {request?.certNo}</p>
       <p>Issued on: {request?.issueOn} </p>

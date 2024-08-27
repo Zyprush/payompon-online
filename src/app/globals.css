@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
 @font-face {
   font-family: 'Bernard MT';
-  src: url('/fonts/bernardMT.ttf') format('truetype');
+  src: url('/font/bernardMT.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

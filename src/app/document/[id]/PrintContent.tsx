@@ -1,12 +1,12 @@
 import React, { useState, useEffect, forwardRef, Ref } from "react";
 import Header from "./Header";
 import { formatIssueDate } from "@/helper/time";
-import { request } from "http";
 import SideContent from "./SideContent";
 import { db } from "@/firebase";
-import { id } from "date-fns/locale";
 import { doc, getDoc } from "firebase/firestore";
 import { useRequestStore } from "@/state/request";
+import UnknownDoc from "@/components/UnknownDoc";
+import { getCaptain } from "@/helper/getOfficials";
 
 type PrintContentProps = {
   zoomLevel: number;
@@ -15,11 +15,15 @@ type PrintContentProps = {
 const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
   ({ zoomLevel }, ref) => {
     const [request, setRequest] = useState<any>();
+    const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
     const { id } = useRequestStore();
 
     useEffect(() => {
       const fetchRequest = async () => {
+        setLoading(true);
+        const cap = await getCaptain();
+        setCaptain(cap);
         if (typeof id === "string") {
           try {
             const requestDoc = doc(db, "requests", id);
@@ -39,6 +43,10 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
 
       fetchRequest();
     }, [id, setRequest]);
+
+    if (!loading && !request) {
+      return <UnknownDoc />;
+    }
 
     return (
       <div
@@ -67,8 +75,8 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 </span>
                 <span className="text-gray-600 text-justify mt-8">
                   This is to certify that MR./MS.{" "}
-                  <b className="text-green-800">{request?.submittedName}</b> is a
-                  bonafide resident of Purok/Sitio {request?.sitio}, Brgy.
+                  <b className="text-green-800">{request?.submittedName}</b> is
+                  a bonafide resident of Purok/Sitio {request?.sitio}, Brgy.
                   Payompon, Mamburao, Occidental Mindoro is known to me of good
                   moral character and has no derogatory records on file in this
                   office. It appeared in this document his/her thumb mark,
@@ -78,7 +86,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 <span className="text-green-800 text-justify text-lg font-bold mt-10">
                   AS PER REQUIREMENT AND/OR TO SUPPORT HIS/HER
                 </span>
-                <span className="text-gray-600 text-justify font-bold">
+                <span className="text-gray-600 text-justify font-bold uppercase">
                   {request?.requestType}
                 </span>
               </div>
@@ -88,7 +96,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   <b>IN WITNESS WHEREOF</b> I have hereunto set my hand and
                   affixed the Official seal of this office. Done at
                   <b className="text-green-800 ml-2">
-                  Barangay Payompon, Mamburao, Occidental Mindoro
+                    Barangay Payompon, Mamburao, Occidental Mindoro
                   </b>
                   , Issued {formatIssueDate(request?.issueOn)}.
                 </span>
@@ -111,7 +119,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-blue-700 text-xl">LEONARD M. ALMERO</p>
+                  <p className="text-blue-700 text-xl uppercase">{captain}</p>
                   <hr />
                   <p className="text-green-800 text-base text-center font-bold">
                     Punong Barangay

@@ -1,5 +1,4 @@
 "use client";
-
 import { auth, db } from "@/firebase"; // Ensure you import your Firebase config
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -66,6 +65,7 @@ export default function Page() {
         }
       }
     } catch (error: any) {
+      console.log('error', error)
       if (error instanceof FirebaseError) {
         const errorMessages: { [key: string]: string } = {
           "auth/invalid-credential":
