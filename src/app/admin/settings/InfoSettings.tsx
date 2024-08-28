@@ -125,7 +125,7 @@ const InfoSetting: React.FC = (): JSX.Element => {
   };
 
   return (
-      <div className="bg-white grid grid-cols-2 rounded-lg border p-10 md:m-10 shadow-sm gap-5">
+      <div className="bg-white grid grid-cols-2 rounded-lg border p-10 shadow-sm gap-5 ml-0">
         {loading ? (
           <div className="flex justify-center items-center h-32">
             <div className="loader">Loading...</div>

@@ -69,63 +69,67 @@ const ImgSetting: React.FC<{ fileName: string; name: string }> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center border w-44 bg-white rounded-lg gap-3 p-3">
+    <div className="flex flex-col items-center justify-center border min-h-44 w-44 bg-white rounded-lg gap-3 p-3 tooltip tooltip-top" data-tip={name}>
       {loading ? (
-        "loading"
+        <p className="font-semibold text-sm text-zinc-600">loading</p>
       ) : (
         <div className="flex flex-col gap-3">
           {isEditing ? (
-            <>
+            <div>
               {preview && (
                 <img
                   src={preview}
                   alt="Preview"
-                  className="mb-4 w-32 h-32 object-cover"
+                  className="mb-4 w-44 h-44 object-contain rounded-lg"
                 />
               )}
-              <label htmlFor="file-upload" className="custom-file-upload">
-                Upload
-              </label>
+          
               <input
                 type="file"
                 id="file-upload"
                 onChange={handleFileChange}
                 className="text-xs border"
+                disabled={uploading}
               />
-              <span className="flex gap-2">
-                <button onClick={toggleEdit} className="bt-outline">
+              <span className="flex gap-2 justify-center items-center mb-0 mt-auto ">
+                {/* <button onClick={toggleEdit} className="bt-outline">
                   Cancel
-                </button>
+                </button> */}
+                <label htmlFor="file-upload" className="bt-outline">
+                Upload
+              </label>
                 <button
                   onClick={handleUpload}
                   className="bt-primary"
                   disabled={uploading}
                 >
-                  {uploading ? "Uploading..." : "Update"}
+                  {uploading ? "loading.." : "Update"}
                 </button>
               </span>
-            </>
+            </div>
           ) : (
             <>
               {loading ? (
-                <div className="w-32 h-32 flex items-center justify-center">
-                  <span>Loading...</span>{" "}
+                <div className="w-44 h-44 flex items-center justify-center">
+                  <span>Loading...</span>
                   {/* You can replace this with a spinner */}
                 </div>
               ) : imageURL ? (
                 <img
                   src={imageURL}
                   alt="Uploaded"
-                  className="w-32 h-32 object-cover"
+                  className="w-44 h-44 object-contain"
                 />
               ) : (
-                <span className="text-xs w-full h-32 font-semibold border rounded p-2 flex items-center justify-center">
+                <span className="text-xs w-full h-44 font-semibold border rounded p-2 flex items-center justify-center">
                   <p className="text-center">No {name} uploaded</p>
                 </span>
               )}
-              <button onClick={toggleEdit} className="bt-outline mx-auto">
-                Edit
-              </button>
+              <span className="flex gap-2 justify-center items-center">
+                <button onClick={toggleEdit} className="bt-outline mx-auto">
+                  Edit
+                </button>
+              </span>
             </>
           )}
         </div>

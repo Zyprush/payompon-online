@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useRequestStore } from "@/state/request";
 import UnknownDoc from "@/components/UnknownDoc";
 import { getCaptain } from "@/helper/getOfficials";
+import GetImage from "@/components/GetImage";
 
 type PrintContentProps = {
   zoomLevel: number;
@@ -102,6 +103,12 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 </span>
               </div>
 
+              <div className="flex flex-col p-3 mt-5 justify-center items-center ml-0 mr-auto">
+                {request?.affiant}
+                <hr className="border border-zinc-500 w-full" />
+                <p className="text-green-800 font-semibold">Affiant</p>
+              </div>
+
               {/* Thumb */}
               <div className="flex justify-between items-center p-3">
                 <div className="flex flex-row gap-2 mt-28">
@@ -119,8 +126,11 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   </div>
                 </div>
                 <div className="text-right">
+                  <div className="w-44 -mb-10">
+                    <GetImage storageLink="settings/captainSign" />
+                  </div>
                   <p className="text-blue-700 text-xl uppercase">{captain}</p>
-                  <hr />
+                  <hr className="border border-zinc-500" />
                   <p className="text-green-800 text-base text-center font-bold">
                     Punong Barangay
                   </p>

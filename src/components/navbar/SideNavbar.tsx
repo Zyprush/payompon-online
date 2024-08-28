@@ -15,7 +15,7 @@ const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
 
   return (
     <div
-      className={`h-screen w-auto ${
+      className={`min-h-screen ${
         isMinimized ? "w-20" : "w-56"
       } hidden md:flex md:flex-col z-50`}
     >
