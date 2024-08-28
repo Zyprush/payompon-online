@@ -9,7 +9,6 @@ interface OfficialModalProps {
 
 const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
-  const [status, setStatus] = useState("");
   const [address, setAddress] = useState("");
   const [chairmanship, setChairmanship] = useState("");
   const [position, setPosition] = useState("");
@@ -47,7 +46,6 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
     try {
       await addDoc(collection(db, "officials"), {
         name,
-        status,
         address,
         chairmanship: chairmanship || null, // Optional field
         position,
@@ -55,7 +53,6 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
       });
       onClose(); // Close the modal after submission
       setName("");
-      setStatus("");
       setAddress("");
       setChairmanship("");
       setPosition("");
@@ -84,19 +81,6 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
               onChange={(e) => setName(e.target.value)}
               required
             />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Status</label>
-            <select
-              className="mt-1 p-2 w-full border rounded"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              required
-            >
-              <option value="">Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Address</label>

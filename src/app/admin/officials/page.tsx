@@ -9,7 +9,6 @@ import { db } from "@/firebase"; // Ensure this path is correct
 interface OfficialData {
   id: string;
   name: string;
-  status: string;
   address: string;
   chairmanship?: string;
   position: string;
@@ -83,7 +82,6 @@ const Official: React.FC = (): JSX.Element => {
           officialId={currentOfficial?.id || ""}
           initialData={{ 
             name: currentOfficial?.name || "",
-            status: currentOfficial?.status || "",
             address: currentOfficial?.address || "",
             chairmanship: currentOfficial?.chairmanship || "",
             position: currentOfficial?.position || "",
@@ -105,7 +103,6 @@ const Official: React.FC = (): JSX.Element => {
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Name</th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Status</th>
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Address</th>
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Chairmanship</th>
                   <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Position</th>
@@ -117,7 +114,6 @@ const Official: React.FC = (): JSX.Element => {
                 {officials.map((official) => (
                   <tr key={official.id}>
                     <td className="py-2 px-4 border-b text-xs">{official.name}</td>
-                    <td className="py-2 px-4 border-b text-xs">{official.status}</td>
                     <td className="py-2 px-4 border-b text-xs">{official.address}</td>
                     <td className="py-2 px-4 border-b text-xs">{official.chairmanship || "N/A"}</td>
                     <td className="py-2 px-4 border-b text-xs">{official.position}</td>

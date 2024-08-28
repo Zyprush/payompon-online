@@ -8,7 +8,6 @@ interface EditOfficialProps {
   officialId: string;
   initialData: {
     name: string;
-    status: string;
     address: string;
     chairmanship?: string;
     position: string;
@@ -23,7 +22,6 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
   initialData,
 }) => {
   const [name, setName] = useState(initialData.name);
-  const [status, setStatus] = useState(initialData.status);
   const [address, setAddress] = useState(initialData.address);
   const [chairmanship, setChairmanship] = useState(
     initialData.chairmanship || ""
@@ -34,7 +32,6 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
 
   useEffect(() => {
     setName(initialData.name);
-    setStatus(initialData.status);
     setAddress(initialData.address);
     setChairmanship(initialData.chairmanship || "");
     setPosition(initialData.position);
@@ -101,19 +98,7 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
               required
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Status</label>
-            <select
-              className="mt-1 p-2 w-full border rounded"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              required
-            >
-              <option value="">Select Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700">Address</label>
             <input

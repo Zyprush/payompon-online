@@ -7,7 +7,6 @@ import UserNavLayout from "@/components/UserNavLayout";
 interface Official {
   id: string;
   name: string;
-  status: string;
   address: string;
   chairmanship?: string;
   position: string;
@@ -24,7 +23,6 @@ const Officials: React.FC = (): JSX.Element => {
       try {
         const q = query(
           collection(db, "officials"),
-          where("status", "==", "active")
         );
         const querySnapshot = await getDocs(q);
         const fetchedOfficials: Official[] = querySnapshot.docs.map((doc) => ({
@@ -66,7 +64,6 @@ const Officials: React.FC = (): JSX.Element => {
                 <tr>
                   <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Name</th>
                   <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Position</th>
-                  <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Status</th>
                   <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Contact</th> {/* Updated header */}
                   <th className="px-4 py-2 border-b text-left text-sm text-gray-600">Chairmanship</th>
                 </tr>
@@ -76,7 +73,6 @@ const Officials: React.FC = (): JSX.Element => {
                   <tr key={official.id}>
                     <td className="px-4 py-2 border-b text-xs">{official.name}</td>
                     <td className="px-4 py-2 border-b text-xs">{official.position}</td>
-                    <td className="px-4 py-2 border-b text-xs">{official.status}</td>
                     <td className="px-4 py-2 border-b text-xs">{official.contact}</td> {/* Updated cell */}
                     <td className="px-4 py-2 border-b text-xs">
                       {official.chairmanship || "N/A"}
