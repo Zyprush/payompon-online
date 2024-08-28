@@ -28,6 +28,12 @@
   .contain-indicator {
     @apply text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto
   }
+  .bt-outline {
+    @apply text-neutral btn btn-sm btn-outline rounded
+  }
+  .bt-primary {
+    @apply text-white btn btn-sm btn-primary rounded
+  }
   .courier-prime {
     font-family: 'Courier Prime', monospace;
   }
@@ -58,4 +64,15 @@ input[type="number"] {
 
 .custom-shadow {
   filter: drop-shadow(1.3px 1.3px 0.4px #000000);
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
 }
