@@ -75,7 +75,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         >
           &times;
         </button>
-        <h2 className="text-xl font-semibold mb-4">Add Announcement</h2>
+        <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">Add Announcement</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label>What:</label>

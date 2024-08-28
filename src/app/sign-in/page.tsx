@@ -95,7 +95,7 @@ export default function Page() {
     <section>
       <div className="flex h-screen w-screen custom-bg items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8">
         <div className="xl:mx-auto xl:w-full min-w-[20rem] shadow-md p-4 xl:max-w-sm 2xl:max-w-md rounded-xl bg-white">
-          <h2 className="text-center text-2xl font-bold leading-tight text-black">
+          <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
             Sign in
           </h2>
           <form className="mt-8" method="POST" onSubmit={onSubmit}>

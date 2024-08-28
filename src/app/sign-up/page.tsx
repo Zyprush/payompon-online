@@ -119,7 +119,7 @@ export default function Page() {
     <section>
       <div className="flex h-screen w-screen custom-bg items-start md:items-center justify-center">
         <div className="mx-auto shadow-md p-4 min-w-[22rem] xl:max-w-sm 2xl:max-w-md rounded-xl m-auto bg-white">
-          <h2 className="text-center text-xl font-bold leading-tight text-black">
+          <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
             Create account
           </h2>
           <form className="mt-8" method="POST" onSubmit={onSubmit}>

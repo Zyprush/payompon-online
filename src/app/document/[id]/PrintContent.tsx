@@ -93,7 +93,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
               </div>
 
               <div className="flex flex-col p-3 mt-5">
-                <span className="text-gray-600 text-justify">
+                <span className="text-gray-600 text-justify indent-8">
                   <b>IN WITNESS WHEREOF</b> I have hereunto set my hand and
                   affixed the Official seal of this office. Done at
                   <b className="text-green-800 ml-2">

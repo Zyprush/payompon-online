@@ -168,9 +168,9 @@ const Message: React.FC = (): JSX.Element => {
                         href={selectedMessage?.certLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 text-sm underline"
+                        className="text-blue-500 text-sm underline font-semibold"
                       >
-                        View Proof
+                        Document Link
                       </a>
                     </div>
                   ) : null}

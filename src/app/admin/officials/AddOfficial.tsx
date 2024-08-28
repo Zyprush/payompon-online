@@ -70,7 +70,7 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Add Official</h2>
+        <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">Add Official</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Name</label>

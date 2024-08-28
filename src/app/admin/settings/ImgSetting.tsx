@@ -88,7 +88,7 @@ const ImgSetting: React.FC<{ fileName: string; name: string }> = ({
                 type="file"
                 id="file-upload"
                 onChange={handleFileChange}
-                className="text-xs border"
+                className="text-xs border none-input"
                 disabled={uploading}
               />
               <span className="flex gap-2 justify-center items-center mb-0 mt-auto ">

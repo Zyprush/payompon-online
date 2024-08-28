@@ -56,7 +56,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Update Certificate</h2>
+        <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">Update Certificate</h2>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             OR No.

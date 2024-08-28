@@ -6,6 +6,7 @@ import React, { ReactNode, useState } from "react";
 import Account from "./Account";
 import { NavLink } from "./NavLink";
 import { IconDotsVertical, IconX } from "@tabler/icons-react";
+import GetImage from "../GetImage";
 
 const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,14 +27,9 @@ const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
             role="button"
             className="h-10 w-10 flex items-center justify-center overflow-hidden border-2 border-primary bg-primary rounded-full"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={userData?.profilePicUrl || "/img/brgy-logo.png"}
-              alt="profile"
-              width={40}
-              height={40}
-              className="h-full w-full object-cover"
-            />
+            <div className="width-[40px]">
+              <GetImage storageLink="settings/brgyLogo" />
+            </div>
           </summary>
           <Account userData={userData} />
         </details>

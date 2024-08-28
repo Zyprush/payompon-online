@@ -17,6 +17,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
   handleClose,
 }): JSX.Element | null => {
   const [requestType, setRequestType] = useState<string>("");
+  const [purpose, setPurpose] = useState<string>(""); // State for Purpose
+  const [amount, setAmount] = useState<string>(""); // State for Amount
   const [gcashRefNo, setGcashRefNo] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
@@ -48,7 +50,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       if (userDoc.exists()) {
         const userData = userDoc.data();
         setUserName(userData?.name || null); // Assuming the user's name is stored under 'name'
-        setUserSitio(userData?.sitio || null); // Assuming the user's name is stored under 'name'
+        setUserSitio(userData?.sitio || null); // Assuming the user's sitio is stored under 'sitio'
       } else {
         console.error("No such user!");
       }
@@ -63,7 +65,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       return;
     }
 
-    if (!requestType || !gcashRefNo || !proofOfPayment) {
+    if (!requestType || !purpose || !amount || !gcashRefNo || !proofOfPayment) {
       alert("All fields are required.");
       return;
     }
@@ -80,6 +82,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
         sitio: userSitio,
         submittedBy: userUid,
         requestType,
+        purpose, // Include Purpose in the submitted data
+        amount,  // Include Amount in the submitted data
         gcashRefNo,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
@@ -108,52 +112,90 @@ const AddRequest: React.FC<AddRequestProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-96">
-        <div className="px-6 py-4">
-          <h2 className="text-xl font-semibold mb-4">Submit a Request</h2>
+    <div className="fixed inset-0 z-50 flex md:items-center md:justify-center bg-black md:bg-opacity-50 bg-opacity-0">
+      <div className="bg-white md:rounded-lg shadow-lg md:w-96 mt-14 md:mt-0">
+        <div className="px-6 py-4 flex flex-col gap-4">
+          <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
+            Submit a Request
+          </h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Request Type</label>
+            <label className="block text-sm font-semibold mb-2 text-zinc-700">
+              Request Type
+            </label>
             <select
               value={requestType}
               onChange={(e) => setRequestType(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
               disabled={loading}
             >
               <option value="">Select a type</option>
               <option value="Barangay clearance">Barangay clearance</option>
               <option value="Indigency">Indigency</option>
               <option value="Business permit">Business permit</option>
-              <option value="Certificate of residency">Certificate of residency</option>
-              <option value="Certificate of late registration">Certificate of late registration</option>
+              <option value="Certificate of residency">
+                Certificate of residency
+              </option>
+              <option value="Certificate of late registration">
+                Certificate of late registration
+              </option>
             </select>
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-semibold mb-2 text-zinc-700">
+              Purpose
+            </label>
+            <input
+              type="text"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2 text-zinc-700">
+              Amount
+            </label>
+            <input
+              type="text"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2 text-zinc-700">
               GCash Reference Number
             </label>
             <input
               type="text"
               value={gcashRefNo}
               onChange={(e) => setGcashRefNo(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
               disabled={loading}
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">
-              Proof of Payment (Screenshot)
+            <label
+              className="block text-sm font-semibold mb-2 text-zinc-700"
+              htmlFor="proof"
+            >
+              Proof of Payment
             </label>
             <input
               type="file"
               accept="image/*"
+              id="proof"
               onChange={(e) => {
                 if (e.target.files) setProofOfPayment(e.target.files[0]);
               }}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-sm"
               disabled={loading}
             />
           </div>
@@ -161,14 +203,14 @@ const AddRequest: React.FC<AddRequestProps> = ({
           <div className="flex justify-end">
             <button
               onClick={handleClose}
-              className="px-4 py-2 btn-outline btn text-neutral font-semibold rounded-md mr-2"
+              className="px-4 py-2 btn-outline btn text-neutral font-semibold rounded-sm mr-2"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 btn btn-primary text-sm font-semibold text-white rounded-md"
+              className="px-4 py-2 btn btn-primary text-sm font-semibold text-white rounded-sm"
               disabled={loading}
             >
               {loading ? "Submitting..." : "Submit"}

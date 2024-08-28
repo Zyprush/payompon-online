@@ -5,7 +5,7 @@ import React from "react";
 const Header = () => {
   return (
     <div className="flex items-center justify-evenly w-full">
-      <div className="custom-shadow rounded-full ml-10 w-[100px]">
+      <div className="rounded-full overflow-hidden ml-10 w-[100px]">
         <GetImage storageLink="settings/municipalLogo" />
       </div>
       <div className="mx-auto text-center leading-tight">
@@ -23,7 +23,7 @@ const Header = () => {
           Office of the Punong Barangay
         </h5>
       </div>
-      <div className="custom-shadow rounded-full mr-10 w-[100px]">
+      <div className="overflow-hidden rounded-full mr-10 w-[100px]">
         <GetImage storageLink="settings/brgyLogo" />
       </div>
     </div>
