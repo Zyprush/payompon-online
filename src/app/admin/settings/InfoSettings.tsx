@@ -1,5 +1,4 @@
 "use client";
-import NavLayout from "@/components/NavLayout";
 import React, { useState, useEffect } from "react";
 import { db, storage } from "@/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -9,7 +8,6 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import DetailItem from "./DetailItem";
-import SignatureUpload from "./SignatureUpload";
 
 const InfoSetting: React.FC = (): JSX.Element => {
   // Original states
