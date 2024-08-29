@@ -3,11 +3,12 @@ import UserNavLayout from "@/components/UserNavLayout";
 import { auth } from "@/firebase";
 import { toTitleCase } from "@/helper/string";
 import { useMessageStore } from "@/state/message";
-import { IconAt } from "@tabler/icons-react";
+import { IconAt, IconPencilMinus } from "@tabler/icons-react";
 import { format } from "date-fns";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import QRCode from "qrcode.react";
+import SendMessage from "./SendMessage";
 
 const Message: React.FC = (): JSX.Element => {
   const { messages, fetchMessageReceivedUser, fetchMessageSentUser } =
@@ -20,6 +21,7 @@ const Message: React.FC = (): JSX.Element => {
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showSend, setShowSend] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const user = auth.currentUser;
 
@@ -45,9 +47,14 @@ const Message: React.FC = (): JSX.Element => {
     setSelectedMessage(msg);
     setShowModal(true);
   };
-
   const closeModal = () => {
     setShowModal(false);
+  };
+  const openSendModal = () => {
+    setShowSend(true);
+  };
+  const closeSendModal = () => {
+    setShowSend(false);
   };
 
   const filteredMessages = messages?.filter((msg) =>
@@ -59,6 +66,12 @@ const Message: React.FC = (): JSX.Element => {
   return (
     <UserNavLayout>
       <div className="flex flex-col">
+        <button onClick={openSendModal} className="flex btn btn-primary shadow-xl text-white border-2 fixed bottom-4 right-4 ">
+          Create
+        </button>
+
+        {/* SendMessage Modal */}
+        <SendMessage open={showSend} handleClose={closeSendModal} />
         <div className="w-full md:px-4">
           <div className="flex space-x-2">
             <button
@@ -118,7 +131,7 @@ const Message: React.FC = (): JSX.Element => {
                   ))}
                 </div>
               ) : (
-                <span className="border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center">
+                <span className="border rounded-md p-4 text-sm text-zinc-600 flex items-center gap-2 justify-center w-80 mx-auto">
                   <IconAt /> No messages available
                 </span>
               )}
