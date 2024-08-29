@@ -148,14 +148,14 @@ const Notifications: React.FC = (): JSX.Element => {
                     <td className="py-2 px-4 border-b text-xs">
                       {notification.message}
                     </td>
-                    <td className="py-2 px-4 border-b text-xs">
-                      {format(new Date(notification.time),"MMM dd, yyyy")}
+                      <td className="py-2 px-4 border-b text-xs">
+                        {format(new Date(notification.time),"MMM dd, yyyy")}
                     </td>
                     <td className="py-2 px-4 border-b text-xs">
                       {format(new Date(notification.time),"hh:mm a")}
                     </td>
                     <td className="py-2 px-4 border-b text-xs">
-                      {notification.read ? <span className="btn btn-xs text-primary btn-outline">Read</span> : <span className="btn btn-xs text-white btn-error">new</span> }
+                      {notification.read ? <span className="btn btn-xs text-primary btn-outline rounded-sm">Read</span> : <span className="btn btn-xs text-white btn-error rounded-sm">new</span> }
                     </td>
                   </tr>
                 ))}

@@ -32,8 +32,8 @@ const Officials: React.FC = (): JSX.Element => {
 
         // Sort officials: Those with "chairman" in position at the top
         fetchedOfficials.sort((a, b) => {
-          const isChairmanA = /chairman/i.test(a.position);
-          const isChairmanB = /chairman/i.test(b.position);
+          const isChairmanA = /punong/i.test(a.position);
+          const isChairmanB = /punong/i.test(b.position);
 
           if (isChairmanA && !isChairmanB) return -1;
           if (!isChairmanA && isChairmanB) return 1;

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useMessageStore } from "@/state/message";
+import { useNotifStore } from "@/state/notif";
 
 interface UpdateCertificateProps {
   selectedRequest: any;
@@ -15,9 +16,9 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const [orNo, setOrNo] = useState<string>("");
   const [issueOn, setIssueOn] = useState<string>("");
   const [certNo, setCertNo] = useState<string>("");
-  const [certType, setCertType] = useState<string>("");
   const [affiant, setAffiant] = useState<string>("");
   const { addMessage, loadingMessage } = useMessageStore();
+  const { addNotif } = useNotifStore();
 
   const handleUpdate = async () => {
     if (!orNo || !issueOn || !certNo || !affiant) {
@@ -31,7 +32,6 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         orNo,
         issueOn,
         certNo,
-        // certType,
         affiant,
         status: "approved",
       });
@@ -45,6 +45,15 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         seen: false,
         time: currentTime,
       });
+      await addNotif({
+        message: `Your certification request (${selectedRequest.requestType}) has been approve.`,
+        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
+        for: selectedRequest.submittedBy,
+        read: false,
+        time: currentTime,
+      });
+
+      
       alert("Certificate updated successfully!");
       onClose();
     } catch (error) {

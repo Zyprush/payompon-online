@@ -120,7 +120,7 @@ const Announce: React.FC = (): JSX.Element => {
             </thead>
             <tbody>
               {announcements.map((announce) => (
-                <tr key={announce.id} className="text-sm text-start align-top">
+                <tr key={announce.id} className="text-xs text-start align-top">
                   <td className="p-4 border-b border-gray-300 align-top">
                     <input
                       type="checkbox"
@@ -128,7 +128,7 @@ const Announce: React.FC = (): JSX.Element => {
                       onChange={() => handleCheckboxChange(announce.id)}
                     />
                   </td>
-                  <td className="p-4 border-b border-gray-300 align-top w-40">{announce.what}</td>
+                  <td className="p-4 border-b border-gray-300 align-top w-40 fon">{announce.what}</td>
                   <td className="p-4 border-b border-gray-300 align-top">
                     {format(
                       new Date(announce.when),
@@ -137,7 +137,7 @@ const Announce: React.FC = (): JSX.Element => {
                   </td>
                   <td className="p-4 border-b border-gray-300 align-top">{announce.who}</td>
                   <td className="p-4 border-b border-gray-300 align-top">{announce.where}</td>
-                  <td className="p-4 border-b border-gray-300 align-top w-40">
+                  <td className="p-4 border-b border-gray-300 align-top w-40 font-bold">
                     {announce.files.length > 0 ? (
                       <ul className="list-none pl-5">
                         {announce.files.map((file, index) => (

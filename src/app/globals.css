@@ -66,7 +66,7 @@ input[type="number"] {
   filter: drop-shadow(1.3px 1.3px 0.4px #000000);
 }
 
-.none-input:input[type="file"] {
+input[type="file"].none-input {
   display: none;
 }
 

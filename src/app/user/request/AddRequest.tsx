@@ -6,6 +6,7 @@ import { storage, db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
+import GetImage from "@/components/GetImage";
 
 interface AddRequestProps {
   open: boolean;
@@ -83,7 +84,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         submittedBy: userUid,
         requestType,
         purpose, // Include Purpose in the submitted data
-        amount,  // Include Amount in the submitted data
+        amount, // Include Amount in the submitted data
         gcashRefNo,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
@@ -91,6 +92,14 @@ const AddRequest: React.FC<AddRequestProps> = ({
       });
 
       // Create a notification
+      await addNotif({
+        for: "admin",
+        message: `${userName} Request for ${requestType}`,
+        time: currentTime,
+        type: "admin",
+        read: false,
+      });
+
       await addNotif({
         for: "admin",
         message: `${userName} Request for ${requestType}`,
@@ -113,8 +122,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex md:items-center md:justify-center bg-black md:bg-opacity-50 bg-opacity-0">
-      <div className="bg-white md:rounded-lg shadow-lg md:w-96 mt-14 md:mt-0">
-        <div className="px-6 py-4 flex flex-col gap-4">
+      <div className="bg-white md:rounded-lg shadow-lg w-full md:w-96 mt-14 md:mt-0">
+        <div className="px-6 py-4 flex flex-col gap-2">
           <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
             Submit a Request
           </h2>
@@ -215,6 +224,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
             >
               {loading ? "Submitting..." : "Submit"}
             </button>
+          </div>
+          <div className="w-44 mt-5 tooltip tooltip-top" data-tip="Gcash QR Code">
+            <GetImage storageLink="settings/gcashQR" />
           </div>
         </div>
       </div>

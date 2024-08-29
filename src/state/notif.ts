@@ -49,7 +49,6 @@ export const useNotifStore = create<NotifStore>((set) => ({
         orderBy("time", "desc")
       );
       const unreadNotifDocSnap = await getDocs(unreadNotifByUserQuery);
-
       // Fetch read notifications for the user
       const readNotifByUserQuery = query(
         collection(db, "notif"),

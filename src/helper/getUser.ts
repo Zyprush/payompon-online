@@ -1,8 +1,22 @@
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { UserDataInterface } from "./interface";
+interface UserDataInterface {
+  civilStatus: string;
+  email: string;
+  gender: string;
+  id: string;
+  name: string;
+  number: string;
+  role: string;
+  sitio: string;
+  submitted?: string;
+  validID: string;
+  verified?: boolean;
+}
 
-export async function getUserData(uid: string): Promise<UserDataInterface | null> {
+export async function getUserData(
+  uid: string
+): Promise<UserDataInterface | null> {
   try {
     // Directly reference the user document using the UID
     const userRef = doc(db, "users", uid);
