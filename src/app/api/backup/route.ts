@@ -25,18 +25,35 @@ export async function POST(req: Request) {
     }
 
     const file = admin.storage().bucket(backupBucket).file(backupPath);
-    await file.save(JSON.stringify(backupData), {
-      contentType: "application/json",
-    });
+    
+    try {
+      await file.save(JSON.stringify(backupData), {
+        contentType: "application/json",
+      });
+    } catch (uploadError) {
+      console.error("Error saving file to bucket:", uploadError);
+      return NextResponse.json(
+        { error: "Failed to save file to storage" },
+        { status: 500 }
+      );
+    }
 
-    const [fileContents] = await file.download();
+    try {
+      const [fileContents] = await file.download();
+      return new Response(fileContents, {
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": `attachment; filename="${backupPath}"`,
+        },
+      });
+    } catch (downloadError) {
+      console.error("Error downloading file from bucket:", downloadError);
+      return NextResponse.json(
+        { error: "Failed to download file from storage" },
+        { status: 500 }
+      );
+    }
 
-    return new Response(fileContents, {
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="${backupPath}"`,
-      },
-    });
   } catch (error) {
     console.error("Error creating backup:", error);
     return NextResponse.json(
