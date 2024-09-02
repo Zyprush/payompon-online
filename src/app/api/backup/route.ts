@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const backupBucket = "brgy-online.appspot.com"; // Your Firebase Storage bucket
+    const backupBucket = "brgy-online.appspot.com"; 
     const backupPath = `backups/${dbName}-${Date.now()}.json`;
 
     const collections = await dbAdmin.listCollections();
