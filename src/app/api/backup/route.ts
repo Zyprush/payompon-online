@@ -1,4 +1,4 @@
-// api/backup/route.ts
+//api/backup/route.ts
 
 import { NextResponse } from "next/server";
 import admin from "@/firebase/admin";
@@ -40,11 +40,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // Simply return a success message
-    return NextResponse.json(
-      { message: "Backup created successfully" },
-      { status: 200 }
-    );
+    try {
+      const [fileContents] = await file.download();
+      return new Response(fileContents, {
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": `attachment; filename="${backupPath}"`,
+        },
+      });
+    } catch (downloadError) {
+      console.error("Error downloading file from bucket:", downloadError);
+      return NextResponse.json(
+        { error: "Failed to download file from storage" },
+        { status: 500 }
+      );
+    }
 
   } catch (error) {
     console.error("Error creating backup:", error);

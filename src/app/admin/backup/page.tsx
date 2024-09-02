@@ -22,9 +22,16 @@ const Backup: React.FC = (): JSX.Element => {
             });
 
             if (response.ok) {
-                const result = await response.json();
-                setMessage("Backup created successfully.");
-                // You can handle the backup result if needed here
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${dbName}-backup.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                setMessage("Backup created and downloaded successfully.");
             } else {
                 const result = await response.json();
                 setError(result.error || "An error occurred");
