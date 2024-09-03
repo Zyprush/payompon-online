@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
 import GetImage from "@/components/GetImage";
+import { fetchFromSettings } from "@/helper/getSettings";
 
 interface AddRequestProps {
   open: boolean;
@@ -26,21 +27,28 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [userName, setUserName] = useState<string | null>(null);
   const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [contact, setContact] = useState<boolean>(false);
 
   const addNotif = useNotifStore((state) => state.addNotif); // Get the addNotif function
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserUid(user.uid);
-        fetchUserData(user.uid);
-      } else {
-        setUserUid(null);
-      }
-    });
+    const fetchContactSetting = async () => {
+      const auth = getAuth();
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          setUserUid(user.uid);
+          fetchUserData(user.uid);
+        } else {
+          setUserUid(null);
+        }
+        const getContact = await fetchFromSettings("contact");
+        setContact(getContact);
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    };
+
+    fetchContactSetting();
   }, []);
 
   const fetchUserData = async (uid: string) => {
@@ -208,25 +216,29 @@ const AddRequest: React.FC<AddRequestProps> = ({
               disabled={loading}
             />
           </div>
-
-          <div className="flex justify-end">
-            <button
-              onClick={handleClose}
-              className="px-4 py-2 btn-outline btn text-neutral font-semibold rounded-sm mr-2"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 btn btn-primary text-sm font-semibold text-white rounded-sm"
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : "Submit"}
-            </button>
-          </div>
-          <div className="w-44 mt-5 tooltip tooltip-top" data-tip="Gcash QR Code">
-            <GetImage storageLink="settings/gcashQR" />
+          <div className="flex gap-5 justify-start">
+            <div className="w-44 tooltip tooltip-top" data-tip="Gcash QR Code">
+              <p className="oldstyle-nums font-semibold text-zinc-600">
+                {contact}
+              </p>
+              <GetImage storageLink="settings/gcashQR" />
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={handleClose}
+                className="px-4 py-2 btn-outline btn text-neutral font-semibold rounded-sm mr-2"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 btn btn-primary  text-sm font-semibold text-white rounded-sm "
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

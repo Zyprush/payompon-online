@@ -83,6 +83,7 @@ export default function Page() {
           errorMessages[error.code] ||
             "An unexpected error occurred. Please try again."
         );
+        console.log("error",errorMessages[error.code] )
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
