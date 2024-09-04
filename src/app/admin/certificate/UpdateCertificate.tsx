@@ -41,7 +41,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         message: `Your certification request (${selectedRequest.requestType}) has been approve. OR NO: ${orNo}, CERT NO: ${certNo}`,
         certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
         sender: "admin",
-        receiver: selectedRequest.submittedBy,
+        recepient: selectedRequest.submittedBy,
         seen: false,
         time: currentTime,
       });

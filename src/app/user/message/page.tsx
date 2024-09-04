@@ -1,47 +1,36 @@
 "use client";
 import UserNavLayout from "@/components/UserNavLayout";
-import { auth } from "@/firebase";
 import { toTitleCase } from "@/helper/string";
 import { useMessageStore } from "@/state/message";
-import { IconAt, IconPencilMinus } from "@tabler/icons-react";
+import { IconAt } from "@tabler/icons-react";
 import { format } from "date-fns";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import QRCode from "qrcode.react";
 import SendMessage from "./SendMessage";
+import useUserData from "@/hooks/useUserData";
 
 const Message: React.FC = (): JSX.Element => {
   const { messages, fetchMessageReceivedUser, fetchMessageSentUser } =
-    useMessageStore((state) => ({
-      messages: state.messages,
-      fetchMessageReceivedUser: state.fetchMessageReceivedUser,
-      fetchMessageSentUser: state.fetchMessageSentUser,
-    }));
+    useMessageStore();
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSend, setShowSend] = useState<boolean>(false);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const user = auth.currentUser;
+
+  const { userUid } = useUserData(); // Use the custom hook
 
   useEffect(() => {
-    if (user) {
-      setCurrentUserId(user.uid);
-    } else {
-      console.error("No current user found");
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (currentUserId) {
+    if (userUid) {
       if (filter === "sent") {
-        fetchMessageSentUser(currentUserId);
+        fetchMessageSentUser(userUid);
       } else {
-        fetchMessageReceivedUser(currentUserId);
+        fetchMessageReceivedUser(userUid);
       }
     }
-  }, [filter, currentUserId, fetchMessageReceivedUser, fetchMessageSentUser]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, userUid]);
 
   const openModal = (msg: any) => {
     setSelectedMessage(msg);
@@ -58,20 +47,21 @@ const Message: React.FC = (): JSX.Element => {
   };
 
   const filteredMessages = messages?.filter((msg) =>
-    filter === "sent"
-      ? msg.sender === currentUserId
-      : msg.receiver === currentUserId
+    filter === "sent" ? msg.sender === userUid : msg.receiverId === userUid
   );
 
   return (
     <UserNavLayout>
       <div className="flex flex-col">
-        <button onClick={openSendModal} className="flex btn btn-primary shadow-xl text-white border-2 fixed bottom-4 right-4 ">
+        <button
+          onClick={openSendModal}
+          className="flex btn btn-primary shadow-xl text-white border-2 fixed bottom-4 right-4 "
+        >
           Create
         </button>
 
-        {/* SendMessage Modal */}
         <SendMessage open={showSend} handleClose={closeSendModal} />
+
         <div className="w-full md:px-4">
           <div className="flex space-x-2">
             <button
@@ -139,7 +129,6 @@ const Message: React.FC = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Modal for viewing message */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3">
@@ -147,7 +136,6 @@ const Message: React.FC = (): JSX.Element => {
                 <div className="flex gap-4">
                   <div className="avatar">
                     <div className="w-16 rounded-full">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <Image
                         alt="brgy-logo.png"
                         width={100}

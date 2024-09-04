@@ -9,7 +9,6 @@ import {
   where,
 } from "firebase/firestore";
 
-
 interface MessageStore {
   messages: Array<any> | null;
   loadingMessage: boolean;
@@ -45,23 +44,23 @@ export const useMessageStore = create<MessageStore>((set) => ({
     set({ loadingMessage: true });
     try {
       const messagesRef = collection(db, "messages");
-  
-      // Query for messages where the user is the receiver
+
+      // Query for messages where the user is the receiverId
       const receivedMessagesQuery = query(
         messagesRef,
-        where("receiver", "==", email),
+        where("receiverId", "==", email),
         orderBy("time", "desc")
       );
-  
+
       // Execute the query
       const receivedMessagesSnap = await getDocs(receivedMessagesQuery);
-  
+
       // Map and set received messages
       const receivedMessages = receivedMessagesSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-  
+
       set({
         messages: receivedMessages,
         loadingMessage: false,
@@ -76,23 +75,23 @@ export const useMessageStore = create<MessageStore>((set) => ({
     set({ loadingMessage: true });
     try {
       const messagesRef = collection(db, "messages");
-  
+
       // Query for messages where the user is the sender
       const sentMessagesQuery = query(
         messagesRef,
         where("sender", "==", email),
         orderBy("time", "desc")
       );
-  
+
       // Execute the query
       const sentMessagesSnap = await getDocs(sentMessagesQuery);
-  
+
       // Map and set sent messages
       const sentMessages = sentMessagesSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-  
+
       set({
         messages: sentMessages,
         loadingMessage: false,
@@ -105,25 +104,23 @@ export const useMessageStore = create<MessageStore>((set) => ({
 
   fetchMessageReceivedAdmin: async () => {
     set({ loadingMessage: true });
+    console.log("Fetching messages for admin");
     try {
       const messagesRef = collection(db, "messages");
-  
-      // Query for messages where the receiver is 'admin'
+      // Query for messages where the receiverId is 'admin'
       const receivedMessagesQuery = query(
         messagesRef,
-        where("receiver", "in", ["admin", "staff"]),
+        where("receiverId", "in", ["admin", "staff"]),
         orderBy("time", "desc")
       );
-  
       // Execute the query
       const receivedMessagesSnap = await getDocs(receivedMessagesQuery);
-  
       // Map and set received messages
       const receivedMessages = receivedMessagesSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-  
+
       set({
         messages: receivedMessages,
         loadingMessage: false,
@@ -138,23 +135,23 @@ export const useMessageStore = create<MessageStore>((set) => ({
     set({ loadingMessage: true });
     try {
       const messagesRef = collection(db, "messages");
-  
+
       // Query for messages where the sender is 'admin' or 'staff'
       const sentMessagesQuery = query(
         messagesRef,
         where("sender", "in", ["admin", "staff"]),
         orderBy("time", "desc")
       );
-  
+
       // Execute the query
       const sentMessagesSnap = await getDocs(sentMessagesQuery);
-  
+
       // Map and set sent messages
       const sentMessages = sentMessagesSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-  
+
       set({
         messages: sentMessages,
         loadingMessage: false,

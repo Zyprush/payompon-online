@@ -31,7 +31,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
       await addMessage({
         message: `${declineMessage}. You may send us a message to request a refund or make another request using the same Screenshot of the Gcash transaction.`,
         sender: "admin",
-        receiver: declineRequest.submittedBy,
+        recepient: declineRequest.submittedBy,
         seen: false,
         time: currentTime,
       });

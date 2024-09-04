@@ -66,7 +66,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         message:
           "Your account has been verified. You can now access services like requesting certification and permit.",
         sender: "admin",
-        receiver: userId,
+        receiverId: userId,
         seen: false,
         time: currentTime,
       });

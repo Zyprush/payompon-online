@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { collection, doc, getDoc, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 
 interface SendMessageModalProps {
@@ -17,17 +17,22 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
     }
 
     try {
+      // Query Firestore to get the user by email
       const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
 
       if (userSnap.docs.length > 0) {
+        const user = userSnap.docs[0];
+        const userId = user.id; // Get the user ID from the document ID
+        const userName = user.data().name;
+
         const currentTime = serverTimestamp();
         await addDoc(collection(db, 'messages'), {
           message: message.trim(),
           read: false,
-          sender: "admin",
+          sender: "admin", // Assuming "admin" is the sender
           time: currentTime,
-          receiver: email,
-        //   reciverName: userSnap.docs.name
+          receiverId: userId, // Use the user ID as receiverId
+          receiverName: userName // Optionally store the user's name
         });
 
         alert('Message sent successfully.');
@@ -50,7 +55,7 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
         <input
           type="text"
           name="email"
-          placeholder="Your email"
+          placeholder="User's email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 mb-4 border rounded"

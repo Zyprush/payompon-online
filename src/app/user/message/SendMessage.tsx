@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import useUserData from "@/hooks/useUserData";
 import { currentTime } from "@/helper/time";
 import { useMessageStore } from "@/state/message";
 
@@ -11,49 +9,13 @@ interface SendMessageProps {
   handleClose: () => void;
 }
 
-const SendMessage: React.FC<SendMessageProps> = ({
-  open,
-  handleClose,
-}): JSX.Element | null => {
+const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
   const [recipient, setRecipient] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [userUid, setUserUid] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  const { addMessage } = useMessageStore(); // Get the addMessage function
-
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserUid(user.uid);
-        fetchUserData(user.uid);
-      } else {
-        setUserUid(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const fetchUserData = async (uid: string) => {
-    try {
-      const userDocRef = doc(db, "users", uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setUserName(userData?.name || null);
-        setUserEmail(userData?.email || null);
-      } else {
-        console.error("No such user!");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+  const { userUid, userName, userEmail } = useUserData(); // Custom hook to fetch user data
+  const { addMessage } = useMessageStore(); // Zustand store for managing messages
 
   const handleSubmit = async () => {
     if (!userUid || !userName) {
@@ -70,12 +32,12 @@ const SendMessage: React.FC<SendMessageProps> = ({
 
     try {
       await addMessage({
-        to: recipient,
-        from: userUid,
+        receiverId: recipient,
+        senderEmail: userEmail,
+        sender: userUid,
         senderName: userName,
-        message: message,
+        message,
         time: currentTime,
-        type: "message",
         read: false,
       });
 
