@@ -3,6 +3,7 @@ import React from "react";
 interface DetailItemProps {
   label: string;
   value: string;
+  type: string;
   isEditing: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -10,6 +11,7 @@ interface DetailItemProps {
 const DetailItem: React.FC<DetailItemProps> = ({
   label,
   value,
+  type,
   isEditing,
   onChange,
 }) => (
@@ -19,7 +21,7 @@ const DetailItem: React.FC<DetailItemProps> = ({
     </span>
     {isEditing ? (
       <input
-        type="text"
+        type={type}
         name={label}
         value={value}
         onChange={onChange}

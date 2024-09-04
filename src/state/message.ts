@@ -13,8 +13,8 @@ import {
 interface MessageStore {
   messages: Array<any> | null;
   loadingMessage: boolean;
-  fetchMessageReceivedUser: (userId: string) => Promise<void>;
-  fetchMessageSentUser: (userId: string) => Promise<void>;
+  fetchMessageReceivedUser: (email: string) => Promise<void>;
+  fetchMessageSentUser: (email: string) => Promise<void>;
   fetchMessageReceivedAdmin: () => Promise<void>;
   fetchMessageSentAdmin: () => Promise<void>;
   addMessage: (data: object) => Promise<void>;
@@ -41,7 +41,7 @@ export const useMessageStore = create<MessageStore>((set) => ({
     set({ loadingMessage: false });
   },
 
-  fetchMessageReceivedUser: async (userId: string) => {
+  fetchMessageReceivedUser: async (email: string) => {
     set({ loadingMessage: true });
     try {
       const messagesRef = collection(db, "messages");
@@ -49,7 +49,7 @@ export const useMessageStore = create<MessageStore>((set) => ({
       // Query for messages where the user is the receiver
       const receivedMessagesQuery = query(
         messagesRef,
-        where("receiver", "==", userId),
+        where("receiver", "==", email),
         orderBy("time", "desc")
       );
   
@@ -72,7 +72,7 @@ export const useMessageStore = create<MessageStore>((set) => ({
     }
   },
 
-  fetchMessageSentUser: async (userId: string) => {
+  fetchMessageSentUser: async (email: string) => {
     set({ loadingMessage: true });
     try {
       const messagesRef = collection(db, "messages");
@@ -80,7 +80,7 @@ export const useMessageStore = create<MessageStore>((set) => ({
       // Query for messages where the user is the sender
       const sentMessagesQuery = query(
         messagesRef,
-        where("sender", "==", userId),
+        where("sender", "==", email),
         orderBy("time", "desc")
       );
   

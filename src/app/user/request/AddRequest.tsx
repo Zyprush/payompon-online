@@ -41,7 +41,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         } else {
           setUserUid(null);
         }
-        const getContact = await fetchFromSettings("contact");
+        const getContact = await fetchFromSettings("gcash");
         setContact(getContact);
       });
 

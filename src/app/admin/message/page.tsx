@@ -6,6 +6,7 @@ import { useMessageStore } from "@/state/message";
 import { IconAt } from "@tabler/icons-react";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import SendMessage from "./SendMessage";
 
 const Message: React.FC = (): JSX.Element => {
   const { messages, fetchMessageReceivedAdmin, fetchMessageSentAdmin } =
@@ -13,7 +14,8 @@ const Message: React.FC = (): JSX.Element => {
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showMessageModal, setShowMessageModal] = useState<boolean>(false);
+  const [showSendMessageModal, setShowSendMessageModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (filter === "sent") {
@@ -23,13 +25,21 @@ const Message: React.FC = (): JSX.Element => {
     }
   }, [filter, fetchMessageReceivedAdmin, fetchMessageSentAdmin]);
 
-  const openModal = (msg: any) => {
+  const openMessageModal = (msg: any) => {
     setSelectedMessage(msg);
-    setShowModal(true);
+    setShowMessageModal(true);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
+  const closeMessageModal = () => {
+    setShowMessageModal(false);
+  };
+
+  const openSendMessageModal = () => {
+    setShowSendMessageModal(true);
+  };
+
+  const closeSendMessageModal = () => {
+    setShowSendMessageModal(false);
   };
 
   const filteredMessages = messages?.filter(
@@ -39,6 +49,9 @@ const Message: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
       <div className="flex flex-col">
+        <button className="fixed bottom-4 right-4 btn btn-primary" onClick={openSendMessageModal}>
+          Create
+        </button>
         <div className="w-full p-4 pt-0">
           <div className="flex space-x-2">
             <button
@@ -69,7 +82,7 @@ const Message: React.FC = (): JSX.Element => {
                   {filteredMessages.map((msg) => (
                     <span
                       key={msg.id}
-                      onClick={() => openModal(msg)}
+                      onClick={() => openMessageModal(msg)}
                       className="p-4 cursor-pointer border-b flex gap-5 bg-white shadow w-full rounded-md"
                     >
                       <div className="avatar">
@@ -106,7 +119,7 @@ const Message: React.FC = (): JSX.Element => {
         </div>
 
         {/* Modal for viewing message */}
-        {showModal && (
+        {showMessageModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-3/6">
               <div className="mt-2">
@@ -132,13 +145,16 @@ const Message: React.FC = (): JSX.Element => {
               </div>
               <button
                 className="btn btn-outline text-neutral"
-                onClick={closeModal}
+                onClick={closeMessageModal}
               >
-                close
+                Close
               </button>
             </div>
           </div>
         )}
+
+        {/* Modal for sending message */}
+        {showSendMessageModal && <SendMessage onClose={closeSendMessageModal} />}
       </div>
     </NavLayout>
   );
