@@ -23,7 +23,8 @@ const Message: React.FC = (): JSX.Element => {
     } else {
       fetchMessageReceivedAdmin();
     }
-  }, [filter, fetchMessageReceivedAdmin, fetchMessageSentAdmin]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, showMessageModal]);
 
   const openMessageModal = (msg: any) => {
     setSelectedMessage(msg);
@@ -42,14 +43,12 @@ const Message: React.FC = (): JSX.Element => {
     setShowSendMessageModal(false);
   };
 
-  const filteredMessages = messages?.filter(
-    (msg) => filter === "sent" && msg.sender === "admin"
-  );
+  const filteredMessages = messages
 
   return (
     <NavLayout>
       <div className="flex flex-col">
-        <button className="fixed bottom-4 right-4 btn btn-primary" onClick={openSendMessageModal}>
+        <button className="fixed bottom-4 right-4 btn btn-primary text-white shadow-2xl" onClick={openSendMessageModal}>
           Create
         </button>
         <div className="w-full p-4 pt-0">
@@ -83,7 +82,7 @@ const Message: React.FC = (): JSX.Element => {
                     <span
                       key={msg.id}
                       onClick={() => openMessageModal(msg)}
-                      className="p-4 cursor-pointer border-b flex gap-5 bg-white shadow w-full rounded-md"
+                      className="p-4 cursor-pointer border-b flex gap-5 bg-white shadow w-full rounded-md min-w-[20rem]"
                     >
                       <div className="avatar">
                         <div className="w-16 custom-shadow rounded-full">
@@ -97,7 +96,7 @@ const Message: React.FC = (): JSX.Element => {
                       </div>
                       <div className="flex flex-col truncate pr-5">
                         <div className="font-semibold text-zinc-600">
-                          {toTitleCase(msg.sender)}
+                        {filter == "sent" ? toTitleCase(msg.receiverName)  : toTitleCase(msg.senderName)}
                         </div>
                         <div className="truncate mt-auto mb-0 text-sm text-zinc-500">
                           {msg.message}
@@ -130,7 +129,7 @@ const Message: React.FC = (): JSX.Element => {
                   </span>
                   <span className="flex flex-col">
                     <h2 className="text-gray-700 font-bold">To:</h2>
-                    <h2 className="text-zinc-500 mb-5">Barangay Admin</h2>
+                    <h2 className="text-zinc-500 mb-5">{selectedMessage?.receiverName}</h2>
                   </span>
                 </div>
 

@@ -34,6 +34,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
         recepient: declineRequest.submittedBy,
         seen: false,
         time: currentTime,
+        for: "user"
       });
 
       alert("Request has been declined successfully.");

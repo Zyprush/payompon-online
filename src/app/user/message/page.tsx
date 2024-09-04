@@ -29,7 +29,7 @@ const Message: React.FC = (): JSX.Element => {
         fetchMessageReceivedUser(userUid);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, userUid]);
 
   const openModal = (msg: any) => {
@@ -46,10 +46,7 @@ const Message: React.FC = (): JSX.Element => {
     setShowSend(false);
   };
 
-  const filteredMessages = messages?.filter((msg) =>
-    filter === "sent" ? msg.sender === userUid : msg.receiverId === userUid
-  );
-
+  const filteredMessages = messages
   return (
     <UserNavLayout>
       <div className="flex flex-col">
@@ -107,7 +104,7 @@ const Message: React.FC = (): JSX.Element => {
                       </div>
                       <div className="flex flex-col truncate pr-5">
                         <div className="font-semibold text-primary">
-                          {toTitleCase(msg.sender)}
+                          {filter == "sent" ? toTitleCase(msg.receiverName) : toTitleCase(msg.senderName)}
                         </div>
                         <div className="text-zinc-500 text-xs font-semibold flex gap-4">
                           {format(new Date(msg.time), "MMM dd, yyyy")} :
@@ -146,7 +143,7 @@ const Message: React.FC = (): JSX.Element => {
                   </div>
                   <div className="flex flex-col justify-center truncate pr-5">
                     <div className="font-semibold text-primary text-lg">
-                      {toTitleCase(selectedMessage.sender)}
+                      {toTitleCase(selectedMessage.receiverName)}
                     </div>
                     <div className="text-zinc-700 text-sm font-semibold items-center flex gap-4">
                       {format(new Date(selectedMessage.time), "MMM dd, yyyy")} :

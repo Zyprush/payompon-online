@@ -69,6 +69,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         receiverId: userId,
         seen: false,
         time: currentTime,
+        for: "user",
       });
   
       // Update the users state to reflect the change
@@ -97,7 +98,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
       sender: "admin",
       receiver: userId,
       seen: false,
-      time: currentTime, // Include time in the message
+      time: currentTime, 
+      for: "user"
     });
 
     await updateDoc(doc(db, "users", userId), {

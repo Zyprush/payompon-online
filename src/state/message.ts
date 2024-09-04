@@ -110,7 +110,7 @@ export const useMessageStore = create<MessageStore>((set) => ({
       // Query for messages where the receiverId is 'admin'
       const receivedMessagesQuery = query(
         messagesRef,
-        where("receiverId", "in", ["admin", "staff"]),
+        where("receiverId", "==", "admin"),
         orderBy("time", "desc")
       );
       // Execute the query
@@ -124,6 +124,10 @@ export const useMessageStore = create<MessageStore>((set) => ({
       set({
         messages: receivedMessages,
         loadingMessage: false,
+      });
+      set((state) => {
+        console.log('messages', state.messages);
+        return state;
       });
     } catch (error: any) {
       console.log("error", error);

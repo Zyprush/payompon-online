@@ -32,13 +32,15 @@ const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
 
     try {
       await addMessage({
-        receiverId: recipient,
+        receiverId: "admin",
+        receiverName: recipient,
         senderEmail: userEmail,
         sender: userUid,
         senderName: userName,
         message,
         time: currentTime,
-        read: false,
+        seen: false,
+        for: "admin"
       });
 
       alert("Message sent successfully!");

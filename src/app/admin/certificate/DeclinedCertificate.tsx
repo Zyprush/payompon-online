@@ -72,7 +72,7 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                     <a
-                      href={`https://payompon-online.vercel.app/document/${request.id}`}
+                      href={request.proofOfPaymentURL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500"

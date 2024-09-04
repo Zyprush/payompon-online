@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
+import { currentTime } from '@/helper/time';
 
 interface SendMessageModalProps {
   onClose: () => void;
@@ -25,11 +26,11 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
         const userId = user.id; // Get the user ID from the document ID
         const userName = user.data().name;
 
-        const currentTime = serverTimestamp();
         await addDoc(collection(db, 'messages'), {
           message: message.trim(),
           read: false,
           sender: "admin", // Assuming "admin" is the sender
+          senderName: "Admin", // Assuming "admin" is the sender
           time: currentTime,
           receiverId: userId, // Use the user ID as receiverId
           receiverName: userName // Optionally store the user's name
@@ -51,7 +52,7 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-3/6">
-        <h2 className="text-lg font-bold mb-4">Send Message</h2>
+        <h2 className="text-lg font-bold mb-4 text-primary drop-shadow">Send Message</h2>
         <input
           type="text"
           name="email"
@@ -67,9 +68,9 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
           onChange={(e) => setMessage(e.target.value)}
           cols={30}
           rows={10}
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-2 mb-4 border rounded resize-none text-sm"
         />
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-5">
           <button onClick={onClose} className="text-neutral btn btn-outline rounded-sm">
             Cancel
           </button>
