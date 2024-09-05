@@ -102,7 +102,7 @@ const Message: React.FC = (): JSX.Element => {
                           {msg.message}
                         </div>
                         <p className="text-xs text-gray-400 mb-0 mt-auto">
-                          {getRelativeTime(selectedMessage?.time)}
+                          {getRelativeTime(msg?.time)}
                         </p>
                       </div>
                     </span>

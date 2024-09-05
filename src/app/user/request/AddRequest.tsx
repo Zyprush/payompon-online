@@ -177,7 +177,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
               Amount
             </label>
             <input
-              type="text"
+              type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
@@ -218,7 +218,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
           </div>
           <div className="flex gap-5 justify-start">
             <div className="w-44 tooltip tooltip-top" data-tip="Gcash QR Code">
-              <p className="oldstyle-nums font-semibold text-zinc-600">
+              <p className="font-semibold text-zinc-600">
                 {contact}
               </p>
               <GetImage storageLink="settings/gcashQR" />

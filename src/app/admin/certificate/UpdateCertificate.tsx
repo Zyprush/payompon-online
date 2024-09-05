@@ -4,6 +4,7 @@ import { db } from "@/firebase";
 import { useMessageStore } from "@/state/message";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
+import { useRevenueStore } from "@/state/revenue";
 
 interface UpdateCertificateProps {
   selectedRequest: any;
@@ -21,6 +22,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const [loading, setLoading] = useState<boolean>(false); // Add loading state
   const { addMessage } = useMessageStore();
   const { addNotif } = useNotifStore();
+  const { addRevenue } = useRevenueStore();
 
   const handleUpdate = async () => {
     if (!orNo || !issueOn || !certNo || !affiant) {
@@ -38,6 +40,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         certNo,
         affiant,
         status: "approved",
+        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`
       });
       await addMessage({
         message: `Your certification request (${selectedRequest.requestType}) has been approved. OR NO: ${orNo}, CERT NO: ${certNo}`,
@@ -56,6 +59,15 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         for: selectedRequest.submittedBy,
         read: false,
         time: currentTime,
+      });
+
+      await addRevenue({
+        amount: selectedRequest.amount,
+        orNo,
+        issueOn,
+        certNo,
+        certType: selectedRequest.requestType,
+        name: selectedRequest.submittedByName,
       });
 
       alert("Certificate updated successfully!");
@@ -77,7 +89,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
             OR No.
           </label>
           <input
-            type="text"
+            type="number"
             value={orNo}
             onChange={(e) => setOrNo(e.target.value)}
             required
@@ -101,7 +113,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
             Certificate No.
           </label>
           <input
-            type="text"
+            type="number"
             required
             value={certNo}
             onChange={(e) => setCertNo(e.target.value)}

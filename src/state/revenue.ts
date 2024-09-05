@@ -8,6 +8,7 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
+import { currentTime } from "@/helper/time";
 
 interface RevenueStore {
   revenue: Array<any> | null;
@@ -20,41 +21,53 @@ export const useRevenueStore = create<RevenueStore>((set) => ({
   revenue: null,
   loadingRevenue: false,
 
+  // Function to add revenue
   addRevenue: async (data: object) => {
     set({ loadingRevenue: true });
     try {
-      const submittedDoc = await addDoc(collection(db, "revenue"), data);
+      const timestampedData = { ...data, time: currentTime }; // Add timestamp to the data
+      const submittedDoc = await addDoc(collection(db, "revenue"), timestampedData);
+      
       console.log("Upload successful");
+
+      // Update state with the new revenue data (including the document ID)
       set((state) => ({
         revenue: state.revenue
-          ? [...state.revenue, submittedDoc]
-          : [submittedDoc],
+          ? [...state.revenue, { id: submittedDoc.id, ...timestampedData }]
+          : [{ id: submittedDoc.id, ...timestampedData }],
         loadingRevenue: false,
       }));
     } catch (error) {
-      console.log("error", error);
+      console.error("Error adding revenue", error);
+    } finally {
+      set({ loadingRevenue: false });
     }
-    set({ loadingRevenue: false });
   },
-  
- 
+
+  // Function to fetch revenue
   fetchRevenue: async () => {
     set({ loadingRevenue: true });
     try {
-      const revQue = query(
+      const revQuery = query(
         collection(db, "revenue"),
         orderBy("time", "desc"),
         limit(50)
       );
-      const revenueDocSnap = await getDocs(revQue);
+      const revenueDocSnap = await getDocs(revQuery);
+
+      // Extract revenue data from Firestore snapshots
+      const revenueData = revenueDocSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       set({
-        revenue: revenueDocSnap as any,
+        revenue: revenueData,
         loadingRevenue: false,
       });
     } catch (error: any) {
-      console.log("error", error);
+      console.error("Error fetching revenue", error);
+      set({ loadingRevenue: false });
     }
-    set({ loadingRevenue: false });
   },
 }));

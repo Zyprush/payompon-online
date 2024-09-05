@@ -27,9 +27,7 @@ export const useNotifStore = create<NotifStore>((set) => ({
       const submittedDoc = await addDoc(collection(db, "notif"), data);
       console.log("Upload successful");
       set((state) => ({
-        notif: state.notif
-          ? [...state.notif, submittedDoc]
-          : [submittedDoc],
+        notif: state.notif ? [...state.notif, submittedDoc] : [submittedDoc],
         loadingNotif: false,
       }));
     } catch (error) {
@@ -37,8 +35,9 @@ export const useNotifStore = create<NotifStore>((set) => ({
     }
     set({ loadingNotif: false });
   },
-  
+
   fetchNotifByUser: async (userId) => {
+    console.log('userId', userId)
     set({ loadingNotif: true });
     try {
       // Fetch unread notifications for the user first
@@ -57,7 +56,8 @@ export const useNotifStore = create<NotifStore>((set) => ({
         orderBy("time", "desc")
       );
       const readNotifDocSnap = await getDocs(readNotifByUserQuery);
-
+      console.log("readNotifDocSnap", readNotifDocSnap);
+      console.log("unreadNotifDocSnap", unreadNotifDocSnap);
       // Combine unread and read notifications
       const allNotifications = [
         ...unreadNotifDocSnap.docs.map((doc) => ({
