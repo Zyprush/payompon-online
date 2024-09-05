@@ -1,6 +1,7 @@
 "use client";
 import NavLayout from "@/components/NavLayout";
 import { useRevenueStore } from "@/state/revenue";
+import { formatDate } from "date-fns";
 import React, { useEffect } from "react";
 
 const Revenue: React.FC = (): JSX.Element => {
@@ -25,10 +26,10 @@ const Revenue: React.FC = (): JSX.Element => {
             <thead>
               <tr>
                 <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
-                  ID
+                  Cert Type
                 </th>
                 <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
-                  Name
+                  Resident Name
                 </th>
                 <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
                   Amount
@@ -42,7 +43,7 @@ const Revenue: React.FC = (): JSX.Element => {
               {revenue && revenue.length > 0 ? (
                 revenue.map((item) => (
                   <tr key={item.id}>
-                    <td className="py-2 px-4 border-b text-xs">{item.id}</td>
+                    <td className="py-2 px-4 border-b text-xs">{item.certType}</td>
                     <td className="py-2 px-4 border-b text-xs">
                       {item.name || "N/A"}
                     </td>
@@ -50,7 +51,7 @@ const Revenue: React.FC = (): JSX.Element => {
                       {item.amount || "N/A"}
                     </td>
                     <td className="py-2 px-4 border-b text-xs">
-                      {new Date(item.time?.seconds * 1000).toLocaleString()}
+                      {formatDate(item.time, "MMM dd, yyyy")}
                     </td>
                   </tr>
                 ))

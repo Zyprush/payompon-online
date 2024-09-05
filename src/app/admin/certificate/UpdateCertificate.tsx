@@ -67,7 +67,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         issueOn,
         certNo,
         certType: selectedRequest.requestType,
-        name: selectedRequest.submittedByName,
+        name: selectedRequest.submittedName,
       });
 
       alert("Certificate updated successfully!");
