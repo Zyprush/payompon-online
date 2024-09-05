@@ -25,16 +25,13 @@ export const useRevenueStore = create<RevenueStore>((set) => ({
   addRevenue: async (data: object) => {
     set({ loadingRevenue: true });
     try {
-      const timestampedData = { ...data, time: currentTime }; // Add timestamp to the data
+      const timestampedData = { ...data, time: currentTime }; // Add timestamp
       const submittedDoc = await addDoc(collection(db, "revenue"), timestampedData);
-      
-      console.log("Upload successful");
 
-      // Update state with the new revenue data (including the document ID)
+      const newRevenueItem = { id: submittedDoc.id, ...timestampedData };
+
       set((state) => ({
-        revenue: state.revenue
-          ? [...state.revenue, { id: submittedDoc.id, ...timestampedData }]
-          : [{ id: submittedDoc.id, ...timestampedData }],
+        revenue: state.revenue ? [...state.revenue, newRevenueItem] : [newRevenueItem],
         loadingRevenue: false,
       }));
     } catch (error) {
@@ -55,7 +52,6 @@ export const useRevenueStore = create<RevenueStore>((set) => ({
       );
       const revenueDocSnap = await getDocs(revQuery);
 
-      // Extract revenue data from Firestore snapshots
       const revenueData = revenueDocSnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
