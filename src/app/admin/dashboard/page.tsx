@@ -1,5 +1,4 @@
 "use client";
-
 import NavLayout from "@/components/NavLayout";
 import React from "react";
 import RecentRevenue from "./RecentRevenue";
