@@ -2,7 +2,7 @@
 import UserNavLayout from "@/components/UserNavLayout";
 import React from "react";
 import Verify from "./Verify";
-import SampleDash from "@/app/admin/dashboard/SampleDash";
+import RecentRevenue from "@/app/admin/dashboard/SampleDash";
 import OfficialTable from "./OfficialTable";
 
 const Dashboard: React.FC = (): JSX.Element => {
@@ -11,7 +11,7 @@ const Dashboard: React.FC = (): JSX.Element => {
       <div className="flex flex-col gap-5 md:items-start">
         <Verify />
         <div className="flex gap-10 flex-col md:flex-row">
-          <SampleDash />
+          <RecentRevenue />
           <OfficialTable />
         </div>
       </div>
