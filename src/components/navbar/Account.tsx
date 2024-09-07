@@ -10,6 +10,7 @@ interface AccountProps {
 const Account: React.FC<AccountProps> = ({ userData }) => {
   const router = useRouter();
 
+  console.log('userData', userData)
   const memoizedUserData = useMemo(() => userData, [userData]);
 
   if (!memoizedUserData) {

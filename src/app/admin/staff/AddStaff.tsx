@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "@/firebase"; // Ensure these paths are correct
 
@@ -44,7 +44,7 @@ const AddStaff: React.FC<StaffModalProps> = ({ isOpen, onClose }) => {
       const user = userCredential.user;
 
       // Save staff details to Firestore
-      await addDoc(collection(db, "users"), {
+      await setDoc(doc(db, "users", user.uid), {
         name,
         sitio,
         position,

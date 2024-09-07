@@ -7,6 +7,7 @@ const useUserData = () => {
   const [userUid, setUserUid] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -31,6 +32,7 @@ const useUserData = () => {
         const userData = userDoc.data();
         setUserName(userData?.name || null);
         setUserEmail(userData?.email || null);
+        setUserRole(userData?.role|| null);
       } else {
         console.error("No such user!");
       }
@@ -39,7 +41,7 @@ const useUserData = () => {
     }
   };
 
-  return { userUid, userName, userEmail };
+  return { userUid, userName, userEmail, userRole };
 };
 
 export default useUserData;

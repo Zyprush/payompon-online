@@ -9,10 +9,6 @@ const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
   const pathname = usePathname();
   const [isMinimized, setIsMinimized] = useState(false);
 
-  // const toggleNavbar = () => {
-  //   setIsMinimized((prev: boolean) => !prev);
-  // };
-
   return (
     <div
       className={`min-h-screen ${
@@ -42,14 +38,6 @@ const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
               isActive={pathname === item.href}
             />
           ))}
-          {/* <button
-            onClick={toggleNavbar}
-            className={`flex items-center p-1 border bg-inherit border-gray-400 absolute bottom-4 text-gray-500 rounded-lg transition-all duration-500 ${
-              isMinimized ? "transform rotate-180" : ""
-            }`}
-          >
-            <IoIosArrowBack className="text-xl" />
-          </button> */}
         </nav>
       </div>
     </div>

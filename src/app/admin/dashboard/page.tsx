@@ -15,6 +15,7 @@ const Dashboard: React.FC = (): JSX.Element => {
           <div className="stats shadow">
             <div className="stat">
               <div className="stat-title font-semibold">Verified Resident</div>
+              {/* TODO: add feature */}
               <div className="stat-value text-primary">9,400</div>
               <div className="stat-desc">Verified registered resident</div>
             </div>
@@ -23,6 +24,7 @@ const Dashboard: React.FC = (): JSX.Element => {
           <div className="stats shadow">
             <div className="stat">
               <div className="stat-title font-semibold">Verification</div>
+              {/* TODO: add feature */}
               <div className="stat-value text-primary">200</div>
               <div className="stat-desc">Pending account verification</div>
             </div>
