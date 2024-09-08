@@ -3,9 +3,11 @@ import { db } from "@/firebase";
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   orderBy,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 
@@ -17,6 +19,7 @@ interface MessageStore {
   fetchMessageReceivedAdmin: () => Promise<void>;
   fetchMessageSentAdmin: () => Promise<void>;
   addMessage: (data: object) => Promise<void>;
+  updateMessageReadStatus: (messageId: string) => Promise<void>;
 }
 
 export const useMessageStore = create<MessageStore>((set) => ({
@@ -163,6 +166,22 @@ export const useMessageStore = create<MessageStore>((set) => ({
     } catch (error: any) {
       console.log("error", error);
       set({ loadingMessage: false });
+    }
+  },
+  updateMessageReadStatus: async (messageId: string) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      await updateDoc(messageRef, {
+        read: true
+      });
+
+      set((state) => ({
+        messages: state.messages?.map((msg) =>
+          msg.id === messageId ? { ...msg, read: true } : msg
+        ) || null,
+      }));
+    } catch (error) {
+      console.error("Error updating message read status:", error);
     }
   },
 }));

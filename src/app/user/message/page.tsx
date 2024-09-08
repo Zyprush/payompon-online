@@ -9,10 +9,15 @@ import React, { useState, useEffect } from "react";
 import QRCode from "qrcode.react";
 import SendMessage from "./SendMessage";
 import useUserData from "@/hooks/useUserData";
-
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 const Message: React.FC = (): JSX.Element => {
-  const { messages, fetchMessageReceivedUser, fetchMessageSentUser } =
-    useMessageStore();
+  const {
+    messages,
+    fetchMessageReceivedUser,
+    fetchMessageSentUser,
+    updateMessageReadStatus,
+  } = useMessageStore();
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
@@ -30,11 +35,46 @@ const Message: React.FC = (): JSX.Element => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, userUid]);
+  }, [filter, userUid, showModal]);
 
-  const openModal = (msg: any) => {
+  const updateMessageStatus = async (messageId: string, userUid: string) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      const messageSnap = await getDoc(messageRef);
+
+      if (messageSnap.exists()) {
+        const messageData = messageSnap.data();
+        if (messageData.receiverId === userUid && !messageData.read) {
+          await updateDoc(messageRef, {
+            read: true,
+          });
+          console.log("Message marked as read");
+          return true; // Indicate successful update
+        } else {
+          console.log(
+            "Message is either already read or user is not the receiver"
+          );
+          return false; // Indicate no update was needed
+        }
+      } else {
+        console.log("Message not found");
+        return false; // Indicate message not found
+      }
+    } catch (error) {
+      console.error("Error updating message status:", error);
+      return false; // Indicate error occurred
+    }
+  };
+  const openModal = async (msg: any) => {
     setSelectedMessage(msg);
     setShowModal(true);
+    if (!msg.read) {
+      const updated = await updateMessageStatus(msg.id, userUid);
+      if (updated) {
+        // Optionally update local state or refetch messages
+        updateMessageReadStatus(msg.id); // If you're using the zustand store method
+      }
+    }
   };
   const closeModal = () => {
     setShowModal(false);
@@ -46,7 +86,7 @@ const Message: React.FC = (): JSX.Element => {
     setShowSend(false);
   };
 
-  const filteredMessages = messages
+  const filteredMessages = messages;
   return (
     <UserNavLayout>
       <div className="flex flex-col">
@@ -90,7 +130,9 @@ const Message: React.FC = (): JSX.Element => {
                     <span
                       key={msg.id}
                       onClick={() => openModal(msg)}
-                      className="p-4 cursor-pointer border-b flex gap-5 bg-white rounded shadow-sm border w-full"
+                      className={`p-4 cursor-pointer flex gap-5 ${
+                        msg.read ? "bg-none" : "bg-white shadow-md"
+                      } rounded border w-full`}
                     >
                       <div className="avatar">
                         <div className="w-16 custom-shadow rounded-full">
@@ -104,7 +146,9 @@ const Message: React.FC = (): JSX.Element => {
                       </div>
                       <div className="flex flex-col truncate pr-5">
                         <div className="font-semibold text-primary">
-                          {filter == "sent" ? toTitleCase(msg.receiverName) : toTitleCase(msg.senderName)}
+                          {filter == "sent"
+                            ? toTitleCase(msg.receiverName)
+                            : toTitleCase(msg.senderName)}
                         </div>
                         <div className="text-zinc-500 text-xs font-semibold flex gap-4">
                           {format(new Date(msg.time), "MMM dd, yyyy")} :

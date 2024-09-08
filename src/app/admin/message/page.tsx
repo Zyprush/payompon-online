@@ -7,9 +7,11 @@ import { IconAt } from "@tabler/icons-react";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import SendMessage from "./SendMessage";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 
 const Message: React.FC = (): JSX.Element => {
-  const { messages, fetchMessageReceivedAdmin, fetchMessageSentAdmin } =
+  const { messages, fetchMessageReceivedAdmin, fetchMessageSentAdmin, updateMessageReadStatus } =
     useMessageStore();
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
@@ -26,9 +28,35 @@ const Message: React.FC = (): JSX.Element => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, showMessageModal]);
 
-  const openMessageModal = (msg: any) => {
+  const updateMessageStatus = async (messageId: string) => {
+    try {
+      const messageRef = doc(db, "messages", messageId);
+      const messageSnap = await getDoc(messageRef);
+
+      if (messageSnap.exists()) {
+        const messageData = messageSnap.data();
+        if (!messageData.read && (messageData.receiverId == "admin" || messageData.receiverId == "staff")) {
+          await updateDoc(messageRef, {
+            read: true,
+          });
+          console.log("Message marked as read");
+          updateMessageReadStatus(messageId); // Update Zustand state
+        }
+      } else {
+        console.log("Message not found");
+      }
+    } catch (error) {
+      console.error("Error updating message status:", error);
+    }
+  };
+
+  const openMessageModal = async (msg: any) => {
     setSelectedMessage(msg);
     setShowMessageModal(true);
+    if (!msg.read) {
+      await updateMessageStatus(msg.id);
+      console.log(" updateMessageStatus")
+    }
   };
 
   const closeMessageModal = () => {
@@ -43,7 +71,7 @@ const Message: React.FC = (): JSX.Element => {
     setShowSendMessageModal(false);
   };
 
-  const filteredMessages = messages
+  const filteredMessages = messages;
 
   return (
     <NavLayout>
@@ -82,7 +110,9 @@ const Message: React.FC = (): JSX.Element => {
                     <span
                       key={msg.id}
                       onClick={() => openMessageModal(msg)}
-                      className="p-4 cursor-pointer border-b flex gap-5 bg-white shadow w-full rounded-md min-w-[20rem]"
+                      className={`p-4 cursor-pointer flex gap-5 ${
+                        msg.read ? "bg-none" : "bg-white shadow-md"
+                      } rounded border w-full`}
                     >
                       <div className="avatar">
                         <div className="w-16 custom-shadow rounded-full">
@@ -96,7 +126,7 @@ const Message: React.FC = (): JSX.Element => {
                       </div>
                       <div className="flex flex-col truncate pr-5">
                         <div className="font-semibold text-zinc-600">
-                        {filter == "sent" ? toTitleCase(msg.receiverName)  : toTitleCase(msg.senderName)}
+                          {filter === "sent" ? toTitleCase(msg.receiverName) : toTitleCase(msg.senderName)}
                         </div>
                         <div className="truncate mt-auto mb-0 text-sm text-zinc-500">
                           {msg.message}
@@ -125,11 +155,11 @@ const Message: React.FC = (): JSX.Element => {
                 <div className="flex justify-start gap-10">
                   <span className="flex flex-col">
                     <h2 className="text-gray-700 font-bold">From:</h2>
-                    <h2 className="text-zinc-500 mb-5">Barangay Admin</h2>
+                    <h2 className="text-zinc-500 mb-5">{selectedMessage?.senderName}</h2>
                   </span>
                   <span className="flex flex-col">
                     <h2 className="text-gray-700 font-bold">To:</h2>
-                    <h2 className="text-zinc-500 mb-5">{selectedMessage?.receiverName}</h2>
+                    <h2 className="text-zinc-500 mb-5">{toTitleCase(selectedMessage?.receiverName)}</h2>
                   </span>
                 </div>
 

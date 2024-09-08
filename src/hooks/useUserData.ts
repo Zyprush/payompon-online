@@ -4,10 +4,11 @@ import { db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const useUserData = () => {
-  const [userUid, setUserUid] = useState<string | null>(null);
+  const [userUid, setUserUid] = useState<string>("");
   const [userName, setUserName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [verified, setVerified] = useState<boolean>(false);
 
   useEffect(() => {
     const auth = getAuth();
@@ -16,7 +17,7 @@ const useUserData = () => {
         setUserUid(user.uid);
         fetchUserData(user.uid);
       } else {
-        setUserUid(null);
+        setUserUid("");
       }
     });
 
@@ -33,6 +34,7 @@ const useUserData = () => {
         setUserName(userData?.name || null);
         setUserEmail(userData?.email || null);
         setUserRole(userData?.role|| null);
+        setVerified(userData?.verified);
       } else {
         console.error("No such user!");
       }
@@ -41,7 +43,7 @@ const useUserData = () => {
     }
   };
 
-  return { userUid, userName, userEmail, userRole };
+  return { userUid, userName, userEmail, userRole , verified};
 };
 
 export default useUserData;

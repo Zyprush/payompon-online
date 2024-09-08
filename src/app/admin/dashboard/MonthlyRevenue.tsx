@@ -68,7 +68,7 @@ const MonthlyRevenue: React.FC = () => {
   };
 
   return (
-    <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 w-3/6">
+    <div className="p-5 bg-white rounded-2xl shadow-sm border h-80 mr-auto border-gray-300 border-opacity-50">
       <Bar data={data} options={options} />
     </div>
   );

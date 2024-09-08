@@ -10,12 +10,15 @@ interface SendMessageModalProps {
 const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
 
   const sendMessage = async () => {
     if (!email.trim() || !message.trim()) {
       alert('Please fill in both the email and message.');
       return;
     }
+
+    setLoading(true); // Set loading to true when the submission starts
 
     try {
       // Query Firestore to get the user by email
@@ -36,9 +39,9 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
           receiverName: userName // Optionally store the user's name
         });
 
-        alert('Message sent successfully.');
         setEmail('');
         setMessage('');
+        alert('Message sent successfully.');
         onClose(); // Close the modal after sending the message
       } else {
         alert('Email not found in users collection.');
@@ -46,6 +49,8 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
     } catch (error) {
       console.error('Error sending message:', error);
       alert('Error sending message.');
+    } finally {
+      setLoading(false); // Reset loading state after the process is done
     }
   };
 
@@ -60,6 +65,7 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 mb-4 border rounded"
+          disabled={loading} // Disable input during loading
         />
         <textarea
           name="message"
@@ -69,13 +75,22 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
           cols={30}
           rows={10}
           className="w-full p-2 mb-4 border rounded resize-none text-sm"
+          disabled={loading} // Disable input during loading
         />
         <div className="flex justify-end space-x-5">
-          <button onClick={onClose} className="text-neutral btn btn-outline rounded-sm">
+          <button
+            onClick={onClose}
+            className="text-neutral btn btn-outline rounded-sm"
+            disabled={loading} // Disable button during loading
+          >
             Cancel
           </button>
-          <button onClick={sendMessage} className="text-white btn btn-primary rounded-sm">
-            Send
+          <button
+            onClick={sendMessage}
+            className="text-white btn btn-primary rounded-sm"
+            disabled={loading} // Disable button during loading
+          >
+            {loading ? 'Sending...' : 'Send'} {/* Show loading text */}
           </button>
         </div>
       </div>

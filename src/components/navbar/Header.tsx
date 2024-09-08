@@ -4,6 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Account from "./Account";
 import GetImage from "../GetImage";
+import MessageIndicator from "./MessageIndicator";
 
 const Header = () => {
   const [userData, setUserData] = useState<any>(null);
@@ -36,6 +37,7 @@ const Header = () => {
   return (
     <span className="w-full h-14 bg-gray-100 justify-between px-5 items-center border-b border-gray-300 hidden md:flex">
       <div className="flex items-center gap-4 ml-auto">
+        <MessageIndicator />
         <details className="dropdown dropdown-end">
           <summary
             tabIndex={0}

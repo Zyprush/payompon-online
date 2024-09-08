@@ -4,33 +4,19 @@ import React from "react";
 import RecentRevenue from "./RecentRevenue";
 import MonthRevenue from "./MonthRevenue";
 import MonthlyRevenue from "./MonthlyRevenue";
+import DashVerified from "./DashVerified";
+import DashNotVerfied from "./DashNotVerfied";
 
 const Dashboard: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
-      <div className="flex gap-10 flex-col">
+      <div className="flex gap-5 flex-col w-full">
         <div className="flex gap-8">
           <MonthRevenue />
-
-          <div className="stats shadow">
-            <div className="stat">
-              <div className="stat-title font-semibold">Verified Resident</div>
-              {/* TODO: add feature */}
-              <div className="stat-value text-primary">9,400</div>
-              <div className="stat-desc">Verified registered resident</div>
-            </div>
-          </div>
-
-          <div className="stats shadow">
-            <div className="stat">
-              <div className="stat-title font-semibold">Verification</div>
-              {/* TODO: add feature */}
-              <div className="stat-value text-primary">200</div>
-              <div className="stat-desc">Pending account verification</div>
-            </div>
-          </div>
+          <DashNotVerfied />
+          <DashVerified />
         </div>
-        <div className="flex gap-5">
+        <div className="flex w-full gap-5 flex-col">
           <RecentRevenue />
           <MonthlyRevenue />
         </div>

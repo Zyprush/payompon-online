@@ -43,8 +43,8 @@ const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
         for: "admin"
       });
 
-      alert("Message sent successfully!");
       handleClose();
+      alert("Message sent successfully!");
     } catch (error) {
       console.error("Error sending message:", error);
       alert("Error sending message. Please try again.");

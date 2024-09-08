@@ -7,6 +7,7 @@ import Account from "./Account";
 import { NavLink } from "./NavLink";
 import { IconDotsVertical, IconX } from "@tabler/icons-react";
 import GetImage from "../GetImage";
+import MessageIndicator from "./MessageIndicator";
 
 const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,7 +34,7 @@ const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
           </summary>
           <Account userData={userData} />
         </details>
-
+        <MessageIndicator />
         <button
           onClick={toggleMenu}
           className="text-2xl text-zinc-700 dark:text-zinc-300 p-2"
