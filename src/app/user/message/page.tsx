@@ -11,6 +11,7 @@ import SendMessage from "./SendMessage";
 import useUserData from "@/hooks/useUserData";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import Unathorized from "../request/Unathorized";
 const Message: React.FC = (): JSX.Element => {
   const {
     messages,
@@ -24,7 +25,7 @@ const Message: React.FC = (): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSend, setShowSend] = useState<boolean>(false);
 
-  const { userUid } = useUserData(); // Use the custom hook
+  const { userUid, verified} = useUserData(); // Use the custom hook
 
   useEffect(() => {
     if (userUid) {
@@ -85,8 +86,12 @@ const Message: React.FC = (): JSX.Element => {
   const closeSendModal = () => {
     setShowSend(false);
   };
-
   const filteredMessages = messages;
+
+  if (!verified) {
+    return <Unathorized />;
+  }
+
   return (
     <UserNavLayout>
       <div className="flex flex-col">
