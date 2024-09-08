@@ -30,7 +30,7 @@ const GetImage: React.FC<{ storageLink: string }> = ({
   }, [storageLink]);
 
   return (
-    <div className="flex flex-col items-center justify-center bg-zinc-400 h-full w-full">
+    <div className="flex flex-col items-center justify-center h-full w-full">
       {loading ? (
         <p className="font-semibold text-xs text-zinc-600 my-auto">loading</p>
       ) : (
