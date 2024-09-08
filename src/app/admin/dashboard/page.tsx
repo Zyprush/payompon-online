@@ -17,8 +17,8 @@ const Dashboard: React.FC = (): JSX.Element => {
           <DashVerified />
         </div>
         <div className="flex w-full gap-5 flex-col">
-          <RecentRevenue />
           <MonthlyRevenue />
+          <RecentRevenue />
         </div>
 
         {/* <SampleFooter /> */}

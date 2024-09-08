@@ -57,7 +57,19 @@ const Verify: FC = () => {
                 <span className=""> Hello</span> {userData?.name}
               </h1>
               <div className="text-xs text-zinc-500 text-wrap">
-                Account not fully verified. No access to services. Visit barangay hall with valid ID to verify account. <Link className="underline ml-2" href="https://governmentph.com/list-valid-id-in-the-philippines/" target="_blank" rel="noopener noreferrer">list of valid id</Link>
+                <p className="">
+                  Account not fully verified. No access to services.If you
+                  receive a message regarding your account verfication, please
+                  visit barangay hall with valid ID to verify account.
+                </p>
+                <Link
+                  className="underline block"
+                  href="https://governmentph.com/list-valid-id-in-the-philippines/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  list of valid id
+                </Link>
               </div>
             </div>
           </div>

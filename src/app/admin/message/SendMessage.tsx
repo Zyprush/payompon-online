@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { currentTime } from '@/helper/time';
 
 interface SendMessageModalProps {
   onClose: () => void;
+  selectedEmail: string;
 }
 
-const SendMessage: React.FC<SendMessageModalProps> = ({ onClose }) => {
+const SendMessage: React.FC<SendMessageModalProps> = ({ onClose, selectedEmail }) => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log('selectedEmail', selectedEmail)
+    if (selectedEmail) {
+      setEmail(selectedEmail);
+    }
+  }, [selectedEmail]);
 
   const sendMessage = async () => {
     if (!email.trim() || !message.trim()) {
