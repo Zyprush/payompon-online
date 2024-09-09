@@ -34,23 +34,22 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const [sending, setSending] = useState<boolean>(false);
   const { addMessage } = useMessageStore();
   const { addNotif } = useNotifStore();
+  const fetchUsers = async () => {
+    const q = query(
+      collection(db, "users"),
+      where("role", "==", "resident"),
+      where("verified", "==", false)
+    );
+    const querySnapshot = await getDocs(q);
+
+    const usersList: User[] = [];
+    querySnapshot.forEach((doc) => {
+      usersList.push({ id: doc.id, ...doc.data() } as User);
+    });
+    setUsers(usersList);
+    setLoading(false);
+  };
   useEffect(() => {
-    const fetchUsers = async () => {
-      const q = query(
-        collection(db, "users"),
-        where("role", "==", "resident"),
-        where("verified", "==", false)
-      );
-      const querySnapshot = await getDocs(q);
-
-      const usersList: User[] = [];
-      querySnapshot.forEach((doc) => {
-        usersList.push({ id: doc.id, ...doc.data() } as User);
-      });
-      setUsers(usersList);
-      setLoading(false);
-    };
-
     fetchUsers();
   }, []);
 
@@ -90,6 +89,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
           user.id === userId ? { ...user, verified: isVerified } : user
         )
       );
+      await fetchUsers();
     } catch (error) {
       console.error("Error verifying user:", error);
     }
@@ -122,6 +122,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
     setSending(false);
     setShowDeclineModal(false);
     setDeclineMessage("");
+    await fetchUsers();
   };
 
   return (
