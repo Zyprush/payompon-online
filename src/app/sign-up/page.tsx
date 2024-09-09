@@ -12,6 +12,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -118,6 +119,7 @@ export default function Page() {
   return (
     <section>
       <div className="flex h-screen w-screen custom-bg items-start md:items-center justify-center">
+        <Link href="/sign-in" className="absolute top-0 left-0 m-4 btn btn-sm btn-outline font-bold border-2">Back</Link>
         <div className="mx-auto shadow-md p-4 min-w-[22rem] xl:max-w-sm 2xl:max-w-md rounded-xl m-auto bg-white">
           <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
             Create account
