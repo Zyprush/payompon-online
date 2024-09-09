@@ -2,21 +2,19 @@
 import NavLayout from "@/components/NavLayout";
 import { toTitleCase } from "@/helper/string";
 import { getRelativeTime } from "@/helper/time";
-import { useMessageStore } from "@/state/message";
 import { IconAt } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
 import SendMessage from "./SendMessage";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase";
 import GetImage from "@/components/GetImage";
+import { useMessages } from '@/hooks/useMessages';
 
 const Message: React.FC = (): JSX.Element => {
   const {
     messages,
     fetchMessageReceivedAdmin,
     fetchMessageSentAdmin,
-    updateMessageReadStatus,
-  } = useMessageStore();
+    updateMessageReadStatus
+  } = useMessages(); // Custom hook to handle messages
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
@@ -31,32 +29,21 @@ const Message: React.FC = (): JSX.Element => {
     } else {
       fetchMessageReceivedAdmin();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, showMessageModal]);
 
   const updateMessageStatus = async (messageId: string) => {
-    try {
-      const messageRef = doc(db, "messages", messageId);
-      const messageSnap = await getDoc(messageRef);
-
-      if (messageSnap.exists()) {
-        const messageData = messageSnap.data();
-        if (
-          !messageData.read &&
-          (messageData.receiverId == "admin" ||
-            messageData.receiverId == "staff")
-        ) {
-          await updateDoc(messageRef, {
-            read: true,
-          });
+    if (filter === "received") {
+      try {
+        // Check if the message is unread and mark it as read
+        const message = messages?.find((msg) => msg.id === messageId);
+        if (message && !message.read) {
+          await updateMessageReadStatus(messageId); // Update the message status in Firestore and locally
           console.log("Message marked as read");
-          updateMessageReadStatus(messageId); // Update Zustand state
         }
-      } else {
-        console.log("Message not found");
+      } catch (error) {
+        console.error("Error updating message status:", error);
       }
-    } catch (error) {
-      console.error("Error updating message status:", error);
     }
   };
 
@@ -65,7 +52,6 @@ const Message: React.FC = (): JSX.Element => {
     setShowMessageModal(true);
     if (!msg.read) {
       await updateMessageStatus(msg.id);
-      console.log(" updateMessageStatus");
     }
   };
 
@@ -74,17 +60,18 @@ const Message: React.FC = (): JSX.Element => {
   };
 
   const openSendMessageModal = () => {
-    setSelectedEmail("")
+    setSelectedEmail("");
     setShowSendMessageModal(true);
   };
 
-  const reply = (email:string) => {
-    setSelectedEmail(email)
+  const reply = (email: string) => {
+    setSelectedEmail(email);
     setShowSendMessageModal(true);
   };
+
   const closeSendMessageModal = () => {
     setShowSendMessageModal(false);
-    setSelectedEmail("")
+    setSelectedEmail("");
   };
 
   const filteredMessages = messages;
@@ -154,17 +141,17 @@ const Message: React.FC = (): JSX.Element => {
                       </div>
                       {filter == "received" && (
                         <button
-                          className="absolute bottom-1 right-16 hidden group-hover:flex btn-sm text-white btn btn-primary shadow-xl z-50"
+                          className="absolute bottom-1 right-16 hidden group-hover:flex btn-xs rounded-sm text-white btn btn-primary shadow-xl z-50"
                           onClick={() => reply(msg?.senderEmail)}
                         >
-                          reply
+                          Reply
                         </button>
                       )}
                       <button
-                        className="absolute bottom-1 right-1 hidden group-hover:flex btn-sm text-white btn btn-secondary shadow-xl z-50"
+                        className="absolute bottom-1 right-1 hidden group-hover:flex btn-xs rounded-sm text-white btn btn-secondary shadow-xl z-50"
                         onClick={() => openMessageModal(msg)}
                       >
-                        view
+                        View
                       </button>
                     </span>
                   ))}

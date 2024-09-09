@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import useUserData from "@/hooks/useUserData";
 import { currentTime } from "@/helper/time";
-import { useMessageStore } from "@/state/message";
+import { useMessages } from "@/hooks/useMessages"; // Updated to use the custom hook
 
 interface SendMessageProps {
   open: boolean;
@@ -15,7 +15,7 @@ const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { userUid, userName, userEmail } = useUserData(); // Custom hook to fetch user data
-  const { addMessage } = useMessageStore(); // Zustand store for managing messages
+  const { addMessage } = useMessages(); // Using the useMessages custom hook
 
   const handleSubmit = async () => {
     if (!userUid || !userName) {
@@ -31,16 +31,17 @@ const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
     setLoading(true);
 
     try {
+      // Sending the message using the addMessage function from the custom hook
       await addMessage({
-        receiverId: "admin",
+        receiverId: recipient === "admin" ? "admin" : "staff", // Adjusting recipient
         receiverName: recipient,
         senderEmail: userEmail,
         sender: userUid,
         senderName: userName,
         message,
         time: currentTime,
-        seen: false,
-        for: "admin"
+        read: false,
+        for: recipient, // "admin" or "staff"
       });
 
       handleClose();

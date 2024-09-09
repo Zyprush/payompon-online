@@ -5,7 +5,7 @@ import { useMessageStore } from "@/state/message";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
 import { useRevenueStore } from "@/state/revenue";
-
+import { useMessages } from "@/hooks/useMessages";
 interface UpdateCertificateProps {
   selectedRequest: any;
   onClose: () => void;
@@ -20,9 +20,9 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const [certNo, setCertNo] = useState<string>("");
   const [affiant, setAffiant] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false); // Add loading state
-  const { addMessage } = useMessageStore();
   const { addNotif } = useNotifStore();
   const { addRevenue } = useRevenueStore();
+  const { addMessage } = useMessages();
 
   const handleUpdate = async () => {
     if (!orNo || !issueOn || !certNo || !affiant) {

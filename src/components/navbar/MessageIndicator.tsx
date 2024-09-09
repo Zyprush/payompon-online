@@ -15,19 +15,19 @@ const MessageIndicator = () => {
         let q;
         if (userRole === "resident") {
           q = query(
-            collection(db, "messages"),
+            collection(db, "receiveMess"),
             where("receiverId", "==", userUid),
             where("read", "==", false)
           );
         } else if (userRole === "admin") {
           q = query(
-            collection(db, "messages"),
+            collection(db, "receiveMess"),
             where("receiverId", "==", "admin"),
             where("read", "==", false)
           );
         } else {
           q = query(
-            collection(db, "messages"),
+            collection(db, "receiveMess"),
             where("receiverId", "==", "staff"),
             where("read", "==", false)
           );

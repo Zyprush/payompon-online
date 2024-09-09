@@ -1,7 +1,6 @@
 "use client";
 import UserNavLayout from "@/components/UserNavLayout";
 import { toTitleCase } from "@/helper/string";
-import { useMessageStore } from "@/state/message";
 import { IconAt } from "@tabler/icons-react";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -11,61 +10,81 @@ import SendMessage from "./SendMessage";
 import useUserData from "@/hooks/useUserData";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import Unathorized from "../request/Unathorized";
+import { useMessages } from "@/hooks/useMessages"; // Importing the custom hook
+
 const Message: React.FC = (): JSX.Element => {
   const {
     messages,
     fetchMessageReceivedUser,
     fetchMessageSentUser,
     updateMessageReadStatus,
-  } = useMessageStore();
+  } = useMessages(); // Using the useMessages hook
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSend, setShowSend] = useState<boolean>(false);
 
-  const { userUid, verified} = useUserData(); // Use the custom hook
+  const { userUid, verified } = useUserData(); // Using the custom hook
 
   useEffect(() => {
     if (userUid) {
       if (filter === "sent") {
-        fetchMessageSentUser(userUid);
+        fetchMessageSentUser(userUid); // Fetching sent messages
       } else {
-        fetchMessageReceivedUser(userUid);
+        fetchMessageReceivedUser(userUid); // Fetching received messages
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, userUid, showModal]);
-
+  // const updateMessageStatus = async (messageId: string) => {
+  //   if (filter === "received") {
+  //     try {
+  //       // Check if the message is unread and mark it as read
+  //       const message = messages?.find((msg) => msg.id === messageId);
+  //       if (message && !message.read) {
+  //         await updateMessageReadStatus(messageId); // Update the message status in Firestore and locally
+  //         console.log("Message marked as read");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating message status:", error);
+  //     }
+  //   }
+  // };
   const updateMessageStatus = async (messageId: string, userUid: string) => {
-    try {
-      const messageRef = doc(db, "messages", messageId);
-      const messageSnap = await getDoc(messageRef);
+    if (filter === "received") {
+      try {
+        const messageRef = doc(db, "receiveMess", messageId);
+        const messageSnap = await getDoc(messageRef);
 
-      if (messageSnap.exists()) {
-        const messageData = messageSnap.data();
-        if (messageData.receiverId === userUid && !messageData.read) {
-          await updateDoc(messageRef, {
-            read: true,
-          });
-          console.log("Message marked as read");
-          return true; // Indicate successful update
+        if (messageSnap.exists()) {
+          const messageData = messageSnap.data();
+          if (messageData.receiverId === userUid && !messageData.read) {
+            await updateDoc(messageRef, {
+              read: true,
+            });
+            console.log("Message marked as read");
+            return true; // Indicate successful update
+          } else {
+            console.log(
+              "Message is either already read or user is not the receiver"
+            );
+            return false; // Indicate no update was needed
+          }
         } else {
-          console.log(
-            "Message is either already read or user is not the receiver"
-          );
-          return false; // Indicate no update was needed
+          console.log("Message not found");
+          return false; // Indicate message not found
         }
-      } else {
-        console.log("Message not found");
-        return false; // Indicate message not found
+      } catch (error) {
+        console.error("Error updating message status:", error);
+        return false; // Indicate error occurred
       }
-    } catch (error) {
-      console.error("Error updating message status:", error);
-      return false; // Indicate error occurred
+    } else {
+      console.log("Filter is not 'received', no update needed");
+      return false; // Indicate no update was needed
     }
   };
+
   const openModal = async (msg: any) => {
     setSelectedMessage(msg);
     setShowModal(true);
@@ -73,24 +92,24 @@ const Message: React.FC = (): JSX.Element => {
       const updated = await updateMessageStatus(msg.id, userUid);
       if (updated) {
         // Optionally update local state or refetch messages
-        updateMessageReadStatus(msg.id); // If you're using the zustand store method
+        updateMessageReadStatus(msg.id); // Updating the read status via the custom hook
       }
     }
   };
+
   const closeModal = () => {
     setShowModal(false);
   };
+
   const openSendModal = () => {
     setShowSend(true);
   };
+
   const closeSendModal = () => {
     setShowSend(false);
   };
-  const filteredMessages = messages;
 
-  // if (!verified) {
-  //   return <Unathorized />;
-  // }
+  const filteredMessages = messages;
 
   return (
     <UserNavLayout>
@@ -175,7 +194,7 @@ const Message: React.FC = (): JSX.Element => {
           </div>
         </div>
 
-        {showModal && (
+        {showModal && selectedMessage && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3">
               <div className="mt-2">

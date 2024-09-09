@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { currentTime } from '@/helper/time';
+import { useMessages } from '@/hooks/useMessages';
 
 interface SendMessageModalProps {
   onClose: () => void;
@@ -12,9 +13,10 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose, selectedEmail }
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const { addMessage } = useMessages();  // Using the custom hook
 
   useEffect(() => {
-    console.log('selectedEmail', selectedEmail)
+    console.log('selectedEmail', selectedEmail);
     if (selectedEmail) {
       setEmail(selectedEmail);
     }
@@ -37,7 +39,7 @@ const SendMessage: React.FC<SendMessageModalProps> = ({ onClose, selectedEmail }
         const userId = user.id; // Get the user ID from the document ID
         const userName = user.data().name;
 
-        await addDoc(collection(db, 'messages'), {
+        await addMessage({
           message: message.trim(),
           read: false,
           sender: "admin", // Assuming "admin" is the sender
