@@ -6,6 +6,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  limit,
   orderBy,
   query,
   updateDoc,
@@ -60,7 +61,8 @@ export const useMessages = () => {
       const sentMessagesQuery = query(
         messagesRef,
         where("sender", "==", email),
-        orderBy("time", "desc")
+        orderBy("time", "desc"),
+        limit(200)
       );
       const sentMessagesSnap = await getDocs(sentMessagesQuery);
       const sentMessages = sentMessagesSnap.docs.map((doc) => ({
@@ -102,7 +104,8 @@ export const useMessages = () => {
       const sentMessagesQuery = query(
         messagesRef,
         where("sender", "in", ["admin", "staff"]),
-        orderBy("time", "desc")
+        orderBy("time", "desc"),
+        limit(200)
       );
       const sentMessagesSnap = await getDocs(sentMessagesQuery);
       const sentMessages = sentMessagesSnap.docs.map((doc) => ({

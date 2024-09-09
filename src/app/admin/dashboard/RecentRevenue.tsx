@@ -37,7 +37,7 @@ const RecentRevenue: React.FC = () => {
   };
 
   return (
-    <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 w-3/6">
+    <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 w-auto mr-auto">
       <h2 className="font-bold text-primary mb-4">Recent Orders</h2>
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">

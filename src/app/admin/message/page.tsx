@@ -6,14 +6,15 @@ import { IconAt } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
 import SendMessage from "./SendMessage";
 import GetImage from "@/components/GetImage";
-import { useMessages } from '@/hooks/useMessages';
+import { useMessages } from "@/hooks/useMessages";
 
 const Message: React.FC = (): JSX.Element => {
   const {
     messages,
     fetchMessageReceivedAdmin,
     fetchMessageSentAdmin,
-    updateMessageReadStatus
+    updateMessageReadStatus,
+    deleteMessage,
   } = useMessages(); // Custom hook to handle messages
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
@@ -29,7 +30,7 @@ const Message: React.FC = (): JSX.Element => {
     } else {
       fetchMessageReceivedAdmin();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, showMessageModal]);
 
   const updateMessageStatus = async (messageId: string) => {
@@ -111,7 +112,7 @@ const Message: React.FC = (): JSX.Element => {
           <div className="mt-4">
             <div className="flex">
               {filteredMessages && filteredMessages.length > 0 ? (
-                <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
+                <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   {filteredMessages.map((msg) => (
                     <span
                       key={msg.id}
@@ -139,20 +140,30 @@ const Message: React.FC = (): JSX.Element => {
                           {getRelativeTime(msg?.time)}
                         </p>
                       </div>
-                      {filter == "received" && (
+                      <div className="absolute bottom-3 border gap-3 p-2 bg-white shadow-lg rounded-md right-3 hidden group-hover:flex">
+                        {filter == "received" && (
+                          <button
+                            className="btn-xs rounded-sm text-white btn btn-error shadow-xl z-50"
+                            onClick={() => deleteMessage(msg.id)}
+                          >
+                            delete
+                          </button>
+                        )}
+                        {filter == "received" && (
+                          <button
+                            className="btn-xs rounded-sm text-white btn btn-primary shadow-xl z-50"
+                            onClick={() => reply(msg?.senderEmail)}
+                          >
+                            reply
+                          </button>
+                        )}
                         <button
-                          className="absolute bottom-1 right-16 hidden group-hover:flex btn-xs rounded-sm text-white btn btn-primary shadow-xl z-50"
-                          onClick={() => reply(msg?.senderEmail)}
+                          className="btn-xs rounded-sm text-white btn btn-neutral shadow-xl z-50"
+                          onClick={() => openMessageModal(msg)}
                         >
-                          Reply
+                          view
                         </button>
-                      )}
-                      <button
-                        className="absolute bottom-1 right-1 hidden group-hover:flex btn-xs rounded-sm text-white btn btn-secondary shadow-xl z-50"
-                        onClick={() => openMessageModal(msg)}
-                      >
-                        View
-                      </button>
+                      </div>
                     </span>
                   ))}
                 </div>
@@ -206,7 +217,10 @@ const Message: React.FC = (): JSX.Element => {
 
         {/* Modal for sending message */}
         {showSendMessageModal && (
-          <SendMessage onClose={closeSendMessageModal} selectedEmail={selectedEmail} />
+          <SendMessage
+            onClose={closeSendMessageModal}
+            selectedEmail={selectedEmail}
+          />
         )}
       </div>
     </NavLayout>

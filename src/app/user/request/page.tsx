@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from "react";
 import UserNavLayout from "@/components/UserNavLayout";
 import AddRequest from "./AddRequest";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import EditRequest from "./EditRequest";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { IconMessage2Question } from "@tabler/icons-react";
 import { RequestTable } from "./RequestTable";
 import { ApprovedTable } from "./ApprovedTable";
@@ -25,6 +24,7 @@ interface RequestData {
   orNo?: string;
   submittedBy?: string;
   submittedName?: string;
+  timestamp?: string; // Ensure you're using the correct field name in Firestore
 }
 
 const Request: React.FC = (): JSX.Element => {
@@ -38,12 +38,14 @@ const Request: React.FC = (): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState<string>("pending");
   const { userUid, verified } = useUserData();
 
+  // Fetch requests based on userUid
   useEffect(() => {
     const fetchRequests = async () => {
       if (userUid) {
         const q = query(
           collection(db, "requests"),
-          where("submittedBy", "==", userUid)
+          where("submittedBy", "==", userUid),
+          orderBy("timestamp") // Ensure you're ordering by the correct field
         );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
@@ -55,8 +57,9 @@ const Request: React.FC = (): JSX.Element => {
     };
 
     fetchRequests();
-  }, [userUid, openAddModal, openEditModal]);
+  }, [userUid]); // Only refetch when userUid changes
 
+  // Filter requests by status (pending, approved, declined)
   useEffect(() => {
     const filtered = requests.filter(
       (request) => request.status === selectedTab
@@ -64,6 +67,7 @@ const Request: React.FC = (): JSX.Element => {
     setFilteredRequests(filtered);
   }, [requests, selectedTab]);
 
+  // Modal handlers
   const handleOpenAdd = () => setOpenAddModal(true);
   const handleCloseAdd = () => setOpenAddModal(false);
 
@@ -72,6 +76,8 @@ const Request: React.FC = (): JSX.Element => {
     setOpenEditModal(true);
   };
   const handleCloseEdit = () => setOpenEditModal(false);
+
+  // Unauthorized access
   if (!verified) {
     return <Unathorized />;
   }
@@ -96,6 +102,7 @@ const Request: React.FC = (): JSX.Element => {
         )}
 
         <div role="tablist" className="tabs tabs-lifted">
+          {/* Pending Tab */}
           <input
             type="radio"
             name="request_tabs"
@@ -122,6 +129,7 @@ const Request: React.FC = (): JSX.Element => {
             )}
           </div>
 
+          {/* Approved Tab */}
           <input
             type="radio"
             name="request_tabs"
@@ -148,6 +156,7 @@ const Request: React.FC = (): JSX.Element => {
             )}
           </div>
 
+          {/* Declined Tab */}
           <input
             type="radio"
             name="request_tabs"

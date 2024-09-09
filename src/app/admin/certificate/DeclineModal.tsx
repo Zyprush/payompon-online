@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useMessageStore } from "@/state/message";
+import { useMessages } from "@/hooks/useMessages";
 
 interface DeclineModalProps {
   declineRequest: any;
@@ -12,7 +12,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
   declineRequest,
   onClose,
 }) => {
-  const { addMessage, loadingMessage } = useMessageStore();
+  const { addMessage } = useMessages();
   const [declineMessage, setDeclineMessage] = useState<string>("");
 
   const handleDecline = async () => {
@@ -32,6 +32,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
         message: `${declineMessage}. You may send us a message to request a refund or make another request using the same Screenshot of the Gcash transaction.`,
         sender: "admin",
         receiverId: declineRequest.submittedBy,
+        //TODO: fix this
         receiverName: declineRequest.submittedByName,
         seen: false,
         time: currentTime,

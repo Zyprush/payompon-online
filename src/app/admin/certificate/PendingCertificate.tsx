@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 
 import { db } from "@/firebase";
 import UpdateCertificate from "./UpdateCertificate";
@@ -12,6 +12,7 @@ interface RequestData {
   gcashRefNo: string;
   proofOfPaymentURL: string;
   status: string;
+  submittedName: string;
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {
@@ -29,7 +30,8 @@ const PendingCertificate: React.FC = (): JSX.Element => {
       try {
         const q = query(
           collection(db, "requests"),
-          where("status", "==", "pending")
+          where("status", "==", "pending"),
+          orderBy("timestamp")
         );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
@@ -69,6 +71,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 Request Type
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                Name
+              </th>
+              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                 GCash Ref No
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -84,6 +89,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
               <tr key={request.id} className="cursor-pointer hover:bg-gray-100">
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.requestType}
+                </td>
+                <td className="py-2 px-4 border-b text-left text-xs">
+                  {request.submittedName}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.gcashRefNo}

@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Adjust the path as needed
-import { db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { useRequestStore } from "@/state/request";
 interface InfoProps {
   params: {

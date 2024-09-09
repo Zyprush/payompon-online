@@ -18,6 +18,7 @@ const Message: React.FC = (): JSX.Element => {
     fetchMessageReceivedUser,
     fetchMessageSentUser,
     updateMessageReadStatus,
+    deleteMessage
   } = useMessages(); // Using the useMessages hook
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
@@ -37,20 +38,7 @@ const Message: React.FC = (): JSX.Element => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, userUid, showModal]);
-  // const updateMessageStatus = async (messageId: string) => {
-  //   if (filter === "received") {
-  //     try {
-  //       // Check if the message is unread and mark it as read
-  //       const message = messages?.find((msg) => msg.id === messageId);
-  //       if (message && !message.read) {
-  //         await updateMessageReadStatus(messageId); // Update the message status in Firestore and locally
-  //         console.log("Message marked as read");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error updating message status:", error);
-  //     }
-  //   }
-  // };
+
   const updateMessageStatus = async (messageId: string, userUid: string) => {
     if (filter === "received") {
       try {
@@ -149,12 +137,11 @@ const Message: React.FC = (): JSX.Element => {
           <div className="mt-4">
             <div className="">
               {filteredMessages && filteredMessages.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {filteredMessages.map((msg) => (
                     <span
                       key={msg.id}
-                      onClick={() => openModal(msg)}
-                      className={`p-4 cursor-pointer flex gap-5 ${
+                      className={`p-4 cursor-pointer flex gap-5 group relative ${
                         msg.read ? "bg-none" : "bg-white shadow-md"
                       } rounded border w-full`}
                     >
@@ -181,6 +168,22 @@ const Message: React.FC = (): JSX.Element => {
                         <div className="truncate mt-auto mb-0 text-sm text-zinc-500">
                           {msg.message}
                         </div>
+                      </div>
+                      <div className="absolute bottom-3 border gap-3 p-2 bg-white shadow-lg rounded-md right-3 hidden group-hover:flex">
+                        {filter == "received" && (
+                          <button
+                            className="btn-xs rounded-sm text-white btn btn-error shadow-xl z-50"
+                            onClick={() => deleteMessage(msg.id)}
+                          >
+                            delete
+                          </button>
+                        )}
+                        <button
+                          className="btn-xs rounded-sm text-white btn btn-neutral shadow-xl z-50"
+                          onClick={() => openModal(msg)}
+                        >
+                          view
+                        </button>
                       </div>
                     </span>
                   ))}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useMessageStore } from "@/state/message";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
 import { useRevenueStore } from "@/state/revenue";
@@ -40,18 +39,19 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         certNo,
         affiant,
         status: "approved",
-        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`
+        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
       });
       await addMessage({
         message: `Your certification request (${selectedRequest.requestType}) has been approved. OR NO: ${orNo}, CERT NO: ${certNo}`,
         certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
         sender: "admin",
         receiverId: selectedRequest.submittedBy,
+        //TODO: fix this
         receiverName: selectedRequest.submittedByName,
         senderName: "Admin",
         seen: false,
         time: currentTime,
-        for: "user"
+        for: "user",
       });
       await addNotif({
         message: `Your certification request (${selectedRequest.requestType}) has been approved.`,
@@ -83,7 +83,9 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-lg p-6">
-        <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary drop-shadow">Update Certificate</h2>
+        <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary drop-shadow">
+          Update Certificate
+        </h2>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             OR No.
@@ -120,7 +122,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
             className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-      
+
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Affiant
