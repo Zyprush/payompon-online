@@ -4,7 +4,6 @@ import { toTitleCase } from "@/helper/string";
 import { getRelativeTime } from "@/helper/time";
 import { useMessageStore } from "@/state/message";
 import { IconAt } from "@tabler/icons-react";
-import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import SendMessage from "./SendMessage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
