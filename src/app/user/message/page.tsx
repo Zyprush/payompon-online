@@ -88,9 +88,9 @@ const Message: React.FC = (): JSX.Element => {
   };
   const filteredMessages = messages;
 
-  if (!verified) {
-    return <Unathorized />;
-  }
+  // if (!verified) {
+  //   return <Unathorized />;
+  // }
 
   return (
     <UserNavLayout>
