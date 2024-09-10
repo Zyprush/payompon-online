@@ -52,6 +52,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     return (
       <div
         ref={ref as Ref<HTMLDivElement>}
+        id="document"
         className="relative w-[8.5in] h-[13in] border border-gray-300 p-4"
         style={{
           transform: `scale(${zoomLevel})`,

@@ -13,68 +13,37 @@
 
 * {
   box-sizing: border-box;
-  /* border: red solid 1px; */
 }
+
 .courier-prime {
   font-family: 'Courier Prime', monospace;
 }
+
 .bernard-mt {
   font-family: 'Bernard MT', serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  .custom-input {
-    @apply bg-gray-100 bg-opacity-50 text-gray-700 border-0 rounded-md p-2 focus:bg-gray-200 focus:bg-opacity-70 focus:outline-none focus:ring-1 focus:ring-secondary transition ease-in-out duration-150 text-sm;
-  }
-  .custom-textarea {
-    @apply textarea textarea-bordered w-auto resize-none text-xs bg-zinc-50 focus:outline-primary focus:border-primary;
-  }
-  .contain-indicator {
-    @apply text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto
-  }
-  .bt-outline {
-    @apply text-neutral btn btn-sm btn-outline rounded
-  }
-  .bt-primary {
-    @apply text-white btn btn-sm btn-primary rounded
+@media print {
+  @font-face {
+    font-family: 'Bernard MT';
+    src: url('/font/bernardMT.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
   }
 
-  
+  #document {
+    font-family: 'Bernard MT', serif;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  #document {
+    width: 100%;
+  }
 }
 
-/* Hide the spin buttons in Chrome, Safari, Edge, and Opera */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Hide the spin buttons in Firefox */
-input[type="number"] {
-  appearance: textfield;
-}
-
-.custom-bg{
-  background-color: #e5e5f7;
-  opacity: 0.8;
-  background-image: radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
-  background-size: 10px 10px;
-}
-
-.custom-shadow {
-  filter: drop-shadow(1.3px 1.3px 0.4px #000000);
-}
-
-input[type="file"].none-input {
-  display: none;
-}
-
-.custom-file-upload {
-  border: 1px solid #ccc;
-  display: inline-block;
-  padding: 6px 12px;
-  cursor: pointer;
-}
+/* Other custom styles */

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Adjust the path as needed
 import { useRequestStore } from "@/state/request";
+
 interface InfoProps {
   params: {
     id: string;
@@ -14,6 +15,7 @@ const DocumentComponent: React.FC<InfoProps> = ({ params }) => {
   const { setId } = useRequestStore();
   const { id } = params;
   console.log("id", id);
+
   useEffect(() => {
     setId(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,10 +61,11 @@ const DocumentComponent: React.FC<InfoProps> = ({ params }) => {
             </button>
           )}
           content={() => document.getElementById("document") as HTMLDivElement}
+          copyStyles={true}
         />
       </div>
       <div className="flex">
-        <div id="document" className="mx-auto">
+        <div id="document" className="mx-auto bernard-mt"> {/* Added the bernard-mt class */}
           <PrintContent zoomLevel={zoomLevel} />
         </div>
       </div>
