@@ -46,8 +46,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
         sender: "admin",
         receiverId: selectedRequest.submittedBy,
-        //TODO: fix this
-        receiverName: selectedRequest.submittedByName,
+        receiverName: selectedRequest.submittedName,
         senderName: "Admin",
         seen: false,
         time: currentTime,
@@ -76,7 +75,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
       console.error("Error updating request:", error);
       alert("Error updating request");
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 

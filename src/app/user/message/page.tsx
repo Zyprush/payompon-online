@@ -18,7 +18,7 @@ const Message: React.FC = (): JSX.Element => {
     fetchMessageReceivedUser,
     fetchMessageSentUser,
     updateMessageReadStatus,
-    deleteMessage
+    deleteMessage,
   } = useMessages(); // Using the useMessages hook
 
   const [filter, setFilter] = useState<"sent" | "received">("received");
@@ -157,9 +157,8 @@ const Message: React.FC = (): JSX.Element => {
                       </div>
                       <div className="flex flex-col truncate pr-5">
                         <div className="font-semibold text-primary">
-                          {filter == "sent"
-                            ? toTitleCase(msg.receiverName)
-                            : toTitleCase(msg.senderName)}
+                          {filter == "sent" && toTitleCase(msg?.receiverName)}
+                          {filter == "received" && toTitleCase(msg?.senderName)}
                         </div>
                         <div className="text-zinc-500 text-xs font-semibold flex gap-4">
                           {format(new Date(msg.time), "MMM dd, yyyy")} :

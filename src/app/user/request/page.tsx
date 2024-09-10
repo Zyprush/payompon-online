@@ -24,7 +24,7 @@ interface RequestData {
   orNo?: string;
   submittedBy?: string;
   submittedName?: string;
-  timestamp?: string; // Ensure you're using the correct field name in Firestore
+  timestamp?: string;
 }
 
 const Request: React.FC = (): JSX.Element => {
@@ -32,34 +32,32 @@ const Request: React.FC = (): JSX.Element => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<RequestData[]>([]);
-  const [editRequestData, setEditRequestData] = useState<RequestData | null>(
-    null
-  );
+  const [editRequestData, setEditRequestData] = useState<RequestData | null>(null);
   const [selectedTab, setSelectedTab] = useState<string>("pending");
   const { userUid, verified } = useUserData();
 
-  // Fetch requests based on userUid
+  const fetchRequests = async () => {
+    if (userUid) {
+      console.log('userUid', userUid)
+      const q = query(
+        collection(db, "requests"),
+        where("submittedBy", "==", userUid),
+        orderBy("timestamp")
+      );
+      const querySnapshot = await getDocs(q);
+      const fetchedRequests: RequestData[] = [];
+      querySnapshot.forEach((doc) => {
+        fetchedRequests.push({ id: doc.id, ...doc.data() } as RequestData);
+      });
+      setRequests(fetchedRequests);
+    }
+  };
+
   useEffect(() => {
-    const fetchRequests = async () => {
-      if (userUid) {
-        const q = query(
-          collection(db, "requests"),
-          where("submittedBy", "==", userUid),
-          orderBy("timestamp") // Ensure you're ordering by the correct field
-        );
-        const querySnapshot = await getDocs(q);
-        const fetchedRequests: RequestData[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedRequests.push({ id: doc.id, ...doc.data() } as RequestData);
-        });
-        setRequests(fetchedRequests);
-      }
-    };
-
     fetchRequests();
-  }, [userUid]); // Only refetch when userUid changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userUid]);
 
-  // Filter requests by status (pending, approved, declined)
   useEffect(() => {
     const filtered = requests.filter(
       (request) => request.status === selectedTab
@@ -67,17 +65,20 @@ const Request: React.FC = (): JSX.Element => {
     setFilteredRequests(filtered);
   }, [requests, selectedTab]);
 
-  // Modal handlers
   const handleOpenAdd = () => setOpenAddModal(true);
   const handleCloseAdd = () => setOpenAddModal(false);
 
   const handleOpenEdit = (requestData: RequestData) => {
+    console.log('requestData', requestData)
     setEditRequestData(requestData);
     setOpenEditModal(true);
   };
   const handleCloseEdit = () => setOpenEditModal(false);
 
-  // Unauthorized access
+  const handleRequestAdded = () => {
+    fetchRequests();
+  };
+
   if (!verified) {
     return <Unathorized />;
   }
@@ -92,12 +93,17 @@ const Request: React.FC = (): JSX.Element => {
           New Request
         </button>
 
-        <AddRequest open={openAddModal} handleClose={handleCloseAdd} />
+        <AddRequest 
+          open={openAddModal} 
+          handleClose={handleCloseAdd} 
+          onRequestAdded={handleRequestAdded}
+        />
         {editRequestData && (
           <EditRequest
             open={openEditModal}
             handleClose={handleCloseEdit}
             requestData={editRequestData}
+            onRequestUpdated={fetchRequests}
           />
         )}
 

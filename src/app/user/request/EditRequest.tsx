@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "@/firebase";
@@ -13,14 +13,25 @@ interface EditRequestProps {
     gcashRefNo: string;
     proofOfPaymentURL: string;
   };
+  onRequestUpdated: () => void;
 }
 
-const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestData }): JSX.Element | null => {
+const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestData, onRequestUpdated }): JSX.Element | null => {
   const [requestType, setRequestType] = useState<string>(requestData.requestType);
   const [gcashRefNo, setGcashRefNo] = useState<string>(requestData.gcashRefNo);
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ requestType?: string; gcashRefNo?: string }>({});
+
+  // Sync state with passed requestData when it changes
+  useEffect(() => {
+    if (requestData) {
+      setRequestType(requestData.requestType);
+      setGcashRefNo(requestData.gcashRefNo);
+      // Proof of payment is a file input, so don't set it here directly from URL
+      setProofOfPayment(null);  // Reset file input when new request data is passed
+    }
+  }, [requestData]);
 
   const validateInputs = () => {
     const errors: { requestType?: string; gcashRefNo?: string } = {};
@@ -31,11 +42,16 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
 
     if (!gcashRefNo) {
       errors.gcashRefNo = "GCash reference number is required";
-    } 
-    
+    }
 
     setErrors(errors);
-    return Object.keys(errors).length === 0;
+
+    if (Object.keys(errors).length > 0) {
+      alert("Please fill in all required fields.");
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async () => {
@@ -49,7 +65,12 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
       if (proofOfPayment) {
         // Delete the old proof of payment
         const oldStorageRef = ref(storage, requestData.proofOfPaymentURL);
-        await deleteObject(oldStorageRef);
+        try {
+          await deleteObject(oldStorageRef);
+        } catch (error) {
+          console.error("Error deleting old file:", error);
+          // Continue with the update even if deletion fails
+        }
 
         // Upload the new proof of payment
         const storageRef = ref(storage, `proofOfPayment/${proofOfPayment.name}`);
@@ -57,7 +78,8 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
         downloadURL = await getDownloadURL(snapshot.ref);
       }
 
-      const requestDocRef = doc(db, "request", requestData.id);
+      // Update Firestore document
+      const requestDocRef = doc(db, "requests", requestData.id);
       await updateDoc(requestDocRef, {
         requestType,
         gcashRefNo,
@@ -65,11 +87,16 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
         timestamp: new Date(),
       });
 
+      onRequestUpdated();
       handleClose();
       alert("Request updated successfully!");
     } catch (error) {
       console.error("Error updating request:", error);
-      alert("Error updating request. Please try again.");
+      if (error instanceof Error) {
+        alert(`Error updating request: ${error.message}`);
+      } else {
+        alert("An unknown error occurred while updating the request.");
+      }
     } finally {
       setLoading(false);
     }

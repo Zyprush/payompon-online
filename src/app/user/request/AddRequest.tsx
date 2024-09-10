@@ -12,24 +12,26 @@ import { fetchFromSettings } from "@/helper/getSettings";
 interface AddRequestProps {
   open: boolean;
   handleClose: () => void;
+  onRequestAdded: () => void;
 }
 
 const AddRequest: React.FC<AddRequestProps> = ({
   open,
   handleClose,
+  onRequestAdded,
 }): JSX.Element | null => {
   const [requestType, setRequestType] = useState<string>("");
-  const [purpose, setPurpose] = useState<string>(""); // State for Purpose
-  const [amount, setAmount] = useState<string>(""); // State for Amount
+  const [purpose, setPurpose] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
   const [gcashRefNo, setGcashRefNo] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [contact, setContact] = useState<boolean>(false);
+  const [contact, setContact] = useState<string>("");
 
-  const addNotif = useNotifStore((state) => state.addNotif); // Get the addNotif function
+  const addNotif = useNotifStore((state) => state.addNotif);
 
   useEffect(() => {
     const fetchContactSetting = async () => {
@@ -53,13 +55,13 @@ const AddRequest: React.FC<AddRequestProps> = ({
 
   const fetchUserData = async (uid: string) => {
     try {
-      const userDocRef = doc(db, "users", uid); // Assuming you have a 'users' collection
+      const userDocRef = doc(db, "users", uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        setUserName(userData?.name || null); // Assuming the user's name is stored under 'name'
-        setUserSitio(userData?.sitio || null); // Assuming the user's sitio is stored under 'sitio'
+        setUserName(userData?.name || null);
+        setUserSitio(userData?.sitio || null);
       } else {
         console.error("No such user!");
       }
@@ -86,20 +88,22 @@ const AddRequest: React.FC<AddRequestProps> = ({
       const snapshot = await uploadBytes(storageRef, proofOfPayment);
       const downloadURL = await getDownloadURL(snapshot.ref);
 
-      await addDoc(collection(db, "requests"), {
+      const newRequest = {
         submittedName: userName,
         sitio: userSitio,
         submittedBy: userUid,
         requestType,
-        purpose, // Include Purpose in the submitted data
-        amount, // Include Amount in the submitted data
+        purpose,
+        amount,
         gcashRefNo,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
         status: "pending",
-      });
+      };
 
-      // Create a notification
+      const docRef = await addDoc(collection(db, "requests"), newRequest);
+
+      // Create notifications
       await addNotif({
         for: "admin",
         message: `${userName} Request for ${requestType}`,
@@ -109,13 +113,13 @@ const AddRequest: React.FC<AddRequestProps> = ({
       });
 
       await addNotif({
-        for: "admin",
-        message: `${userName} Request for ${requestType}`,
+        for: userUid,
+        message: `Your request for ${requestType} has been submitted`,
         time: currentTime,
-        type: "admin",
+        type: "user",
         read: false,
       });
-
+      onRequestAdded();
       alert("Request submitted successfully!");
       handleClose();
     } catch (error) {
