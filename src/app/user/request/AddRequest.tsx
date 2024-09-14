@@ -8,6 +8,7 @@ import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
 import GetImage from "@/components/GetImage";
 import { fetchFromSettings } from "@/helper/getSettings";
+import GetText from "@/app/admin/settings/GetText";
 
 interface AddRequestProps {
   open: boolean;
@@ -30,8 +31,23 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [contact, setContact] = useState<string>("");
-
+  const [services, setServices] = useState<{ name: string; price: string }[]>(
+    []
+  );
   const addNotif = useNotifStore((state) => state.addNotif);
+  // Update the amount when the request type changes
+  const handleRequestTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedService = services.find(
+      (service) => service.name === e.target.value
+    );
+    setRequestType(e.target.value);
+    console.log("e.target.value", e.target.value);
+    if (selectedService) {
+      setAmount(selectedService.price);
+    } else {
+      setAmount(""); // Reset amount if no service is selected
+    }
+  };
 
   useEffect(() => {
     const fetchContactSetting = async () => {
@@ -46,6 +62,14 @@ const AddRequest: React.FC<AddRequestProps> = ({
         const getContact = await fetchFromSettings("gcash");
         setContact(getContact);
       });
+      // Fetch services from Firestore
+      const fetchServices = async () => {
+        const servicesDoc = await getDoc(doc(db, "settings", "services"));
+        if (servicesDoc.exists()) {
+          setServices(servicesDoc.data()?.services || []);
+        }
+      };
+      fetchServices();
 
       return () => unsubscribe();
     };
@@ -94,8 +118,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
         submittedBy: userUid,
         requestType,
         purpose,
-        amount,
-        gcashRefNo,
+        //service price ,
+        amount: gcashRefNo,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
         status: "pending",
@@ -136,30 +160,28 @@ const AddRequest: React.FC<AddRequestProps> = ({
     <div className="fixed inset-0 z-50 flex md:items-center md:justify-center bg-black md:bg-opacity-50 bg-opacity-0">
       <div className="bg-white md:rounded-lg shadow-lg w-full md:w-96 mt-14 md:mt-0">
         <div className="px-6 py-4 flex flex-col gap-2">
-          <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
+          <h2 className="text-lg flex justify-between w-full font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
             Submit a Request
           </h2>
-
-          <div className="mb-4">
+          <h1 className="text-sm border p-2 -mt-3 text-zinc-600 flex items-center mr-auto">
+            <b className="mr-2 text-lg">₱ {amount}</b> {requestType} Amount
+          </h1>
+          <div className="my-4">
             <label className="block text-sm font-semibold mb-2 text-zinc-700">
               Request Type
             </label>
             <select
               value={requestType}
-              onChange={(e) => setRequestType(e.target.value)}
+              onChange={handleRequestTypeChange}
               className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
               disabled={loading}
             >
-              <option value="">Select a type</option>
-              <option value="Barangay clearance">Barangay clearance</option>
-              <option value="Indigency">Indigency</option>
-              <option value="Business permit">Business permit</option>
-              <option value="Certificate of residency">
-                Certificate of residency
-              </option>
-              <option value="Certificate of late registration">
-                Certificate of late registration
-              </option>
+              <option value="">Select a service</option>
+              {services.map((service, index) => (
+                <option key={index} value={service.name}>
+                  {service.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -174,12 +196,18 @@ const AddRequest: React.FC<AddRequestProps> = ({
               disabled={loading}
             >
               <option value="">Select a purpose</option>
-              <option value="Employment Requirement">Employment Requirement</option>
+              <option value="Employment Requirement">
+                Employment Requirement
+              </option>
               <option value="Business Permit">Business Permit</option>
-              <option value="Travel/Passport Requirement">Travel/Passport Requirement</option>
+              <option value="Travel/Passport Requirement">
+                Travel/Passport Requirement
+              </option>
               <option value="Bank Account Opening">Bank Account Opening</option>
               <option value="Job Application">Job Application</option>
-              <option value="Barangay ID Application">Barangay ID Application</option>
+              <option value="Barangay ID Application">
+                Barangay ID Application
+              </option>
               <option value="School/Scholarship">School/Scholarship</option>
               <option value="Proof of Residency">Proof of Residency</option>
               <option value="Police Clearance">Police Clearance</option>
@@ -187,9 +215,15 @@ const AddRequest: React.FC<AddRequestProps> = ({
               <option value="Loan">Loan</option>
               <option value="Financial assistance">Financial assistance</option>
               <option value="Firearm License">Firearm License</option>
-              <option value="Local Government Transactions">Local Government Transactions</option>
-              <option value="Legal or Court Requirements">Legal or Court Requirements</option>
-              <option value="Community Event Participation">Community Event Participation</option>
+              <option value="Local Government Transactions">
+                Local Government Transactions
+              </option>
+              <option value="Legal or Court Requirements">
+                Legal or Court Requirements
+              </option>
+              <option value="Community Event Participation">
+                Community Event Participation
+              </option>
             </select>
           </div>
 
@@ -227,7 +261,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
           <div className="flex gap-5 justify-start">
             <div className="w-44 tooltip tooltip-top" data-tip="Gcash QR Code">
               <p className="font-semibold text-zinc-600">
-                {contact}
+                <GetText name="gcash" title="Gcash no." />
               </p>
               <GetImage storageLink="settings/gcashQR" />
             </div>
