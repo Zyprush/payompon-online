@@ -29,6 +29,8 @@ export default function Page() {
   const [sitio, setSitio] = useState("");
   const [civilStatus, setCivilStatus] = useState("");
   const [validID, setValidID] = useState<File | null>(null); // State to handle file input
+  const [selfie, setSelfie] = useState<File | null>(null); // State to handle selfie file input
+  const [validIDType, setValidIDType] = useState(""); // State to handle valid ID type
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -51,7 +53,9 @@ export default function Page() {
       !civilStatus ||
       !password ||
       !confirmPassword ||
-      !validID
+      !validIDType ||
+      !validID ||
+      !selfie
     ) {
       toast.error("All fields are required!");
       return false;
@@ -67,30 +71,37 @@ export default function Page() {
     return true;
   };
 
-
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!validateInputs()) return;
-  
+
     setLoading(true);
     try {
       const userCredential = await createUser(email, password);
       if (!userCredential?.user) {
         throw new Error("User creation failed.");
       }
-  
+
       const user = userCredential.user;
-  
+
       const validIDRef = ref(storage, `validIDs/${user.uid}`);
       if (validID) {
         await uploadBytes(validIDRef, validID);
       } else {
         throw new Error("Valid ID file is missing.");
       }
-  
+
+      const selfieRef = ref(storage, `selfies/${user.uid}`);
+      if (selfie) {
+        await uploadBytes(selfieRef, selfie);
+      } else {
+        throw new Error("Selfie file is missing.");
+      }
+
       const validIDURL = await getDownloadURL(validIDRef);
+      const selfieURL = await getDownloadURL(selfieRef);
       await sendEmailVerification();
-  
+
       // Create a document reference within the 'users' collection using user.uid
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
@@ -100,11 +111,12 @@ export default function Page() {
         sitio: sitio,
         civilStatus: civilStatus,
         validID: validIDURL,
+        selfie: selfieURL,
         role: "resident",
         verified: false,
         submitted: "submitted",
       });
-  
+
       router.push("/user/dashboard");
     } catch (error: any) {
       console.error("Error details:", error);
@@ -113,13 +125,16 @@ export default function Page() {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <section>
       <div className="flex h-screen w-screen custom-bg items-start md:items-center justify-center">
-        <Link href="/sign-in" className="absolute top-0 left-0 m-4 btn btn-sm btn-outline font-bold border-2">Back</Link>
+        <Link
+          href="/sign-in"
+          className="absolute top-0 left-0 m-4 btn btn-sm btn-outline font-bold border-2"
+        >
+          Back
+        </Link>
         <div className="mx-auto shadow-md p-4 min-w-[22rem] xl:max-w-sm 2xl:max-w-md rounded-xl m-auto bg-white">
           <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
             Create account
@@ -133,50 +148,52 @@ export default function Page() {
                     type="text"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="sn-input"
                   />
                 </div>
               </div>
-              <div>
-                <div className="mt-2">
-                  <input
-                    placeholder="Email"
-                    type="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
+              <div className="flex justify-between gap-2">
+                <input
+                  placeholder="Email"
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  className="sn-input"
+                />
+                <input
+                  placeholder="Contact Number"
+                  type="number"
+                  onChange={(e) => {
+                    setNumber(e.target.value);
+                  }}
+                  value={number}
+                  required
+                  pattern="\d{11}" // Optional HTML5 pattern validation
+                  maxLength={11} // Limit input length
+                  title="Please enter a valid 11-digit number"
+                  className="sn-input"
+                />
               </div>
-              <div>
-                <div className="mt-2">
-                  <input
-                    placeholder="Contact Number"
-                    type="text"
-                    onChange={(e) => {
-                      setNumber(e.target.value);
-                    }}
-                    value={number}
-                    required
-                    pattern="\d{11}" // Optional HTML5 pattern validation
-                    maxLength={11} // Limit input length
-                    title="Please enter a valid 11-digit number"
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="mt-2">
-                  <select
-                    onChange={(e) => setGender(e.target.value)}
-                    value={gender}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
+              <div className="mt-2 flex gap-2">
+                <select
+                  onChange={(e) => setGender(e.target.value)}
+                  value={gender}
+                  className="sn-input"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+                <select
+                  onChange={(e) => setCivilStatus(e.target.value)}
+                  value={civilStatus}
+                  className="sn-input"
+                >
+                  <option value="">Select Civil Status</option>
+                  <option value="single">Single</option>
+                  <option value="widow">Widow</option>
+                  <option value="married">Married</option>
+                </select>
               </div>
               <div>
                 <div className="mt-2">
@@ -185,23 +202,12 @@ export default function Page() {
                     type="text"
                     onChange={(e) => setSitio(e.target.value)}
                     value={sitio}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="sn-input"
                   />
                 </div>
               </div>
               <div>
-                <div className="mt-2">
-                  <select
-                    onChange={(e) => setCivilStatus(e.target.value)}
-                    value={civilStatus}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="">Select Civil Status</option>
-                    <option value="single">Single</option>
-                    <option value="widow">Widow</option>
-                    <option value="married">Married</option>
-                  </select>
-                </div>
+                <div className="mt-2"></div>
               </div>
 
               <div>
@@ -211,7 +217,7 @@ export default function Page() {
                     type={showPassword ? "text" : "password"}
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="sn-input"
                   />
                   <button
                     type="button"
@@ -229,7 +235,7 @@ export default function Page() {
                     type={showConfirmPassword ? "text" : "password"}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     value={confirmPassword}
-                    className="flex h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="sn-input"
                   />
                   <button
                     type="button"
@@ -238,6 +244,64 @@ export default function Page() {
                   >
                     {showConfirmPassword ? <IconEye /> : <IconEyeOff />}
                   </button>
+                </div>
+              </div>
+              <div>
+                <div className="mt-2">
+                  <select
+                    onChange={(e) => setValidIDType(e.target.value)}
+                    value={validIDType}
+                    className="sn-input"
+                  >
+                    <option value="">Select Valid ID</option>
+                    <option value="Philippine Passport">
+                      Philippine Passport
+                    </option>
+                    <option value="Driver’s License">Driver’s License</option>
+                    <option value="Unified Multi-Purpose ID (UMID)">
+                      Unified Multi-Purpose ID (UMID)
+                    </option>
+                    <option value="Voter’s ID or Voter’s Certificate">
+                      Voter’s ID or Voter’s Certificate
+                    </option>
+                    <option value="PhilHealth ID">PhilHealth ID</option>
+                    <option value="Social Security System (SSS) ID">
+                      Social Security System (SSS) ID
+                    </option>
+                    <option value="Postal ID">Postal ID</option>
+                    <option value="Professional Regulation Commission (PRC) ID">
+                      Professional Regulation Commission (PRC) ID
+                    </option>
+                    <option value="Barangay ID">Barangay ID</option>
+                    <option value="Government Service Insurance System (GSIS) eCard">
+                      Government Service Insurance System (GSIS) eCard
+                    </option>
+                    <option value="Philippine National Police (PNP) ID">
+                      Philippine National Police (PNP) ID
+                    </option>
+                    <option value="Senior Citizen ID">Senior Citizen ID</option>
+                    <option value="Person with Disability (PWD) ID">
+                      Person with Disability (PWD) ID
+                    </option>
+                    <option value="Bureau of Internal Revenue (BIR) ID (TIN ID)">
+                      Bureau of Internal Revenue (BIR) ID (TIN ID)
+                    </option>
+                    <option value="Overseas Workers Welfare Administration (OWWA) ID">
+                      Overseas Workers Welfare Administration (OWWA) ID
+                    </option>
+                    <option value="School ID (for students)">
+                      School ID (for students)
+                    </option>
+                    <option value="Alien Certificate of Registration (ACR) ID">
+                      Alien Certificate of Registration (ACR) ID
+                    </option>
+                    <option value="Company ID (for employed individuals)">
+                      Company ID (for employed individuals)
+                    </option>
+                    <option value="Indigenous People’s (IP) ID">
+                      Indigenous People’s (IP) ID
+                    </option>
+                  </select>
                 </div>
               </div>
               <div>
@@ -253,7 +317,24 @@ export default function Page() {
                     id="validID"
                     accept="image/*,.pdf"
                     onChange={(e) => setValidID(e.target.files?.[0] || null)}
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="sn-input"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="selfie"
+                  className="block text-xs font-medium text-gray-700"
+                >
+                  Upload Selfie
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="file"
+                    id="selfie"
+                    accept="image/*"
+                    onChange={(e) => setSelfie(e.target.files?.[0] || null)}
+                    className="sn-input"
                   />
                 </div>
               </div>

@@ -16,7 +16,8 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -45,7 +46,7 @@ export default function Page() {
           <form className="mt-6" method="POST" onSubmit={onSubmit}>
             <div className="space-y-5">
               <div>
-                <label className="text-sm font-medium text-gray-900">
+                <label className="text-sm font-semibold text-primary">
                   Email address
                 </label>
                 <div className="mt-2">
@@ -61,7 +62,7 @@ export default function Page() {
               </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-900">
+                  <label className="text-sm font-semibold text-primary">
                     Password
                   </label>
                 </div>
@@ -82,12 +83,20 @@ export default function Page() {
                     {showPassword ? <IconEye /> : <IconEyeOff />}
                   </button>
                 </div>
-                <Link
-                  href={"/sign-up"}
-                  className="text-sm underline text-zinc-500 mt-5"
-                >
-                  Don&apos;t have an account? Sign up
-                </Link>
+                <div className="flex flex-col gap-3">
+                  <Link
+                    href={"/sign-up"}
+                    className="text-xs underline text-zinc-500"
+                  >
+                    Don&apos;t have an account? Sign up
+                  </Link>
+                  <Link
+                    href={"/forgot-password"}
+                    className="text-xs underline text-zinc-500"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
               <div>
                 <SignedOut>
@@ -112,15 +121,31 @@ export default function Page() {
               </div>
             </div>
           </form>
-          {loading && <p className="text-zinc-600 border border-zinc-600 text-sm font-semibold p-2 rounded-md mt-6 text-center">Loading...</p>}
+          {loading && (
+            <p className="text-zinc-600 border border-zinc-600 text-sm font-semibold p-2 rounded-md mt-6 text-center">
+              Loading...
+            </p>
+          )}
           {error && (
             <p className="text-red-500 border border-red-500 text-sm font-semibold p-2 rounded-md mt-6 text-center">
-              {error?.code === "auth/invalid-credential" && "Invalid email or password. Please try again."}
-              {error?.code === "auth/user-disabled" && "This account has been disabled. Please contact support."}
-              {error?.code === "auth/too-many-requests" && "Too many failed login attempts. Please try again later."}
-              {error?.code === "auth/wrong-password" && "The password is incorrect. Please try again."}
-              {error?.code === "auth/user-not-found" && "No user found with this email. Please check and try again."}
-              {!["auth/invalid-credential", "auth/user-disabled", "auth/too-many-requests", "auth/wrong-password", "auth/user-not-found"].includes(error?.code as string) && "An unexpected error occurred. Please try again."}
+              {error?.code === "auth/invalid-credential" &&
+                "Invalid email or password. Please try again."}
+              {error?.code === "auth/user-disabled" &&
+                "This account has been disabled. Please contact support."}
+              {error?.code === "auth/too-many-requests" &&
+                "Too many failed login attempts. Please try again later."}
+              {error?.code === "auth/wrong-password" &&
+                "The password is incorrect. Please try again."}
+              {error?.code === "auth/user-not-found" &&
+                "No user found with this email. Please check and try again."}
+              {![
+                "auth/invalid-credential",
+                "auth/user-disabled",
+                "auth/too-many-requests",
+                "auth/wrong-password",
+                "auth/user-not-found",
+              ].includes(error?.code as string) &&
+                "An unexpected error occurred. Please try again."}
             </p>
           )}
         </div>

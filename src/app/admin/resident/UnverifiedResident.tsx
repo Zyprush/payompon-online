@@ -23,6 +23,7 @@ interface User {
   civilStatus: string;
   verified: boolean;
   validID: string;
+  selfie: string; // Add selfie property
 }
 
 const UnverifiedResident: React.FC = (): JSX.Element => {
@@ -34,6 +35,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const [sending, setSending] = useState<boolean>(false);
   const { addMessage } = useMessageStore();
   const { addNotif } = useNotifStore();
+
   const fetchUsers = async () => {
     const q = query(
       collection(db, "users"),
@@ -49,6 +51,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
     setUsers(usersList);
     setLoading(false);
   };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -60,8 +63,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         verified: isVerified,
       });
 
-      const currentTime = new Date().toISOString(); // Get current time in ISO format
-      // Add a message for the user
+      const currentTime = new Date().toISOString();
       addMessage({
         message:
           "Your account has been verified. You can now access services like requesting certification and permit.",
@@ -74,7 +76,6 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         time: currentTime,
         for: "user",
       });
-      // Create a notification
       await addNotif({
         for: userId,
         message: `Your account has been verified. You can now access services like requesting certification and permit.`,
@@ -83,7 +84,6 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         read: false,
       });
 
-      // Update the users state to reflect the change
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === userId ? { ...user, verified: isVerified } : user
@@ -126,7 +126,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   };
 
   return (
-    <div className="md:px-4 flex flex-col">
+    <div className="flex flex-col">
       {loading ? (
         <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto">
           <span className="loading loading-spinner loading-md"></span> Loading
@@ -140,6 +140,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         <table className="min-w-full bg-white border">
           <thead>
             <tr>
+              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">Selfie</th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Name
               </th>
@@ -156,10 +157,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 Sitio
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Civil Status
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Valid ID
+                ID
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Actions
@@ -169,6 +167,25 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
+                <td className="py-2 px-4 w-14 border-b text-xs font-semibold">
+                  {user.selfie ? (
+                    <a
+                      href={user.selfie}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={user.selfie}
+                        alt="Selfie"
+                        className="w-14 h-14 object-cover rounded"
+                      />
+                    </a>
+                  ) : (
+                    "No Selfie Uploaded"
+                  )}
+                </td>
                 <td className="py-2 px-4 border-b text-xs">
                   {toTitleCase(user.name)}
                 </td>
@@ -179,9 +196,6 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 </td>
                 <td className="py-2 px-4 border-b text-xs">
                   {toTitleCase(user.sitio)}
-                </td>
-                <td className="py-2 px-4 border-b text-xs">
-                  {toTitleCase(user.civilStatus)}
                 </td>
                 <td className="py-2 px-4 border-b text-xs font-semibold">
                   {user.validID ? (
@@ -197,6 +211,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                     "No ID Uploaded"
                   )}
                 </td>
+
                 <td className="py-2 px-4 border-b flex gap-3">
                   <button
                     onClick={() => {

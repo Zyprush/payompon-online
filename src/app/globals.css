@@ -4,7 +4,6 @@
   src: url('/font/bernardMT.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-  display: swap;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -18,7 +17,6 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   appearance: textfield;
 }
-
 
 @tailwind base;
 @tailwind components;
@@ -36,6 +34,11 @@ input[type="number"] {
   font-family: 'Bernard MT', serif;
 }
 
+@layer utilities {
+  .sn-input {
+    @apply h-10 text-black w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50
+  }
+}
 @media print {
   @font-face {
     font-family: 'Bernard MT';
