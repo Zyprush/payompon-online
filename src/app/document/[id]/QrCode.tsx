@@ -4,6 +4,7 @@ import { db } from "@/firebase";
 import { useRequestStore } from "@/state/request";
 import { doc, getDoc } from "firebase/firestore";
 import { format } from "date-fns";
+import GetText from "@/app/admin/settings/GetText";
 
 const QrCode = () => {
   // Get the current URL or define any URL you want to encode in the QR code
@@ -41,7 +42,7 @@ const QrCode = () => {
       <p>Paid Under O.R: {request?.orNo}</p>
       <p>Res. Cert. No: {request?.certNo}</p>
       <p>Issued on: {request?.issueOn} </p>
-      <p>Issued at: Barangay Payompon Mamburao, Occ. Mindoro</p>
+      <p>Issued at: <GetText name="address" title="adress"/></p>
     </span>
   );
 };

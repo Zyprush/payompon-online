@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase"; // Make sure this path is correct
 import UserNavLayout from "@/components/UserNavLayout";
+import { IconPhone } from "@tabler/icons-react";
 
 interface Official {
   id: string;
@@ -73,7 +74,12 @@ const Officials: React.FC = (): JSX.Element => {
                   <tr key={official.id}>
                     <td className="px-4 py-2 border-b text-xs">{official.name}</td>
                     <td className="px-4 py-2 border-b text-xs">{official.position}</td>
-                    <td className="px-4 py-2 border-b text-xs">{official.contact}</td> {/* Updated cell */}
+                    <td className="py-2 px-6 border-b text-xs">
+                      <a href={`tel:${official.contact}`} className="flex items-center">
+                        <IconPhone className="h-5 w-5 mr-2" />
+                        {official.contact}
+                      </a>
+                    </td> {/* Updated cell */}
                     <td className="px-4 py-2 border-b text-xs">
                       {official.chairmanship || "N/A"}
                     </td>

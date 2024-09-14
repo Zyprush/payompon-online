@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { NavLink } from "./NavLink";
 import { IconGpsFilled } from "@tabler/icons-react";
+import GetText from "@/app/admin/settings/GetText";
 
 const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
   const pathname = usePathname();
@@ -19,7 +20,7 @@ const SideNavbar:  React.FC<{navItems:any}> = ({navItems}) => {
         className={`h-14 bg-gray-100 justify-between px-5 items-center border-r border-b border-gray-300 hidden transition-width duration-300 md:flex`}
       >
         <span className="flex items-center text-primary font-semibold rounded-md gap-2">
-          <p className="p-2 text-primary custom-shadow font-bold rounded-md flex items-center text-xl gap-2"><IconGpsFilled className="text-3xl"/>Payompon</p>
+          <p className="p-2 text-primary custom-shadow font-extrabold rounded-md flex items-center text-xl gap-2"><GetText name="name" title="name"/></p>
         </span>
       </span>
       <div className="w-full overflow-y-auto h-full flex">

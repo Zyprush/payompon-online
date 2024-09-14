@@ -167,26 +167,30 @@ const AddRequest: React.FC<AddRequestProps> = ({
             <label className="block text-sm font-semibold mb-2 text-zinc-700">
               Purpose
             </label>
-            <input
-              type="text"
+            <select
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
               className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
               disabled={loading}
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-zinc-700">
-              Amount
-            </label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
-              disabled={loading}
-            />
+            >
+              <option value="">Select a purpose</option>
+              <option value="Employment Requirement">Employment Requirement</option>
+              <option value="Business Permit">Business Permit</option>
+              <option value="Travel/Passport Requirement">Travel/Passport Requirement</option>
+              <option value="Bank Account Opening">Bank Account Opening</option>
+              <option value="Job Application">Job Application</option>
+              <option value="Barangay ID Application">Barangay ID Application</option>
+              <option value="School/Scholarship">School/Scholarship</option>
+              <option value="Proof of Residency">Proof of Residency</option>
+              <option value="Police Clearance">Police Clearance</option>
+              <option value="Marriage License">Marriage License</option>
+              <option value="Loan">Loan</option>
+              <option value="Financial assistance">Financial assistance</option>
+              <option value="Firearm License">Firearm License</option>
+              <option value="Local Government Transactions">Local Government Transactions</option>
+              <option value="Legal or Court Requirements">Legal or Court Requirements</option>
+              <option value="Community Event Participation">Community Event Participation</option>
+            </select>
           </div>
 
           <div className="mb-4">

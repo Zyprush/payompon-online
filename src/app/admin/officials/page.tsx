@@ -5,6 +5,7 @@ import AddOfficial from "./AddOfficial";
 import EditOfficial from "./EditOfficial";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase"; // Ensure this path is correct
+import { IconPhone } from "@tabler/icons-react";
 
 interface OfficialData {
   id: string;
@@ -19,7 +20,9 @@ const Official: React.FC = (): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [officials, setOfficials] = useState<OfficialData[]>([]);
-  const [currentOfficial, setCurrentOfficial] = useState<OfficialData | null>(null);
+  const [currentOfficial, setCurrentOfficial] = useState<OfficialData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const [isEmpty, setIsEmpty] = useState(false); // Empty data state
 
@@ -46,7 +49,9 @@ const Official: React.FC = (): JSX.Element => {
   }, [isModalOpen, editModalOpen]);
 
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("Are you sure you want to delete this official?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this official?"
+    );
     if (confirmed) {
       try {
         await deleteDoc(doc(db, "officials", id));
@@ -75,17 +80,20 @@ const Official: React.FC = (): JSX.Element => {
         >
           Add Official
         </button>
-        <AddOfficial isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <AddOfficial
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
         <EditOfficial
           isOpen={editModalOpen}
           onClose={() => setEditModalOpen(false)}
           officialId={currentOfficial?.id || ""}
-          initialData={{ 
+          initialData={{
             name: currentOfficial?.name || "",
             address: currentOfficial?.address || "",
             chairmanship: currentOfficial?.chairmanship || "",
             position: currentOfficial?.position || "",
-            contact: currentOfficial?.contact || ""
+            contact: currentOfficial?.contact || "",
           }}
         />
 
@@ -102,22 +110,52 @@ const Official: React.FC = (): JSX.Element => {
             <table className="min-w-full bg-white">
               <thead>
                 <tr>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Name</th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Address</th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Chairmanship</th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Position</th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Contact</th> {/* Updated header */}
-                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">Actions</th>
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
+                    Name
+                  </th>
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
+                    Address
+                  </th>
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
+                    Chairmanship
+                  </th>
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
+                    Position
+                  </th>
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
+                    Contact
+                  </th>{" "}
+                  {/* Updated header */}
+                  <th className="py-2 px-4 border-b-2 border-gray-200 text-sm text-left">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {officials.map((official) => (
                   <tr key={official.id}>
-                    <td className="py-2 px-4 border-b text-xs">{official.name}</td>
-                    <td className="py-2 px-4 border-b text-xs">{official.address}</td>
-                    <td className="py-2 px-4 border-b text-xs">{official.chairmanship || "N/A"}</td>
-                    <td className="py-2 px-4 border-b text-xs">{official.position}</td>
-                    <td className="py-2 px-4 border-b text-xs">{official.contact}</td> {/* Updated cell */}
+                    <td className="py-2 px-4 border-b text-xs">
+                      {official.name}
+                    </td>
+                    <td className="py-2 px-4 border-b text-xs">
+                      {official.address}
+                    </td>
+                    <td className="py-2 px-4 border-b text-xs">
+                      {official.chairmanship || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border-b text-xs">
+                      {official.position}
+                    </td>
+                    <td className="py-2 px-4 border-b text-xs">
+                      <a
+                        href={`tel:${official.contact}`}
+                        className="flex items-center"
+                      >
+                        <IconPhone className="h-5 w-5 mr-2" />
+                        {official.contact}
+                      </a>
+                    </td>{" "}
+                    {/* Updated cell */}
                     <td className="py-2 px-4 border-b flex space-x-2">
                       <button
                         className="btn btn-xs text-neutral btn-outline rounded-sm"
