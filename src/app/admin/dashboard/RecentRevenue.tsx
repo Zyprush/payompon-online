@@ -37,43 +37,45 @@ const RecentRevenue: React.FC = () => {
   };
 
   return (
-    <div className="p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 w-auto mr-auto">
+    <div className="flex-1 p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 h-96 overflow-y-auto">
       <h2 className="font-bold text-primary mb-4">Recent Orders</h2>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            {['Document', 'Amount', 'Date', 'OR No'].map((header) => (
-              <th
-                key={header}
-                scope="col"
-                className="py-3 px-6 text-left font-bold text-gray-600 text-xs tracking-wider"
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {revenue.map((order, index) => (
-            <tr key={index}>
-              <td className="py-3 px-6 whitespace-nowrap text-zinc-600 text-sm">
-                {order.certType}
-              </td>
-              <td className="py-3 px-6 whitespace-nowrap text-xs text-zinc-600 font-semibold">
-              Php {order.amount}
-              </td>
-              <td className="py-3 px-6 whitespace-nowrap text-xs text-zinc-600">
-                {formatDate(order.time)}
-              </td>
-              <td className="py-3 px-6 whitespace-nowrap text-xs">
-                <span className="text-primary btn btn-outline btn-xs">
-                  {order.orNo}
-                </span>
-              </td>
+      <div className="overflow-x-auto h-full"> {/* Ensures horizontal scroll on small screens */}
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              {['Document', 'Amount', 'Date', 'OR No'].map((header) => (
+                <th
+                  key={header}
+                  scope="col"
+                  className="py-3 px-6 text-left font-bold text-gray-600 text-xs tracking-wider"
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {revenue.map((order, index) => (
+              <tr key={index}>
+                <td className="py-3 px-6 whitespace-nowrap text-zinc-600 text-sm">
+                  {order.certType}
+                </td>
+                <td className="py-3 px-6 whitespace-nowrap text-xs text-zinc-600 font-semibold">
+                  Php {order.amount}
+                </td>
+                <td className="py-3 px-6 whitespace-nowrap text-xs text-zinc-600">
+                  {formatDate(order.time)}
+                </td>
+                <td className="py-3 px-6 whitespace-nowrap text-xs">
+                  <span className="text-primary btn btn-outline btn-xs">
+                    {order.orNo}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

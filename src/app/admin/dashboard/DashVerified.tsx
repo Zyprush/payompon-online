@@ -17,7 +17,7 @@ const DashVerified = () => {
   }, []);
 
   return (
-    <div className="stats shadow">
+    <div className="stats shadow flex-1">
       <div className="stat">
         <div className="stat-title font-semibold">Verified Resident</div>
         <div className="stat-value text-primary">{verifiedCount}</div>

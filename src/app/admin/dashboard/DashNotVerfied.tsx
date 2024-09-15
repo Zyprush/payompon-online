@@ -17,7 +17,7 @@ const DashNotVerified = () => {
   }, []);
 
   return (
-    <div className="stats shadow">
+    <div className="stats shadow flex-1">
       <div className="stat">
         <div className="stat-title font-semibold">Verification</div>
         <div className="stat-value text-primary">{unverifiedCount}</div>
