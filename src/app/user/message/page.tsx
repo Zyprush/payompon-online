@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import NavLayout from "@/components/NavLayout";
+
 import { collection, query, onSnapshot, orderBy, where, addDoc, serverTimestamp, doc, getDoc, getDocs } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import { Search, Send, Menu } from 'lucide-react';
+import UserNavLayout from '@/components/UserNavLayout';
 
 interface User {
     id: string;
@@ -187,7 +188,7 @@ const Message: React.FC = () => {
     };
 
     return (
-        <NavLayout>
+        <UserNavLayout>
             <div className="flex h-screen bg-gray-100">
                 {/* Sidebar */}
                 <div className={`fixed z-40 inset-0 bg-black bg-opacity-50 lg:hidden ${isSidebarOpen ? 'block' : 'hidden'}`} onClick={toggleSidebar}></div>
@@ -267,7 +268,7 @@ const Message: React.FC = () => {
                     </form>
                 </div>
             </div>
-        </NavLayout>
+        </UserNavLayout>
     );
 };
 
