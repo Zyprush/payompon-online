@@ -62,4 +62,8 @@ input[type="number"] {
   }
 }
 
-/* Other custom styles */
+@media print {
+  .print-header {
+    display: flex;
+  }
+}

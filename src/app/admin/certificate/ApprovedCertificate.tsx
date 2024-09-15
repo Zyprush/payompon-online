@@ -1,7 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
+import ReactToPrint from "react-to-print";
+import Header from "@/app/document/[id]/Header";
 
 interface RequestData {
   id: string;
@@ -15,6 +17,7 @@ interface RequestData {
 const ApprovedCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -22,7 +25,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
         const q = query(
           collection(db, "requests"),
           where("status", "==", "approved"),
-          orderBy("timestamp","desc")
+          orderBy("timestamp", "desc")
         );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
@@ -42,59 +45,72 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
 
   return (
     <div className="certificate-list">
-      {loading ? (
-        <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
-          Loading...
-        </p>
-      ) : requests.length > 0 ? (
-        <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Request Type
-              </th>
-              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Name
-              </th>
-              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                GCash Ref No
-              </th>
-              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Proof of Payment
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {requests.map((request) => (
-              <tr key={request.id}>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.requestType}
-                </td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.submittedName}
-                </td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.gcashRefNo}
-                </td>
-                <td className="py-2 px-4 border-b text-left text-xs font-semibold">
-                  <a
-                    href={`https://payompon-online.vercel.app/document/${request.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500"
-                  >
-                    View Doc
-                  </a>
-                </td>
+      <ReactToPrint
+        trigger={() => (
+          <button className="btn btn-sm btn-primary text-white fixed bottom-4 right-4">
+            Print
+          </button>
+        )}
+        content={() => printRef.current}
+      />
+      <div className="flex flex-col" ref={printRef}>
+        <div className="print-header hidden">
+          <Header />
+        </div>
+        {loading ? (
+          <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
+            Loading...
+          </p>
+        ) : requests.length > 0 ? (
+          <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                  Request Type
+                </th>
+                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                  Name
+                </th>
+                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                  GCash Ref No
+                </th>
+                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                  Proof of Payment
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-80">
-          No completed certificates found.
-        </p>
-      )}
+            </thead>
+            <tbody>
+              {requests.map((request) => (
+                <tr key={request.id}>
+                  <td className="py-2 px-4 border-b text-left text-xs w-60">
+                    {request.requestType}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left text-xs">
+                    {request.submittedName}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left text-xs">
+                    {request.gcashRefNo}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left text-xs font-semibold">
+                    <a
+                      href={`https://payompon-online.vercel.app/document/${request.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500"
+                    >
+                      View Doc
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-80">
+            No completed certificates found.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

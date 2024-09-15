@@ -1,4 +1,5 @@
 "use client";
+import Header from "@/app/document/[id]/Header";
 import NavLayout from "@/components/NavLayout";
 import { useRevenueStore } from "@/state/revenue";
 import { format, parseISO } from "date-fns";
@@ -44,6 +45,8 @@ const Revenue: React.FC = (): JSX.Element => {
         content={() => printRef.current}
       />
       <div className="flex gap-5 p-5 flex-col" ref={printRef}>
+        {/* only show header while printing */}
+        <div className="print-header hidden"><Header/></div>
         <h1 className="text-xl text-primary flex gap-2 items-center font-bold">
           <span className="ml-2">Revenue</span>
           <div className="flex gap-4">
