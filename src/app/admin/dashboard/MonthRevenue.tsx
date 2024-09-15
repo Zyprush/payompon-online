@@ -15,7 +15,7 @@ const MonthRevenue: React.FC = () => {
   }, [fetchRevenueThisMonth]);
 
   return (
-    <div className="stats shadow">
+    <div className="stats shadow flex-1">
       <div className="stat">
         <div className="stat-title font-semibold">Monthly Revenue</div>
         <div className="stat-value text-primary">
