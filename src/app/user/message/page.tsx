@@ -1,119 +1,274 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "@/firebase";
-import UserNavLayout from "@/components/UserNavLayout";
 
-interface Message {
-  senderId: string;
-  message: string;
-  timestamp: any;
-  isAdmin: boolean;
+import React, { useState, useEffect, useRef } from 'react';
+import NavLayout from "@/components/NavLayout";
+import { collection, query, onSnapshot, orderBy, where, addDoc, serverTimestamp, doc, getDoc, getDocs } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { db } from '@/firebase';
+import { Search, Send, Menu } from 'lucide-react';
+
+interface User {
+    id: string;
+    name: string;
+    role: string;
+    photoURL: string;
 }
 
-const Chat = () => {
-  const [user] = useAuthState(auth);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [lastSeenMessageTimestamp, setLastSeenMessageTimestamp] = useState<number | null>(null);
+interface Message {
+    id: string;
+    text: string;
+    sender: string;
+    receiver: string;
+    timestamp: any;
+    participants: string[];
+    conversationId: string;
+}
 
-  const messageListRef = useRef<HTMLDivElement | null>(null);
+const Message: React.FC = () => {
+    const [users, setUsers] = useState<User[]>([]);
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [currentMessage, setCurrentMessage] = useState<string>('');
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for sidebar
 
-  useEffect(() => {
-    if (!user || !user?.uid) return; // Ensure user.uid is defined
+    // Toggle sidebar visibility
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
-    const q = query(
-      collection(db, "chats", user.uid, "messages"),
-      orderBy("timestamp", "asc")
-    );
+    // Fetch current logged-in user and user list
+    useEffect(() => {
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnapshot = await getDoc(docRef);
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map((doc) => ({
-        ...(doc.data() as unknown as Message), // Cast to unknown first
-        id: doc.id,
-      })) as Message[]; // Ensure doc.data() returns all Message properties
+                    if (docSnapshot.exists()) {
+                        const userData = docSnapshot.data() as User;
+                        setCurrentUser({
+                            id: user.uid,
+                            name: userData.name,
+                            role: userData.role,
+                            photoURL: userData.photoURL || 'https://example.com/avatar.jpg',
+                        });
+                    } else {
+                        console.log("No matching user data found!");
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data: ", error);
+                }
+            } else {
+                setCurrentUser(null);
+            }
+        });
 
-      setMessages(messages);
+        const usersQuery = query(collection(db, 'users'));
+        const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+            const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+            setUsers(usersData);
+            setFilteredUsers(usersData);
+        });
 
-      // Automatically set the last seen timestamp to the latest message timestamp if there is a new message
-      if (messages.length > 0) {
-        const lastMessage = messages[messages.length - 1];
-        setLastSeenMessageTimestamp(lastMessage.timestamp.seconds);
-      }
-    });
+        return () => {
+            unsubscribe();
+            unsubscribeUsers();
+        };
+    }, []);
 
-    return () => unsubscribe();
-  }, [user]);
+    // Fetch messages for selected user
+    useEffect(() => {
+        if (selectedUser && currentUser) {
+            const participants = [currentUser.id, selectedUser.id].sort();
+            const conversationId = participants.join('_');
 
-  const sendMessage = async () => {
-    if (newMessage.trim() === "" || !user) return; // Check if user is defined
+            const fetchMessages = async () => {
+                try {
+                    const messagesQuery = query(
+                        collection(db, 'pmessages'),
+                        where('conversationId', '==', conversationId)
+                    );
+                    
+                    const querySnapshot = await getDocs(messagesQuery);
+                    const messagesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
+                    
+                    // Sort messages by timestamp client-side
+                    messagesData.sort((a, b) => a.timestamp - b.timestamp);
+                    
+                    setMessages(messagesData);
+                    console.log('Fetched messages:', messagesData); // Debug log
+                } catch (error) {
+                    console.error("Error fetching messages:", error);
+                }
+            };
 
-    await addDoc(collection(db, "chats", user.uid, "messages"), {
-      senderId: user.uid!,
-      message: newMessage,
-      timestamp: serverTimestamp(),
-      isAdmin: false, // Update this based on whether it's a user or admin
-    });
-
-    setNewMessage("");
-  };
-
-  // Scroll to the bottom when new messages are added
-  useEffect(() => {
-    if (messageListRef.current) {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  return (
-    <UserNavLayout>
-      <div className="chat-container">
-        <div className="messages-list h-80 overflow-y-auto p-4 bg-gray-100 rounded-lg" ref={messageListRef}>
-          {messages.map((msg, index) => {
-            // Check if the message is newer than the last seen message timestamp
-            const isNewMessage =
-              lastSeenMessageTimestamp !== null && msg.timestamp?.seconds > lastSeenMessageTimestamp;
-
-            return (
-              <div
-                key={index}
-                className={`message p-2 mb-2 rounded-lg ${
-                  isNewMessage
-                    ? "bg-red-400"
-                    : msg.isAdmin
-                    ? "bg-blue-200"
-                    : "bg-green-200"
-                }`}
-              >
-                <p>{msg.message}</p>
-              </div>
+            fetchMessages();
+            
+            // Set up a listener for real-time updates
+            const unsubscribeMessages = onSnapshot(
+                query(collection(db, 'pmessages'), where('conversationId', '==', conversationId)),
+                (snapshot) => {
+                    fetchMessages(); // Refetch and resort messages on updates
+                }
             );
-          })}
-        </div>
 
-        <div className="input-container mt-4 flex">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            className="border border-gray-300 p-2 rounded-lg flex-grow"
-            placeholder="Type your message..."
-          />
-          <button onClick={sendMessage} className="bg-blue-500 text-white p-2 rounded-lg ml-2">
-            Send
-          </button>
-        </div>
-      </div>
-    </UserNavLayout>
-  );
+            return () => unsubscribeMessages();
+        }
+    }, [selectedUser, currentUser]);
+
+    useEffect(() => {
+        scrollToBottom();
+        console.log('Current messages:', messages);
+    }, [messages]);
+
+    // Scroll to bottom when new messages are added
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Handle message sending
+    const sendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedUser || !currentUser || !currentMessage.trim()) return;
+
+        const participants = [currentUser.id, selectedUser.id].sort();
+        const conversationId = participants.join('_');
+
+        try {
+            await addDoc(collection(db, 'pmessages'), {
+                text: currentMessage,
+                sender: currentUser.id,
+                receiver: selectedUser.id,
+                timestamp: serverTimestamp(),
+                participants: participants,
+                conversationId: conversationId,
+            });
+            setCurrentMessage('');
+        } catch (error) {
+            console.error("Error sending message: ", error);
+            alert("Failed to send message. Please try again.");
+        }
+    };
+
+    // Handle search functionality for users
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const term = e.target.value.toLowerCase();
+        setSearchTerm(term);
+        const filtered = users.filter(user =>
+            user.name.toLowerCase().includes(term) ||
+            user.role.toLowerCase().includes(term)
+        );
+        setFilteredUsers(filtered);
+    };
+
+    const renderMessage = (message: Message) => {
+        const isCurrentUser = message.sender === currentUser?.id;
+        return (
+            <div key={message.id} className={`mb-4 flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+                <div
+                    className={`max-w-[70%] p-3 rounded-lg ${isCurrentUser
+                            ? 'bg-blue-500 text-white rounded-br-none'
+                            : 'bg-white text-gray-800 rounded-bl-none shadow-md'
+                        }`}
+                >
+                    <p>{message.text}</p>
+                    <span className={`text-xs ${isCurrentUser ? 'text-blue-100' : 'text-gray-500'}`}>
+                        {message.timestamp?.toDate().toLocaleTimeString()}
+                    </span>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <NavLayout>
+            <div className="flex h-screen bg-gray-100">
+                {/* Sidebar */}
+                <div className={`fixed z-40 inset-0 bg-black bg-opacity-50 lg:hidden ${isSidebarOpen ? 'block' : 'hidden'}`} onClick={toggleSidebar}></div>
+                <div className={`fixed z-50 inset-y-0 left-0 w-64 bg-white transition-transform transform lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <div className="p-4 border-b flex items-center justify-between lg:hidden">
+                        <h2 className="text-xl font-bold">Users</h2>
+                        <button onClick={toggleSidebar}>
+                            <Menu size={24} />
+                        </button>
+                    </div>
+                    <div className="p-4 border-b">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search users..."
+                                value={searchTerm}
+                                onChange={handleSearch}
+                                className="w-full p-2 pr-10 border rounded bg-gray-100"
+                            />
+                            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        </div>
+                    </div>
+                    <div className="overflow-y-auto h-[calc(100vh-80px)]">
+                        {filteredUsers.map(user => (
+                            <div
+                                key={user.id}
+                                className={`flex items-center p-4 cursor-pointer hover:bg-gray-100 transition ${selectedUser?.id === user.id ? 'bg-blue-100' : ''}`}
+                                onClick={() => setSelectedUser(user)}
+                            >
+                                <img src={user.photoURL || '/img/profile.jpg'} alt={user.name} className="w-10 h-10 rounded-full mr-3" />
+                                <div>
+                                    <h3 className="font-semibold">{user.name}</h3>
+                                    <p className="text-sm text-gray-500">{user.role}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="flex-1 flex flex-col">
+                    {/* Header with user information */}
+                    <div className="bg-white p-4 border-b flex items-center justify-between">
+                        {selectedUser && (
+                            <div className="flex items-center space-x-3">
+                                <img src={selectedUser.photoURL || '/img/profile.jpg'} alt={selectedUser.name} className="w-10 h-10 rounded-full" />
+                                <div>
+                                    <h3 className="font-semibold">{selectedUser.name}</h3>
+                                    <p className="text-sm text-gray-500">{selectedUser.role}</p>
+                                </div>
+                            </div>
+                        )}
+                        {/* Burger button for mobile */}
+                        <button className="lg:hidden" onClick={toggleSidebar}>
+                            <Menu size={24} />
+                        </button>
+                    </div>
+
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+                        {messages.map(renderMessage)}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Message input form */}
+                    <form onSubmit={sendMessage} className="p-4 bg-white border-t flex items-center">
+                        <input
+                            type="text"
+                            placeholder="Type your message..."
+                            value={currentMessage}
+                            onChange={(e) => setCurrentMessage(e.target.value)}
+                            className="flex-1 p-2 border rounded bg-gray-100"
+                        />
+                        <button type="submit" className="ml-4 p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition">
+                            <Send size={20} />
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </NavLayout>
+    );
 };
 
-export default Chat;
+export default Message;
