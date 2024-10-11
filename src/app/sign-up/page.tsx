@@ -23,29 +23,31 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [middlename, setMiddlename] = useState("");
+  const [address, setAddress] = useState("");
   const [number, setNumber] = useState("");
   const [gender, setGender] = useState("");
   const [sitio, setSitio] = useState("");
   const [civilStatus, setCivilStatus] = useState("");
-  const [validID, setValidID] = useState<File | null>(null); // State to handle file input
-  const [selfie, setSelfie] = useState<File | null>(null); // State to handle selfie file input
-  const [validIDType, setValidIDType] = useState(""); // State to handle valid ID type
+  const [validID, setValidID] = useState<File | null>(null);
+  const [selfie, setSelfie] = useState<File | null>(null);
+  const [validIDType, setValidIDType] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword(!showConfirmPassword);
-  };
 
   const validateInputs = () => {
     if (
-      !name ||
+      !firstname ||
+      !lastname ||
+      !middlename ||
+      !address ||
       !email ||
       !number ||
       !gender ||
@@ -85,31 +87,29 @@ export default function Page() {
       const user = userCredential.user;
 
       const validIDRef = ref(storage, `validIDs/${user.uid}`);
+      const selfieRef = ref(storage, `selfies/${user.uid}`);
+
       if (validID) {
         await uploadBytes(validIDRef, validID);
-      } else {
-        throw new Error("Valid ID file is missing.");
       }
-
-      const selfieRef = ref(storage, `selfies/${user.uid}`);
       if (selfie) {
         await uploadBytes(selfieRef, selfie);
-      } else {
-        throw new Error("Selfie file is missing.");
       }
 
       const validIDURL = await getDownloadURL(validIDRef);
       const selfieURL = await getDownloadURL(selfieRef);
       await sendEmailVerification();
 
-      // Create a document reference within the 'users' collection using user.uid
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
-        name: name,
-        number: number,
-        gender: gender,
-        sitio: sitio,
-        civilStatus: civilStatus,
+        firstname,
+        lastname,
+        middlename,
+        address,
+        number,
+        gender,
+        sitio,
+        civilStatus,
         validID: validIDURL,
         selfie: selfieURL,
         role: "resident",
@@ -141,17 +141,78 @@ export default function Page() {
           </h2>
           <form className="mt-8" method="POST" onSubmit={onSubmit}>
             <div className="space-y-5">
-              <div>
+              <div className="grid grid-cols-2 gap-3">
                 <div className="mt-2">
                   <input
-                    placeholder="Name"
+                    placeholder="First Name"
                     type="text"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
+                    onChange={(e) => setFirstname(e.target.value)}
+                    value={firstname}
                     className="sn-input"
                   />
                 </div>
+                <div className="mt-2">
+                  <input
+                    placeholder="Last Name"
+                    type="text"
+                    onChange={(e) => setLastname(e.target.value)}
+                    value={lastname}
+                    className="sn-input"
+                  />
+                </div>
+                <div className="mt-2">
+                  <input
+                    placeholder="Middle Name"
+                    type="text"
+                    onChange={(e) => setMiddlename(e.target.value)}
+                    value={middlename}
+                    className="sn-input"
+                  />
+                </div>
+                <div>
+                <div className="mt-2">
+                  <select
+                    onChange={(e) => setSitio(e.target.value)}
+                    value={sitio}
+                    className="sn-input"
+                  >
+                    <option value="">Select Sitio</option>
+                    <option>Marina</option>
+                    <option>Bagong Sikat</option>
+                    <option>Masigasig</option>
+                    <option>Seaside</option>
+                    <option>Airport</option>
+                    <option>Calle Onse</option>
+                    <option>Masikap</option>
+                    <option>Bansutan/Victoria</option>
+                    <option>Paraiso</option>
+                    <option>Boning</option>
+                    <option>Dapi</option>
+                    <option>Charot</option>
+                    <option>Pagkakaisa</option>
+                    <option>Masagana</option>
+                    <option>Maligaya</option>
+                    <option>Ungkot</option>
+                    <option>PagAsa Kanan</option>
+                    <option>PagAsa Kaliwa</option>
+                    <option>Maasim</option>
+                    <option>Urban</option>
+                    <option>Santolan</option>
+                    <option>LA</option>
+                  </select>
+                </div>
               </div>
+              </div>
+              <div className="mt-2">
+                <input
+                  placeholder="Address"
+                  type="text"
+                  onChange={(e) => setAddress(e.target.value)}
+                  value={address}
+                  className="sn-input"
+                />
+              </div>
+
               <div className="flex justify-between gap-2">
                 <input
                   placeholder="Email"
@@ -195,17 +256,7 @@ export default function Page() {
                   <option value="married">Married</option>
                 </select>
               </div>
-              <div>
-                <div className="mt-2">
-                  <input
-                    placeholder="Sitio"
-                    type="text"
-                    onChange={(e) => setSitio(e.target.value)}
-                    value={sitio}
-                    className="sn-input"
-                  />
-                </div>
-              </div>
+    
               <div>
                 <div className="mt-2"></div>
               </div>
@@ -254,53 +305,38 @@ export default function Page() {
                     className="sn-input"
                   >
                     <option value="">Select Valid ID</option>
-                    <option value="Philippine Passport">
-                      Philippine Passport
-                    </option>
-                    <option value="Driver’s License">Driver’s License</option>
-                    <option value="Unified Multi-Purpose ID (UMID)">
-                      Unified Multi-Purpose ID (UMID)
-                    </option>
-                    <option value="Voter’s ID or Voter’s Certificate">
-                      Voter’s ID or Voter’s Certificate
-                    </option>
-                    <option value="PhilHealth ID">PhilHealth ID</option>
-                    <option value="Social Security System (SSS) ID">
-                      Social Security System (SSS) ID
-                    </option>
-                    <option value="Postal ID">Postal ID</option>
-                    <option value="Professional Regulation Commission (PRC) ID">
-                      Professional Regulation Commission (PRC) ID
-                    </option>
-                    <option value="Barangay ID">Barangay ID</option>
-                    <option value="Government Service Insurance System (GSIS) eCard">
-                      Government Service Insurance System (GSIS) eCard
-                    </option>
-                    <option value="Philippine National Police (PNP) ID">
-                      Philippine National Police (PNP) ID
-                    </option>
-                    <option value="Senior Citizen ID">Senior Citizen ID</option>
-                    <option value="Person with Disability (PWD) ID">
-                      Person with Disability (PWD) ID
-                    </option>
-                    <option value="Bureau of Internal Revenue (BIR) ID (TIN ID)">
-                      Bureau of Internal Revenue (BIR) ID (TIN ID)
-                    </option>
-                    <option value="Overseas Workers Welfare Administration (OWWA) ID">
-                      Overseas Workers Welfare Administration (OWWA) ID
-                    </option>
-                    <option value="School ID (for students)">
-                      School ID (for students)
-                    </option>
-                    <option value="Alien Certificate of Registration (ACR) ID">
-                      Alien Certificate of Registration (ACR) ID
-                    </option>
-                    <option value="Company ID (for employed individuals)">
-                      Company ID (for employed individuals)
-                    </option>
-                    <option value="Indigenous People’s (IP) ID">
-                      Indigenous People’s (IP) ID
-                    </option>
+                    <optgroup label="Primary ID">
+                      <option value="Philippine Passport">
+                        Philippine Passport
+                      </option>
+                      <option value="Driver’s License">Driver’s License</option>
+                      <option value="Unified Multi-Purpose ID (UMID)">
+                        Unified Multi-Purpose ID (UMID)
+                      </option>
+                      <option value="Voter’s ID or Voter’s Certification">
+                        Voter’s ID or Voter’s Certification
+                      </option>
+                      <option value="Postal ID">Postal ID</option>
+                      <option value="PhilSys ID (National ID)">
+                        PhilSys ID (National ID)
+                      </option>
+                      <option value="RC License">RC License</option>
+                    </optgroup>
+                    <optgroup label="Secondary ID">
+                      <option value="Barangay ID or Barangay Clearance">
+                        Barangay ID or Barangay Clearance
+                      </option>
+                      <option value="Company ID">Company ID</option>
+                      <option value="School ID">School ID</option>
+                      <option value="PhilHealth ID">PhilHealth ID</option>
+                      <option value="NBI Clearance">NBI Clearance</option>
+                      <option value="Police Clearance">Police Clearance</option>
+                      <option value="Senior Citizen ID">
+                        Senior Citizen ID
+                      </option>
+                      <option value="PWD ID">PWD ID</option>
+                      <option value="TIN ID">TIN ID</option>
+                    </optgroup>
                   </select>
                 </div>
               </div>

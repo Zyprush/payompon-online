@@ -31,7 +31,7 @@ const Account: React.FC<AccountProps> = ({ userData }) => {
 
           <span className="w-auto">
             <h1 className="font-bold text-primary">
-              Hello, {memoizedUserData?.name}!
+              Hello, {memoizedUserData?.name || memoizedUserData?.firstname}!
             </h1>
             <h1 className="text-xs text-zinc-500">
               {toTitleCase(memoizedUserData?.role)}

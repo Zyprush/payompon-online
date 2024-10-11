@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
 import { useRevenueStore } from "@/state/revenue";
 import { useMessages } from "@/hooks/useMessages";
+import { v4 as uuidv4 } from "uuid"; // Import UUID library
+
 interface UpdateCertificateProps {
   selectedRequest: any;
   onClose: () => void;
@@ -18,10 +20,24 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const [issueOn, setIssueOn] = useState<string>("");
   const [certNo, setCertNo] = useState<string>("");
   const [affiant, setAffiant] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false); // Add loading state
+  const [loading, setLoading] = useState<boolean>(false);
   const { addNotif } = useNotifStore();
   const { addRevenue } = useRevenueStore();
   const { addMessage } = useMessages();
+
+  useEffect(() => {
+    // Auto-generate unique OR No and Cert No
+    const generateUniqueNumber = () => {
+      const timestamp = Date.now().toString(); // Use current timestamp
+      const uniqueCertNo = `CERT-${timestamp}`;
+      const uniqueOrNo = `OR-${uuidv4().substring(0, 8)}`; // Generate part of a UUID for OR No
+
+      setCertNo(uniqueCertNo);
+      setOrNo(uniqueOrNo);
+    };
+
+    generateUniqueNumber();
+  }, []); // This will run once when the component mounts
 
   const handleUpdate = async () => {
     if (!orNo || !issueOn || !certNo || !affiant) {
@@ -29,7 +45,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       const requestDoc = doc(db, "requests", selectedRequest.id);
@@ -87,14 +103,24 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         </h2>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
+            Certificate No.
+          </label>
+          <input
+            type="text"
+            value={certNo}
+            disabled
+            className="w-full border rounded px-3 py-2 text-sm bg-gray-200 cursor-not-allowed"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             OR No.
           </label>
           <input
-            type="number"
+            type="text"
             value={orNo}
-            onChange={(e) => setOrNo(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled
+            className="w-full border rounded px-3 py-2 text-sm bg-gray-200 cursor-not-allowed"
           />
         </div>
         <div className="mb-4">
@@ -109,18 +135,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
             className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Certificate No.
-          </label>
-          <input
-            type="number"
-            required
-            value={certNo}
-            onChange={(e) => setCertNo(e.target.value)}
-            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -138,16 +153,16 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
           <button
             onClick={onClose}
             className="btn btn-outline text-neutral rounded"
-            disabled={loading} // Disable Cancel button during loading
+            disabled={loading}
           >
             Cancel
           </button>
           <button
             onClick={handleUpdate}
             className="btn btn-primary text-white rounded"
-            disabled={loading} // Disable Update button during loading
+            disabled={loading}
           >
-            {loading ? "Updating..." : "Update"} {/* Show loading text */}
+            {loading ? "Updating..." : "Update"}
           </button>
         </div>
       </div>

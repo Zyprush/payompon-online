@@ -58,9 +58,13 @@ const Verify: FC = () => {
               </h1>
               <div className="text-xs text-zinc-500 text-wrap">
                 <p className="">
-                  Account not fully verified. No access to services.If you
-                  receive a message regarding your account verfication, please
-                  visit barangay hall with valid ID to verify account.
+                  Your account is not fully verified. You currently do not have
+                  access to services. To complete your account verification,
+                  please visit the barangay hall to register your fingerprint.
+                  This is required to process any document requests, including
+                  the Thumbmark Certificate. Make sure to bring a valid ID for
+                  registration at the barangay hall. Once your fingerprint is
+                  registered, you will be able to access the online services.
                 </p>
                 <Link
                   className="underline block"
