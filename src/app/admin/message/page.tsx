@@ -41,7 +41,6 @@ const Message: React.FC = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
-    // Fetch current logged-in user and user list
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -73,7 +72,7 @@ const Message: React.FC = () => {
         const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
             const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
             setUsers(usersData);
-            setFilteredUsers(usersData);
+            filterUsers(usersData, currentUser);
         });
 
         return () => {
@@ -81,6 +80,28 @@ const Message: React.FC = () => {
             unsubscribeUsers();
         };
     }, []);
+
+    // New function to filter users based on roles
+    const filterUsers = (allUsers: User[], currentUser: User | null) => {
+        if (!currentUser) return;
+
+        let filtered: User[];
+        if (currentUser.role === 'resident') {
+            filtered = allUsers.filter(user => ['admin', 'staff'].includes(user.role));
+        } else if (['admin', 'staff'].includes(currentUser.role)) {
+            filtered = allUsers.filter(user => user.id !== currentUser.id);
+        } else {
+            filtered = [];
+        }
+
+        setFilteredUsers(filtered);
+    };
+
+    // Update filterUsers call when currentUser changes
+    useEffect(() => {
+        filterUsers(users, currentUser);
+    }, [currentUser, users]);
+
 
     // Fetch messages for selected user
     useEffect(() => {
@@ -102,7 +123,7 @@ const Message: React.FC = () => {
                     messagesData.sort((a, b) => a.timestamp - b.timestamp);
                     
                     setMessages(messagesData);
-                    console.log('Fetched messages:', messagesData); // Debug log
+                    //console.log('Fetched messages:', messagesData); // Debug log
                 } catch (error) {
                     console.error("Error fetching messages:", error);
                 }
@@ -124,7 +145,7 @@ const Message: React.FC = () => {
 
     useEffect(() => {
         scrollToBottom();
-        console.log('Current messages:', messages);
+        //console.log('Current messages:', messages);
     }, [messages]);
 
     // Scroll to bottom when new messages are added
@@ -160,11 +181,11 @@ const Message: React.FC = () => {
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const term = e.target.value.toLowerCase();
         setSearchTerm(term);
-        const filtered = users.filter(user =>
+        const searchFiltered = users.filter(user =>
             user.name.toLowerCase().includes(term) ||
             user.role.toLowerCase().includes(term)
         );
-        setFilteredUsers(filtered);
+        filterUsers(searchFiltered, currentUser);
     };
 
     const renderMessage = (message: Message) => {
