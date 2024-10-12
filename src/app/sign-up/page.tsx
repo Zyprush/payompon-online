@@ -171,35 +171,13 @@ export default function Page() {
                 </div>
                 <div>
                 <div className="mt-2">
-                  <select
+                  <input
+                    placeholder="Sitio"
+                    type="text"
                     onChange={(e) => setSitio(e.target.value)}
                     value={sitio}
                     className="sn-input"
-                  >
-                    <option value="">Select Sitio</option>
-                    <option>Marina</option>
-                    <option>Bagong Sikat</option>
-                    <option>Masigasig</option>
-                    <option>Seaside</option>
-                    <option>Airport</option>
-                    <option>Calle Onse</option>
-                    <option>Masikap</option>
-                    <option>Bansutan/Victoria</option>
-                    <option>Paraiso</option>
-                    <option>Boning</option>
-                    <option>Dapi</option>
-                    <option>Charot</option>
-                    <option>Pagkakaisa</option>
-                    <option>Masagana</option>
-                    <option>Maligaya</option>
-                    <option>Ungkot</option>
-                    <option>PagAsa Kanan</option>
-                    <option>PagAsa Kaliwa</option>
-                    <option>Maasim</option>
-                    <option>Urban</option>
-                    <option>Santolan</option>
-                    <option>LA</option>
-                  </select>
+                  />
                 </div>
               </div>
               </div>
