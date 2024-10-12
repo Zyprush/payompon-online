@@ -10,8 +10,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Payompon Online",
-  description: "Payompon online certification system",
+  title: "Barangay Certification System",
+  description: "Barangay online certification system",
 };
 
 export default function RootLayout({
