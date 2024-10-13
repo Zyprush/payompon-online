@@ -288,7 +288,7 @@ const Message: React.FC = () => {
                     </form>
                 </div>
             </div>
-        </NavLayout>
+        </NavLayout>  
     );
 };
 
