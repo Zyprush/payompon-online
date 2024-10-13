@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
-
 import { db } from "@/firebase";
 import UpdateCertificate from "./UpdateCertificate";
 import DeclineModal from "./DeclineModal";
@@ -24,6 +23,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
   const [declineRequest, setDeclineRequest] = useState<RequestData | null>(
     null
   );
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -57,13 +57,28 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     setDeclineRequest(request);
   };
 
+  // Filter the requests based on the search term
+  const filteredRequests = requests.filter((request) =>
+    request.submittedName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="certificate-list">
+      <div className="search-bar mb-4">
+        <input
+          type="text"
+          className="border p-2 rounded-md w-60 text-sm"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       {loading ? (
         <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
           Loading...
         </span>
-      ) : requests.length > 0 ? (
+      ) : filteredRequests.length > 0 ? (
         <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
           <thead>
             <tr>
@@ -85,7 +100,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            {requests.map((request) => (
+            {filteredRequests.map((request) => (
               <tr key={request.id} className="cursor-pointer hover:bg-gray-100">
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.requestType}
@@ -108,10 +123,16 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                   </a>
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs space-x-3">
-                  <button onClick={() => handleUpdate(request)} className="btn-xs rounded-sm btn-primary btn text-white">
+                  <button
+                    onClick={() => handleUpdate(request)}
+                    className="btn-xs rounded-sm btn-primary btn text-white"
+                  >
                     Approve
                   </button>
-                  <button onClick={() => handleDecline(request)}  className="btn-xs rounded-sm btn-outline btn text-error">
+                  <button
+                    onClick={() => handleDecline(request)}
+                    className="btn-xs rounded-sm btn-outline btn text-error"
+                  >
                     Decline
                   </button>
                 </td>

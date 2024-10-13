@@ -12,11 +12,15 @@ interface RequestData {
   proofOfPaymentURL: string;
   status: string;
   submittedName: string;
+  issueOn: string;
+  amount: string;
 }
 
 const ApprovedCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
+  const [filteredRequests, setFilteredRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>(""); // State to store search input
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,6 +37,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
           fetchedRequests.push({ id: doc.id, ...doc.data() } as RequestData);
         });
         setRequests(fetchedRequests);
+        setFilteredRequests(fetchedRequests); // Initialize filtered requests
       } catch (error) {
         console.error("Error fetching requests:", error);
       } finally {
@@ -42,6 +47,14 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
 
     fetchRequests();
   }, []);
+
+  // Filter requests by submittedName
+  useEffect(() => {
+    const filtered = requests.filter((request) =>
+      request.submittedName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredRequests(filtered);
+  }, [searchTerm, requests]);
 
   return (
     <div className="certificate-list">
@@ -57,11 +70,21 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
         <div className="print-header hidden">
           <Header />
         </div>
+
+        {/* Search input */}
+        <input
+          type="text"
+          placeholder="Search by name"
+          className="p-2 text-sm w-60 border rounded mb-4"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
         {loading ? (
           <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
             Loading...
           </p>
-        ) : requests.length > 0 ? (
+        ) : filteredRequests.length > 0 ? (
           <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
             <thead>
               <tr>
@@ -74,13 +97,16 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                 <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                   GCash Ref No
                 </th>
-                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                <th className="print:hidden py-2 px-4 border-b text-left text-xs text-gray-700">
                   Proof of Payment
+                </th>
+                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                  Certficate Link
                 </th>
               </tr>
             </thead>
             <tbody>
-              {requests.map((request) => (
+              {filteredRequests.map((request) => (
                 <tr key={request.id}>
                   <td className="py-2 px-4 border-b text-left text-xs w-60">
                     {request.requestType}
@@ -90,6 +116,16 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs">
                     {request.gcashRefNo}
+                  </td>
+                  <td className="print:hidden py-2 px-4 border-b text-left text-xs font-semibold">
+                    <a
+                      href={request.proofOfPaymentURL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500"
+                    >
+                      View
+                    </a>
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                     <a

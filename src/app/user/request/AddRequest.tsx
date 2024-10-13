@@ -171,6 +171,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
               Request Type
             </label>
             <select
+              required
               value={requestType}
               onChange={handleRequestTypeChange}
               className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
@@ -234,6 +235,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
             <input
               type="text"
               value={gcashRefNo}
+              required
               onChange={(e) => setGcashRefNo(e.target.value)}
               className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
               disabled={loading}

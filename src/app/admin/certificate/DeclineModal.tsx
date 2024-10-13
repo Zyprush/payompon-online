@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useMessages } from "@/hooks/useMessages";
 
 interface DeclineModalProps {
   declineRequest: any;
@@ -12,7 +11,6 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
   declineRequest,
   onClose,
 }) => {
-  const { addMessage } = useMessages();
   const [declineMessage, setDeclineMessage] = useState<string>("");
 
   const handleDecline = async () => {
@@ -25,18 +23,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
       const requestDoc = doc(db, "requests", declineRequest.id);
       await updateDoc(requestDoc, {
         status: "declined",
-      });
-
-      const currentTime = new Date().toISOString();
-      await addMessage({
-        message: `${declineMessage}. You may send us a message to request a refund or make another request using the same Screenshot of the Gcash transaction.`,
-        sender: "admin",
-        senderName: "Admin",
-        receiverId: declineRequest.submittedBy,
-        receiverName: declineRequest.submittedName,
-        seen: false,
-        time: currentTime,
-        for: "user",
+        declineReason: `${declineMessage}. You may send us a message to request a refund or make another request using the same Screenshot of the Gcash transaction.`,
       });
 
       alert("Request has been declined successfully.");
