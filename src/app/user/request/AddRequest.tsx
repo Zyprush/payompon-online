@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage, db } from "@/firebase";
@@ -84,7 +84,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        setUserName(userData?.name || null);
+        setUserName(userData?.firstname + " " + userData?.lastname || " ");
         setUserSitio(userData?.sitio || null);
       } else {
         console.error("No such user!");
