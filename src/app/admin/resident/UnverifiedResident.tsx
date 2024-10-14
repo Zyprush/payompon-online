@@ -171,7 +171,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                       rel="noopener noreferrer"
                       className="text-blue-500"
                     >
-                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={user.selfie}
                         alt="Selfie"
@@ -190,8 +190,13 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
-                <td className="py-2 px-4 border-b flex gap-3">
-                  <button onClick={() => setSelectedUser(user)} className="btn-outline text-primary rounded-sm btn-xs btn">View</button>
+                <td className="py-2 px-4 border-b text-xs">
+                  <button
+                    onClick={() => setSelectedUser(user)}
+                    className="btn-outline text-primary rounded-sm btn-xs btn mr-3"
+                  >
+                    View
+                  </button>
                   <button
                     onClick={() => handleVerify(user.id, true)}
                     className="btn btn-xs rounded btn-primary text-white"

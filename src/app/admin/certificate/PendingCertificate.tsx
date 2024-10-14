@@ -49,6 +49,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     fetchRequests();
   }, [selectedRequest, declineRequest]);
 
+
   const handleUpdate = (request: RequestData) => {
     setSelectedRequest(request);
   };
@@ -59,8 +60,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
 
   // Filter the requests based on the search term
   const filteredRequests = requests.filter((request) =>
-    request.submittedName.toLowerCase().includes(searchTerm.toLowerCase())
+    request.submittedName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
 
   return (
     <div className="certificate-list">
