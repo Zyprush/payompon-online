@@ -14,11 +14,11 @@ const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { userUid, userName, userEmail } = useUserData(); // Custom hook to fetch user data
+  const { userUid, firstname, lastname, userEmail } = useUserData(); // Custom hook to fetch user data
   const { addMessage } = useMessages(); // Using the useMessages custom hook
 
   const handleSubmit = async () => {
-    if (!userUid || !userName) {
+    if (!userUid) {
       alert("You must be logged in to send a message.");
       return;
     }
@@ -37,7 +37,7 @@ const SendMessage: React.FC<SendMessageProps> = ({ open, handleClose }) => {
         receiverName: recipient,
         senderEmail: userEmail,
         sender: userUid,
-        senderName: userName,
+        senderName: firstname + " " + lastname,
         message,
         time: currentTime,
         read: false,
