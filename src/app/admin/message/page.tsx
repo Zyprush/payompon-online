@@ -165,7 +165,7 @@ const Message: React.FC = () => {
             await addDoc(collection(db, 'pmessages'), {
                 text: currentMessage,
                 sender: currentUser.id,
-                receiver: selectedUser.id,
+                receiver: selectedUser.id, 
                 timestamp: serverTimestamp(),
                 participants: participants,
                 conversationId: conversationId,
