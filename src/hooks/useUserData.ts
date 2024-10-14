@@ -5,7 +5,9 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const useUserData = () => {
   const [userUid, setUserUid] = useState<string>("");
-  const [userName, setUserName] = useState<string | null>(null);
+  const [firstname, setFirstname] = useState<string | null>(null);
+  const [middlename, setMiddlename] = useState<string | null>(null);
+  const [lastname, setLastname] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [verified, setVerified] = useState<boolean>(false);
@@ -31,9 +33,11 @@ const useUserData = () => {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        setUserName(userData?.name || null);
+        setFirstname(userData?.firstname || null);
+        setMiddlename(userData?.middlename || null);
+        setLastname(userData?.lastname || null);
         setUserEmail(userData?.email || null);
-        setUserRole(userData?.role|| null);
+        setUserRole(userData?.role || null);
         setVerified(userData?.verified);
       } else {
         console.error("No such user!");
@@ -43,7 +47,7 @@ const useUserData = () => {
     }
   };
 
-  return { userUid, userName, userEmail, userRole , verified};
+  return { userUid, firstname, middlename, lastname, userEmail, userRole, verified };
 };
 
 export default useUserData;

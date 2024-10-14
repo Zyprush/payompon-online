@@ -12,7 +12,6 @@ import MessageIndicator from "./MessageIndicator";
 const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const [userData, setUserData] = useState<any>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -32,7 +31,7 @@ const MobileHeader: React.FC<{ navItems: any }> = ({ navItems }) => {
               <GetImage storageLink="settings/brgyLogo" />
             </div>
           </summary>
-          <Account userData={userData} />
+          <Account />
         </details>
         <MessageIndicator />
         <button

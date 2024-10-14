@@ -5,13 +5,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import GetImage from "../GetImage";
 import MessageIndicator from "./MessageIndicator";
+import Account from "./Account";
 
 const Header = () => { 
   const router = useRouter();
-  const handleSignOut = async () => {
-    await auth.signOut();
-    router.push("/sign-in");
-  };
+  // const handleSignOut = async () => {
+  //   await auth.signOut();
+  //   router.push("/sign-in");
+  // };
   const [userData, setUserData] = useState<any>(null);
   const [showNotif, setShowNotif] = useState<boolean>(false);
 
@@ -44,12 +45,12 @@ const Header = () => {
     <span className="w-full h-14 bg-gray-100 justify-between px-5 items-center border-b border-gray-300 hidden md:flex">
       <div className="flex items-center gap-4 ml-auto">
         <MessageIndicator />
-        <button
+        {/* <button
           className="btn btn-xs btn-error btn-outline rounded-none"
           onClick={handleSignOut}
         >
           <h1>Sign Out</h1>
-        </button>
+        </button> */}
         <details className="dropdown dropdown-end">
           <summary
             tabIndex={0}
@@ -60,7 +61,7 @@ const Header = () => {
               <GetImage storageLink="settings/brgyLogo" />
             </div>
           </summary>
-          {/* <Account userData={userData} /> */}
+          <Account/>
         </details>
       </div>
     </span>

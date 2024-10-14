@@ -1,20 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
+import UpdateCertificate from "./UpdateCertificate";
+import DeclineModal from "./DeclineModal";
+import ViewRequestModal from "./ViewRequestModal";
 
 interface RequestData {
   id: string;
   requestType: string;
   gcashRefNo: string;
-  submittedName: string;
   proofOfPaymentURL: string;
   status: string;
+  submittedName: string;
+  declineReason: string;
 }
 
-const DeclinedCertificate: React.FC = (): JSX.Element => {
+const PendingCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(
+    null
+  );
+  const [viewRequest, setViewRequest] = useState<RequestData | null>(null); // Added for viewing
+  const [declineRequest, setDeclineRequest] = useState<RequestData | null>(
+    null
+  );
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
@@ -22,7 +33,8 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
       try {
         const q = query(
           collection(db, "requests"),
-          where("status", "==", "declined")
+          where("status", "==", "declined"),
+          orderBy("timestamp")
         );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
@@ -38,13 +50,18 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
     };
 
     fetchRequests();
-  }, []);
+  }, [selectedRequest, declineRequest]);
+
+
+  const handleView = (request: RequestData) => {
+    setViewRequest(request); // Opens the view modal
+  };
 
   // Filter the requests based on the search term
   const filteredRequests = requests.filter((request) =>
-    request.submittedName.toLowerCase().includes(searchTerm.toLowerCase())
+    request.submittedName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   return (
     <div className="certificate-list">
       <div className="search-bar mb-4">
@@ -58,18 +75,18 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
       </div>
 
       {loading ? (
-        <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
+        <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
           Loading...
-        </p>
+        </span>
       ) : filteredRequests.length > 0 ? (
         <table className="min-w-full bg-white mt-4 rounded-lg shadow-sm border">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Name
+                Request Type
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Request Type
+                Name
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                 GCash Ref No
@@ -78,18 +95,18 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
                 Proof of Payment
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Status
+                Actions
               </th>
             </tr>
           </thead>
           <tbody>
             {filteredRequests.map((request) => (
-              <tr key={request.id}>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.submittedName}
-                </td>
+              <tr key={request.id} className="cursor-pointer hover:bg-gray-100">
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.requestType}
+                </td>
+                <td className="py-2 px-4 border-b text-left text-xs">
+                  {request.submittedName}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.gcashRefNo}
@@ -100,12 +117,18 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500"
+                    onClick={(e) => e.stopPropagation()} // Prevents row click when link is clicked
                   >
-                    View Doc
+                    View Proof
                   </a>
                 </td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.status}
+                <td className="py-2 px-4 border-b text-left text-xs space-x-3">
+                  <button
+                    onClick={() => handleView(request)}
+                    className="btn-xs rounded-sm btn-outline btn text-info"
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
@@ -113,11 +136,32 @@ const DeclinedCertificate: React.FC = (): JSX.Element => {
         </table>
       ) : (
         <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-80">
-          No declined certificates found.
+          No pending certificates found.
         </p>
+      )}
+
+      {selectedRequest && (
+        <UpdateCertificate
+          selectedRequest={selectedRequest}
+          onClose={() => setSelectedRequest(null)}
+        />
+      )}
+
+      {declineRequest && (
+        <DeclineModal
+          declineRequest={declineRequest}
+          onClose={() => setDeclineRequest(null)}
+        />
+      )}
+
+      {viewRequest && (
+        <ViewRequestModal
+          request={viewRequest}
+          onClose={() => setViewRequest(null)}
+        />
       )}
     </div>
   );
 };
 
-export default DeclinedCertificate;
+export default PendingCertificate;

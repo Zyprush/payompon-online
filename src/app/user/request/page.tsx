@@ -10,6 +10,7 @@ import { RequestTable } from "./RequestTable";
 import { ApprovedTable } from "./ApprovedTable";
 import useUserData from "@/hooks/useUserData";
 import Unathorized from "./Unathorized";
+import { ResidentDeclinedTable } from "./ResidentDeclinedTable";
 
 interface RequestData {
   id: string;
@@ -25,6 +26,7 @@ interface RequestData {
   submittedBy?: string;
   submittedName?: string;
   timestamp?: string;
+  declineReason?: string;
 }
 
 const Request: React.FC = (): JSX.Element => {
@@ -181,7 +183,7 @@ const Request: React.FC = (): JSX.Element => {
                 <IconMessage2Question /> No request data
               </span>
             ) : (
-              <RequestTable
+              <ResidentDeclinedTable
                 requests={filteredRequests}
                 handleOpenEdit={handleOpenEdit}
                 showEditButton={selectedTab === "pending"}
