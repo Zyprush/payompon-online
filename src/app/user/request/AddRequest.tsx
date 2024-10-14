@@ -95,7 +95,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (!userUid || !userName) {
+    if (!userUid) {
       alert("You must be logged in to submit a request.");
       return;
     }
@@ -119,7 +119,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
         requestType,
         purpose,
         //service price ,
-        amount: gcashRefNo,
+        gcashRefNo,
+        amount,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
         status: "pending",
