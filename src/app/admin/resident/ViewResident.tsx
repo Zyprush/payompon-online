@@ -24,49 +24,58 @@ interface ViewResidentProps {
 const ViewResident: React.FC<ViewResidentProps> = ({ user, onClose }) => {
   if (!user) return null;
 
+  const userDetails = [
+    { label: "First Name", value: user.firstname },
+    { label: "Middle Name", value: user.middlename },
+    { label: "Last Name", value: user.lastname },
+    { label: "Email", value: user.email },
+    { label: "Contact Number", value: user.number },
+    { label: "Gender", value: user.gender },
+    { label: "Sitio", value: user.sitio },
+    { label: "Civil Status", value: user.civilStatus },
+    { label: "Verified", value: user.verified ? "Yes" : "No" },
+    { label: "Valid ID Type", value: user.validIDType },
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-4">Resident Details</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-primary">Resident Details</h2>
 
         <div className="grid grid-cols-2 gap-4">
+          {userDetails.map((detail, index) => (
+            <div key={index}>
+              <span className="text-gray-700 font-semibold">{detail.label}:</span> <p className="text-sm text-zinc-600">{detail.value || "N/A"}</p>
+            </div>
+          ))}
+
           <div>
-            <strong>First Name:</strong> <p>{user.firstname}</p>
+            <strong>Valid ID:</strong>
+            {user.validID ? (
+              <a
+                href={user.validID}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500"
+              >
+                View ID
+              </a>
+            ) : (
+              "No ID Uploaded"
+            )}
           </div>
-          <div>
-            <strong>Middle Name:</strong> <p>{user.middlename}</p>
-          </div>
-          <div>
-            <strong>Last Name:</strong> <p>{user.lastname}</p>
-          </div>
-          <div>
-            <strong>Email:</strong> <p>{user.email}</p>
-          </div>
-          <div>
-            <strong>Contact Number:</strong> <p>{user.number}</p>
-          </div>
-          <div>
-            <strong>Gender:</strong> <p>{user.gender}</p>
-          </div>
-          <div>
-            <strong>Sitio:</strong> <p>{user.sitio}</p>
-          </div>
-          <div>
-            <strong>Civil Status:</strong> <p>{user.civilStatus}</p>
-          </div>
-          <div>
-            <strong>Verified:</strong> <p>{user.verified ? "Yes" : "No"}</p>
-          </div>
-          <div>
-            <strong>Valid ID Type:</strong> <p>{user.validIDType}</p>
-          </div>
-          <div>
-            <strong>Valid ID:</strong> <p>{user.validID ? <a href={user.validID} target="_blank" rel="noopener noreferrer" className="text-blue-500">View ID</a> : "No ID Uploaded"}</p>
-          </div>
+
           <div>
             <strong>Selfie:</strong>
             {user.selfie ? (
-              <a href={user.selfie} target="_blank" rel="noopener noreferrer" className="text-blue-500">View Selfie</a>
+              <a
+                href={user.selfie}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500"
+              >
+                View Selfie
+              </a>
             ) : (
               "No Selfie Uploaded"
             )}

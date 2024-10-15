@@ -83,14 +83,9 @@ const VerifiedResident: React.FC = (): JSX.Element => {
           <thead>
             <tr>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                First Name
+                Name
               </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Middle Name
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Last Name
-              </th>
+        
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Email
               </th>
@@ -101,12 +96,6 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                 Gender
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Sitio
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Civil Status
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Valid ID
               </th>
             </tr>
@@ -114,18 +103,10 @@ const VerifiedResident: React.FC = (): JSX.Element => {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user.id}>
-                <td className="py-2 px-4 border-b text-xs">{user.firstname}</td>
-                <td className="py-2 px-4 border-b text-xs">
-                  {user.middlename}
-                </td>
-                <td className="py-2 px-4 border-b text-xs">{user.lastname}</td>
+                <td className="py-2 px-4 border-b text-xs">{user.firstname} {user.middlename} {user.lastname}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
-                <td className="py-2 px-4 border-b text-xs">{user.sitio}</td>
-                <td className="py-2 px-4 border-b text-xs">
-                  {user.civilStatus}
-                </td>
                 <td className="py-2 px-4 border-b text-xs font-semibold flex gap-3">
                   <button
                     onClick={() => setSelectedUser(user)}
@@ -135,14 +116,17 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                   </button>
 
                   {user.validID ? (
+                    <button className="btn btn-xs text-white rounded-sm btn-primary">
                     <a
                       href={user.validID}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500"
+                      className="text-white"
                     >
                       View ID
                     </a>
+                    </button>
+
                   ) : (
                     "No ID Uploaded"
                   )}

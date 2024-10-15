@@ -47,7 +47,7 @@ const Revenue: React.FC = (): JSX.Element => {
       <div className="flex gap-5 p-5 flex-col" ref={printRef}>
         {/* only show header while printing */}
         <div className="print-header hidden"><Header/></div>
-        <h1 className="text-xl text-primary flex gap-2 items-center font-bold">
+        <h1 className="text-xl text-primary flex gap-2 items-center font-bold print:hidden">
           <span className="ml-2">Revenue</span>
           <div className="flex gap-4">
             <select

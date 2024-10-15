@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { IoCaretBackCircle } from "react-icons/io5";
 import { auth } from "@/firebase";
@@ -8,20 +8,7 @@ import useUserData from "@/hooks/useUserData"; // Import the custom hook
 
 const Account: React.FC = () => {
   const router = useRouter();
-  const { firstname, middlename, lastname, userRole, verified } = useUserData(); // Destructure the data from the hook
-
-  const memoizedUserData = useMemo(() => {
-    return {
-      firstname,
-      middlename,
-      lastname,
-      role: userRole,
-    };
-  }, [firstname, middlename, lastname, userRole]);
-
-  if (!memoizedUserData.firstname && !memoizedUserData.lastname) {
-    return null; // Return null if user data is not loaded yet
-  }
+  const { firstname, lastname, userRole } = useUserData(); // Destructure the data from the hook
 
   const handleSignOut = async () => {
     await auth.signOut();
@@ -32,15 +19,15 @@ const Account: React.FC = () => {
     <React.Fragment>
       <ul
         tabIndex={0}
-        className="flex flex-col mt-2 dropdown-content menu bg-base-100 border border-zinc-300 z-50 h-auto shadow w-[13rem] p-0 absolute"
+        className="flex flex-col mt-2 dropdown-content menu bg-base-100 border border-zinc-300 z-50 h-auto shadow w-[13rem] p-0 absolute border border-red-500"
       >
         <span className="w-full h-auto border-b-2 gap-3 p-3 flex justify-start items-center">
           <span className="w-auto">
             <h1 className="font-bold text-primary">
-              Hello, {`${memoizedUserData.firstname} ${memoizedUserData.lastname}`}!
+              Hello, {userRole === "admin" ? "Admin" : `${firstname} ${lastname}`}!
             </h1>
             <h1 className="text-xs text-zinc-500">
-              {toTitleCase(memoizedUserData.role || "")}
+              {userRole !== "admin" && toTitleCase(userRole || "")}
             </h1>
           </span>
         </span>

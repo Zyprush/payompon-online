@@ -13,34 +13,7 @@ const Header = () => {
   //   await auth.signOut();
   //   router.push("/sign-in");
   // };
-  const [userData, setUserData] = useState<any>(null);
-  const [showNotif, setShowNotif] = useState<boolean>(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("user", user);
-      if (user) {
-        try {
-          // Fetch the document directly using the user.uid as the document ID
-          const docRef = doc(db, "users", user.uid);
-          const docSnapshot = await getDoc(docRef);
-
-          if (docSnapshot.exists()) {
-            setUserData(docSnapshot.data());
-          } else {
-            console.log("No matching user data found!");
-          }
-        } catch (error) {
-          console.error("Error fetching user data: ", error);
-        }
-      } else {
-        setUserData(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-  console.log("userData", userData);
   return (
     <span className="w-full h-14 bg-gray-100 justify-between px-5 items-center border-b border-gray-300 hidden md:flex">
       <div className="flex items-center gap-4 ml-auto">

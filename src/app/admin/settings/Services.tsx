@@ -11,9 +11,8 @@ const Services = () => {
   >([]);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false);
 
-  // Fetch services from Firestore on component mount
   useEffect(() => {
     const fetchServices = async () => {
       const servicesDoc = await getDoc(doc(db, "settings", "services"));
@@ -24,22 +23,23 @@ const Services = () => {
     fetchServices();
   }, []);
 
-  // Save services to Firestore
   const saveServices = async () => {
     if (!isFormValid()) {
       setError("Please complete all fields.");
       return;
     }
 
-    setError(null); // Clear error
-    setLoading(true); // Set loading to true
+    setError(null);
+    setLoading(true);
     await setDoc(doc(db, "settings", "services"), { services });
-    setLoading(false); // Set loading to false after saving
-    setIsEditing(false); // Exit editing mode after saving
+    setLoading(false);
+    setIsEditing(false);
   };
 
   const isFormValid = () => {
-    return services.every(service => service.name.trim() !== "" && service.price.trim() !== "");
+    return services.every(
+      (service) => service.name.trim() !== "" && service.price.trim() !== ""
+    );
   };
 
   const handleServiceChange = (index: number, field: string, value: any) => {
@@ -78,47 +78,66 @@ const Services = () => {
 
       {error && <div className="text-red-500">{error}</div>}
 
-      {services.length > 0 &&
-        services.map((service, index) => (
-          <div key={index} className="flex gap-3">
-            {isEditing ? (
-              <div className="flex gap-3 items-center">
-                <input
-                  type="text"
-                  placeholder="Service Name"
-                  value={service.name}
-                  onChange={(e) =>
-                    handleServiceChange(index, "name", e.target.value)
-                  }
-                  className="p-2 text-sm border-primary border-2 rounded-sm w-80"
-                />
-                <input
-                  type="number"
-                  placeholder="Price"
-                  value={service.price}
-                  onChange={(e) =>
-                    handleServiceChange(index, "price", e.target.value)
-                  }
-                  className="p-2 text-sm border-primary border-2 rounded-sm"
-                />
-                <button
-                  onClick={() => deleteService(index)}
-                  className="btn btn-sm rounded-sm text-white btn-error"
-                >
-                  Delete
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-3">
-                <span>{service.name}</span>
-                <span>{service.price}</span>
-              </div>
-            )}
-          </div>
-        ))}
+      {services.length > 0 && (
+        <table className="table-auto w-full">
+          <thead>
+            <tr className="border-b-2 text-primary">
+              <th className="text-left p-2">Service Name</th>
+              <th className="text-left p-2">Price</th>
+              {isEditing && <th className="text-left p-2">Actions</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {services.map((service, index) => (
+              <tr key={index} className="border-b">
+                <td className="p-2 text-sm">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      placeholder="Service Name"
+                      value={service.name}
+                      onChange={(e) =>
+                        handleServiceChange(index, "name", e.target.value)
+                      }
+                      className="p-2 text-sm border-primary border-2 rounded-sm w-full"
+                    />
+                  ) : (
+                    service.name
+                  )}
+                </td>
+                <td className="p-2">
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      placeholder="Price"
+                      value={service.price}
+                      onChange={(e) =>
+                        handleServiceChange(index, "price", e.target.value)
+                      }
+                      className="p-2 text-sm border-primary border-2 rounded-sm w-full"
+                    />
+                  ) : (
+                    service.price
+                  )}
+                </td>
+                {isEditing && (
+                  <td className="p-2">
+                    <button
+                      onClick={() => deleteService(index)}
+                      className="btn btn-sm rounded-sm text-white btn-error"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {isEditing && (
-        <div className="mx-auto flex gap-5">
+        <div className="mt-5 flex gap-5 justify-end">
           <button
             onClick={addService}
             className="btn btn-sm text-primary btn-outline"
@@ -128,9 +147,9 @@ const Services = () => {
           <button
             onClick={saveServices}
             className="btn btn-sm btn-primary text-white"
-            disabled={!isFormValid() || loading} // Disable button if form is invalid or loading
+            disabled={!isFormValid() || loading}
           >
-            {loading ? "Saving..." : "Save Changes"} {/* Show loading text */}
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       )}

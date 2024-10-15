@@ -8,7 +8,7 @@ const DashVerified = () => {
   useEffect(() => {
     const fetchVerifiedUsersCount = async () => {
       const usersRef = collection(db, "users");
-      const verifiedUsersQuery = query(usersRef, where("verified", "==", true));
+      const verifiedUsersQuery = query(usersRef, where("verified", "==", true),where("role", "==", "resident"));
       const querySnapshot = await getDocs(verifiedUsersQuery);
       setVerifiedCount(querySnapshot.size);
     };
