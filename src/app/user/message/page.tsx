@@ -1,8 +1,6 @@
 "use client";
-
 import React, { useState, useEffect, useRef } from 'react';
-
-import { collection, query, onSnapshot, orderBy, where, addDoc, serverTimestamp, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, query, onSnapshot, orderBy, where, addDoc, serverTimestamp, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import { Search, Send, Menu } from 'lucide-react';
@@ -13,6 +11,8 @@ interface User {
     name: string;
     role: string;
     photoURL: string;
+    unreadCount: number;
+    lastMessageTimestamp: any;
 }
 
 interface Message {
@@ -35,14 +35,12 @@ const Message: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // Toggle sidebar visibility
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
-    // Fetch current logged-in user and user list
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -58,6 +56,8 @@ const Message: React.FC = () => {
                             name: userData.name,
                             role: userData.role,
                             photoURL: userData.photoURL || 'https://example.com/avatar.jpg',
+                            unreadCount: 0,
+                            lastMessageTimestamp: null,
                         });
                     } else {
                         console.log("No matching user data found!");
@@ -72,7 +72,12 @@ const Message: React.FC = () => {
 
         const usersQuery = query(collection(db, 'users'));
         const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
-            const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+            const usersData = snapshot.docs.map(doc => ({ 
+                id: doc.id, 
+                ...doc.data(),
+                unreadCount: doc.data().unreadCount || 0,
+                lastMessageTimestamp: doc.data().lastMessageTimestamp || null,
+            } as User));
             setUsers(usersData);
             filterUsers(usersData, currentUser);
         });
@@ -83,7 +88,6 @@ const Message: React.FC = () => {
         };
     }, []);
 
-    // New function to filter users based on roles
     const filterUsers = (allUsers: User[], currentUser: User | null) => {
         if (!currentUser) return;
 
@@ -96,16 +100,21 @@ const Message: React.FC = () => {
             filtered = [];
         }
 
+        // Sort users by unread count (descending) and then by last message timestamp (descending)
+        filtered.sort((a, b) => {
+            if (b.unreadCount !== a.unreadCount) {
+                return b.unreadCount - a.unreadCount;
+            }
+            return b.lastMessageTimestamp - a.lastMessageTimestamp;
+        });
+
         setFilteredUsers(filtered);
     };
 
-    // Update filterUsers call when currentUser changes
     useEffect(() => {
         filterUsers(users, currentUser);
     }, [currentUser, users]);
 
-
-    // Fetch messages for selected user
     useEffect(() => {
         if (selectedUser && currentUser) {
             const participants = [currentUser.id, selectedUser.id].sort();
@@ -121,11 +130,14 @@ const Message: React.FC = () => {
                     const querySnapshot = await getDocs(messagesQuery);
                     const messagesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
                     
-                    // Sort messages by timestamp client-side
                     messagesData.sort((a, b) => a.timestamp - b.timestamp);
                     
                     setMessages(messagesData);
-                    console.log('Fetched messages:', messagesData); // Debug log
+
+                    // Reset unread count for the selected user
+                    await updateDoc(doc(db, 'users', currentUser.id), {
+                        [`unreadCounts.${selectedUser.id}`]: 0
+                    });
                 } catch (error) {
                     console.error("Error fetching messages:", error);
                 }
@@ -133,11 +145,10 @@ const Message: React.FC = () => {
 
             fetchMessages();
             
-            // Set up a listener for real-time updates
             const unsubscribeMessages = onSnapshot(
                 query(collection(db, 'pmessages'), where('conversationId', '==', conversationId)),
                 (snapshot) => {
-                    fetchMessages(); // Refetch and resort messages on updates
+                    fetchMessages();
                 }
             );
 
@@ -147,15 +158,12 @@ const Message: React.FC = () => {
 
     useEffect(() => {
         scrollToBottom();
-        console.log('Current messages:', messages);
     }, [messages]);
 
-    // Scroll to bottom when new messages are added
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    // Handle message sending
     const sendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedUser || !currentUser || !currentMessage.trim()) return;
@@ -164,14 +172,21 @@ const Message: React.FC = () => {
         const conversationId = participants.join('_');
 
         try {
-            await addDoc(collection(db, 'pmessages'), {
+            const messageDoc = await addDoc(collection(db, 'pmessages'), {
                 text: currentMessage,
                 sender: currentUser.id,
-                receiver: selectedUser.id,
+                receiver: selectedUser.id, 
                 timestamp: serverTimestamp(),
                 participants: participants,
                 conversationId: conversationId,
             });
+
+            // Update last message timestamp and increment unread count for the receiver
+            await updateDoc(doc(db, 'users', selectedUser.id), {
+                lastMessageTimestamp: serverTimestamp(),
+                [`unreadCounts.${currentUser.id}`]: (selectedUser.unreadCount || 0) + 1
+            });
+
             setCurrentMessage('');
         } catch (error) {
             console.error("Error sending message: ", error);
@@ -179,7 +194,6 @@ const Message: React.FC = () => {
         }
     };
 
-    // Handle search functionality for users
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const term = e.target.value.toLowerCase();
         setSearchTerm(term);
@@ -212,7 +226,6 @@ const Message: React.FC = () => {
     return (
         <UserNavLayout>
             <div className="flex h-screen bg-gray-100">
-                {/* Sidebar */}
                 <div className={`fixed z-40 inset-0 bg-black bg-opacity-50 lg:hidden ${isSidebarOpen ? 'block' : 'hidden'}`} onClick={toggleSidebar}></div>
                 <div className={`fixed z-50 inset-y-0 left-0 w-64 bg-white transition-transform transform lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <div className="p-4 border-b flex items-center justify-between lg:hidden">
@@ -237,22 +250,25 @@ const Message: React.FC = () => {
                         {filteredUsers.map(user => (
                             <div
                                 key={user.id}
-                                className={`flex items-center p-4 cursor-pointer hover:bg-gray-100 transition ${selectedUser?.id === user.id ? 'bg-blue-100' : ''}`}
+                                className={`flex items-center p-4 cursor-pointer hover:bg-gray-100 transition ${selectedUser?.id === user.id ? 'bg-blue-100' : ''} ${user.unreadCount > 0 ? 'bg-yellow-50' : ''}`}
                                 onClick={() => setSelectedUser(user)}
                             >
                                 <img src={user.photoURL || '/img/profile.jpg'} alt={user.name} className="w-10 h-10 rounded-full mr-3" />
-                                <div>
+                                <div className="flex-1">
                                     <h3 className="font-semibold">{user.name}</h3>
                                     <p className="text-sm text-gray-500">{user.role}</p>
                                 </div>
+                                {user.unreadCount > 0 && (
+                                    <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1">
+                                        {user.unreadCount}
+                                    </span>
+                                )}
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Main Content Area */}
                 <div className="flex-1 flex flex-col">
-                    {/* Header with user information */}
                     <div className="bg-white p-4 border-b flex items-center justify-between">
                         {selectedUser && (
                             <div className="flex items-center space-x-3">
@@ -263,19 +279,16 @@ const Message: React.FC = () => {
                                 </div>
                             </div>
                         )}
-                        {/* Burger button for mobile */}
                         <button className="lg:hidden" onClick={toggleSidebar}>
                             <Menu size={24} />
                         </button>
                     </div>
 
-                    {/* Messages */}
                     <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
                         {messages.map(renderMessage)}
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Message input form */}
                     <form onSubmit={sendMessage} className="p-4 bg-white border-t flex items-center">
                         <input
                             type="text"
@@ -290,7 +303,7 @@ const Message: React.FC = () => {
                     </form>
                 </div>
             </div>
-        </UserNavLayout>
+        </UserNavLayout>  
     );
 };
 
