@@ -102,6 +102,7 @@ export default function Page() {
 
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
+        name: firstname + " " + lastname,
         firstname,
         lastname,
         middlename,
