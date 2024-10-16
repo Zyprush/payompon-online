@@ -19,7 +19,7 @@ const Account: React.FC = () => {
     <React.Fragment>
       <ul
         tabIndex={0}
-        className="flex flex-col mt-2 dropdown-content menu bg-base-100 border border-zinc-300 z-50 h-auto shadow w-[13rem] p-0 absolute border border-red-500"
+        className="flex flex-col mt-2 dropdown-content menu bg-base-100 border border-zinc-300 z-50 h-auto shadow w-[13rem] p-0 absolute"
       >
         <span className="w-full h-auto border-b-2 gap-3 p-3 flex justify-start items-center">
           <span className="w-auto">
