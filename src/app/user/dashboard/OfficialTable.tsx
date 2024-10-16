@@ -52,34 +52,45 @@ const OfficialTable: React.FC = (): JSX.Element => {
   }, []);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-primary">Barangay Officials</h2>
-        <div className="mt-4">
-          {isLoading ? (
-            <div className="flex justify-center items-center">
-              <div className="text-sm text-gray-500">Loading officials...</div>
-            </div>
-          ) : isEmpty ? (
-            <div className="flex justify-center items-center">
-              <div className="text-sm text-gray-500">No officials found.</div>
-            </div>
-          ) : (
+    <div className="p-4 md:p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-lg md:text-xl font-bold text-primary">Barangay Officials</h2>
+      <div className="mt-4">
+        {isLoading ? (
+          <div className="flex justify-center items-center">
+            <div className="text-sm text-gray-500">Loading officials...</div>
+          </div>
+        ) : isEmpty ? (
+          <div className="flex justify-center items-center">
+            <div className="text-sm text-gray-500">No officials found.</div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-2 px-6 border-b-2 border-gray-200 text-sm text-left">Name</th>
-                  <th className="py-2 px-6 border-b-2 border-gray-200 text-sm text-left">Position</th>
-                  <th className="py-2 px-6 border-b-2 border-gray-200 text-sm text-left">Contact</th>
+                  <th className="py-2 px-4 md:px-6 border-b-2 border-gray-200 text-xs md:text-sm text-left">
+                    Name
+                  </th>
+                  <th className="py-2 px-4 md:px-6 border-b-2 border-gray-200 text-xs md:text-sm text-left">
+                    Position
+                  </th>
+                  <th className="py-2 px-4 md:px-6 border-b-2 border-gray-200 text-xs md:text-sm text-left">
+                    Contact
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {officials.map((official) => (
                   <tr key={official.id}>
-                    <td className="py-2 px-6 border-b text-xs">{official.name}</td>
-                    <td className="py-2 px-6 border-b text-xs">{official.position}</td>
-                    <td className="py-2 px-6 border-b text-xs">
+                    <td className="py-2 px-4 md:px-6 border-b text-xs md:text-sm">
+                      {official.name}
+                    </td>
+                    <td className="py-2 px-4 md:px-6 border-b text-xs md:text-sm">
+                      {official.position}
+                    </td>
+                    <td className="py-2 px-4 md:px-6 border-b text-xs md:text-sm">
                       <a href={`tel:${official.contact}`} className="flex items-center">
-                        <IconPhone className="h-5 w-5 mr-2" />
+                        <IconPhone className="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" />
                         {official.contact}
                       </a>
                     </td>
@@ -87,9 +98,11 @@ const OfficialTable: React.FC = (): JSX.Element => {
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
+          </div>
+        )}
       </div>
+    </div>
+
   );
 };
 

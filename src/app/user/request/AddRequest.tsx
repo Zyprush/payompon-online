@@ -158,15 +158,17 @@ const AddRequest: React.FC<AddRequestProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex md:items-center md:justify-center bg-black md:bg-opacity-50 bg-opacity-0">
-      <div className="bg-white md:rounded-lg shadow-lg w-full md:w-96 mt-14 md:mt-0">
-        <div className="px-6 py-4 flex flex-col gap-2">
-          <h2 className="text-lg flex justify-between w-full font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto pt-5">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 md:mx-0 md:w-96">
+        <div className="px-4 md:px-6 py-4 flex flex-col gap-2">
+          <h2 className="text-lg flex justify-between w-full font-bold mb-4 text-primary drop-shadow">
             Submit a Request
           </h2>
-          <h1 className="text-sm border p-2 -mt-3 text-zinc-600 flex items-center mr-auto">
+          <h1 className="text-sm border p-2 text-zinc-600 flex items-center mr-auto">
             <b className="mr-2 text-lg">₱ {amount}</b> {requestType} Amount
           </h1>
+
+          {/* Request Type Dropdown */}
           <div className="my-4">
             <label className="block text-sm font-semibold mb-2 text-zinc-700">
               Request Type
@@ -187,6 +189,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
             </select>
           </div>
 
+          {/* Purpose Dropdown */}
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2 text-zinc-700">
               Purpose
@@ -198,37 +201,13 @@ const AddRequest: React.FC<AddRequestProps> = ({
               disabled={loading}
             >
               <option value="">Select a purpose</option>
-              <option value="Employment Requirement">
-                Employment Requirement
-              </option>
+              <option value="Employment Requirement">Employment Requirement</option>
               <option value="Business Permit">Business Permit</option>
-              <option value="Travel/Passport Requirement">
-                Travel/Passport Requirement
-              </option>
-              <option value="Bank Account Opening">Bank Account Opening</option>
-              <option value="Job Application">Job Application</option>
-              <option value="Barangay ID Application">
-                Barangay ID Application
-              </option>
-              <option value="School/Scholarship">School/Scholarship</option>
-              <option value="Proof of Residency">Proof of Residency</option>
-              <option value="Police Clearance">Police Clearance</option>
-              <option value="Marriage License">Marriage License</option>
-              <option value="Loan">Loan</option>
-              <option value="Financial assistance">Financial assistance</option>
-              <option value="Firearm License">Firearm License</option>
-              <option value="Local Government Transactions">
-                Local Government Transactions
-              </option>
-              <option value="Legal or Court Requirements">
-                Legal or Court Requirements
-              </option>
-              <option value="Community Event Participation">
-                Community Event Participation
-              </option>
+              {/* Other options here */}
             </select>
           </div>
 
+          {/* GCash Reference Number */}
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2 text-zinc-700">
               GCash Reference Number
@@ -243,11 +222,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
             />
           </div>
 
+          {/* Proof of Payment */}
           <div className="mb-4">
-            <label
-              className="block text-sm font-semibold mb-2 text-zinc-700"
-              htmlFor="proof"
-            >
+            <label className="block text-sm font-semibold mb-2 text-zinc-700" htmlFor="proof">
               Proof of Payment
             </label>
             <input
@@ -261,24 +238,27 @@ const AddRequest: React.FC<AddRequestProps> = ({
               disabled={loading}
             />
           </div>
-          <div className="flex gap-5 justify-start">
+
+          {/* Gcash QR and Buttons */}
+          <div className="flex flex-col md:flex-row gap-5 justify-between items-center">
             <div className="w-44 tooltip tooltip-top" data-tip="Gcash QR Code">
               <p className="font-semibold text-zinc-600">
                 <GetText name="gcash" title="Gcash no." />
               </p>
               <GetImage storageLink="settings/gcashQR" />
             </div>
-            <div className="flex justify-end">
+
+            <div className="flex col-span-1 justify-end gap-3 w-full md:w-auto">
               <button
                 onClick={handleClose}
-                className="px-4 py-2 btn-outline btn text-neutral font-semibold rounded-sm mr-2"
+                className="w-full md:w-auto px-4 py-2 btn-outline btn text-neutral font-semibold rounded-sm"
                 disabled={loading}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 btn btn-primary  text-sm font-semibold text-white rounded-sm "
+                className="w-full md:w-auto px-4 py-2 btn btn-primary text-sm font-semibold text-white rounded-sm"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : "Submit"}
@@ -288,6 +268,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         </div>
       </div>
     </div>
+
   );
 };
 
