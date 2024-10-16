@@ -34,7 +34,7 @@ export const userNavItems = [
     { href: "/user/request", icon: IconChecklist, label: "Request" },
     { href: "/user/officials", icon: IconUsers, label: "Officials" },
     { href: "/user/announce", icon: IconInfoSquare, label: "Announcement" },
-    { href: "/user/message", icon: IconMail, label: "Message" },
+    //{ href: "/user/message", icon: IconMail, label: "Message" },
     { href: "/user/notification", icon: IconNotification, label: "Notification" },
     { href: "/user/about", icon: IconHelpHexagon, label: "About" },
 ];
