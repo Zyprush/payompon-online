@@ -27,6 +27,8 @@ interface User {
   validID: string;
   validIDType: string;
   selfie: string;
+  infoErrors?: string;
+  submitted: boolean;
 }
 
 const UnverifiedResident: React.FC = (): JSX.Element => {
@@ -41,7 +43,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
     const q = query(
       collection(db, "users"),
       where("role", "==", "resident"),
-      where("verified", "==", false)
+      where("verified", "==", false),
+      where("submitted", "==", true)
     );
     const querySnapshot = await getDocs(q);
 
@@ -58,12 +61,15 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   }, []);
 
   const handleVerify = async (userId: string, isVerified: boolean) => {
+    const confirmAction = confirm("Are you sure you want to verify this resident?");
+    if (!confirmAction) return; // If the user cancels, do nothing
+  
     try {
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         verified: isVerified,
       });
-
+  
       const currentTime = new Date().toISOString();
       const user = users.find((user) => user.id === userId);
       addMessage({
@@ -78,7 +84,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         time: currentTime,
         for: "user",
       });
-
+  
       await addNotif({
         for: userId,
         message: isVerified
@@ -88,7 +94,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         type: "user",
         read: false,
       });
-
+  
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === userId ? { ...user, verified: isVerified } : user
@@ -97,6 +103,52 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
       await fetchUsers();
     } catch (error) {
       console.error("Error updating user verification status:", error);
+    }
+  };
+  
+
+  const handleReject = async (userId: string) => {
+    const reason = prompt("Please enter the reason for rejection eg: resubmit selfie, enter correct name, etc");
+    if (!reason) return;
+
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        infoErrors: reason,
+        submitted: false,
+      });
+
+      const currentTime = new Date().toISOString();
+      const user = users.find((user) => user.id === userId);
+
+      addMessage({
+        message: "Your account verification has been rejected.",
+        sender: "admin",
+        receiverId: userId,
+        receiverName: user ? `${user.firstname} ${user.lastname}` : "Unknown",
+        senderName: "Admin",
+        seen: false,
+        time: currentTime,
+        for: "user",
+      });
+
+      await addNotif({
+        for: userId,
+        message: "Your account verification was rejected. Reason: " + reason,
+        time: currentTime,
+        type: "user",
+        read: false,
+      });
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId ? { ...user, submitted: false, infoErrors: reason } : user
+        )
+      );
+
+      await fetchUsers();
+    } catch (error) {
+      console.error("Error rejecting user:", error);
     }
   };
 
@@ -203,12 +255,12 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                   >
                     Verify
                   </button>
-                  {/* <button
-                    onClick={() => handleVerify(user.id, false)}
-                    className="btn-xs btn-outline text-neutral btn rounded"
+                  <button
+                    onClick={() => handleReject(user.id)}
+                    className="btn btn-xs ml-2 rounded btn-error text-white"
                   >
-                    Decline
-                  </button> */}
+                    Reject
+                  </button>
                 </td>
               </tr>
             ))}
