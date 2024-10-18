@@ -31,7 +31,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
 
     const q = query(
       collection(db, "users"),
-      where("role", "==", "resident"),
+      where("role", "==", "archived"),
       where("verified", "==", true),
       limit(50)
     );
