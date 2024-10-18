@@ -34,6 +34,8 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [services, setServices] = useState<{ name: string; price: string }[]>(
     []
   );
+  const [purposes, setPurposes] = useState<string[]>([]); // Change to store purposes as an array of strings
+
   const addNotif = useNotifStore((state) => state.addNotif);
   // Update the amount when the request type changes
   const handleRequestTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -70,6 +72,15 @@ const AddRequest: React.FC<AddRequestProps> = ({
         }
       };
       fetchServices();
+
+      const fetchPurposes = async () => {
+        const purposesDoc = await getDoc(doc(db, "settings", "purposes"));
+        if (purposesDoc.exists()) {
+          setPurposes(purposesDoc.data().purposes || []); // Assuming the data is an array of purpose strings
+        } else {
+          console.log("No such document!");
+        }
+      };
 
       return () => unsubscribe();
     };
@@ -118,7 +129,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
         submittedBy: userUid,
         requestType,
         purpose,
-        //service price ,
         gcashRefNo,
         amount,
         proofOfPaymentURL: downloadURL,
@@ -201,9 +211,11 @@ const AddRequest: React.FC<AddRequestProps> = ({
               disabled={loading}
             >
               <option value="">Select a purpose</option>
-              <option value="Employment Requirement">Employment Requirement</option>
-              <option value="Business Permit">Business Permit</option>
-              {/* Other options here */}
+              {purposes.map((pur, index) => (
+                <option key={index} value={pur}>
+                  {pur}
+                </option>
+              ))}
             </select>
           </div>
 

@@ -4,6 +4,7 @@ import React from "react";
 import InfoSetting from "./InfoSettings";
 import ImgSetting from "./ImgSetting";
 import Services from "./Services";
+import Purposes from "./Purposes";
 
 const Setting = () => {
   return (
@@ -16,6 +17,7 @@ const Setting = () => {
           <ImgSetting fileName="captainSign" name="Brgy Captain Signature" />
         </div>
         <Services/>
+        <Purposes/>
         <InfoSetting />
       </div>
     </NavLayout>

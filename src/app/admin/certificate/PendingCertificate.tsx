@@ -4,6 +4,7 @@ import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
 import UpdateCertificate from "./UpdateCertificate";
 import DeclineModal from "./DeclineModal";
+import { format } from "date-fns"; // Import format from date-fns
 
 interface RequestData {
   id: string;
@@ -12,17 +13,14 @@ interface RequestData {
   proofOfPaymentURL: string;
   status: string;
   submittedName: string;
+  timestamp: any; // Change the type here to 'any' to accommodate Firestore timestamps
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(
-    null
-  );
-  const [declineRequest, setDeclineRequest] = useState<RequestData | null>(
-    null
-  );
+  const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(null);
+  const [declineRequest, setDeclineRequest] = useState<RequestData | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
@@ -31,7 +29,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
         const q = query(
           collection(db, "requests"),
           where("status", "==", "pending"),
-          orderBy("timestamp")
+          orderBy("timestamp", "desc")
         );
         const querySnapshot = await getDocs(q);
         const fetchedRequests: RequestData[] = [];
@@ -49,7 +47,6 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     fetchRequests();
   }, [selectedRequest, declineRequest]);
 
-
   const handleUpdate = (request: RequestData) => {
     setSelectedRequest(request);
   };
@@ -58,11 +55,16 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     setDeclineRequest(request);
   };
 
+  // Convert Firestore timestamp to readable date format
+  const formatDate = (timestamp: any) => {
+    const date = timestamp?.seconds ? new Date(timestamp.seconds * 1000) : null;
+    return date ? format(date, "MMM dd, yyyy") : "N/A"; // Use date-fns format
+  };
+
   // Filter the requests based on the search term
   const filteredRequests = requests.filter((request) =>
     request.submittedName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
 
   return (
     <div className="certificate-list">
@@ -91,6 +93,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 Name
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                Date
+              </th>
+              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                 GCash Ref No
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -111,6 +116,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                   {request.submittedName}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
+                  {formatDate(request.timestamp)}
+                </td>
+                <td className="py-2 px-4 border-b text-left text-xs">
                   {request.gcashRefNo}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs font-semibold">
@@ -121,7 +129,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                     className="text-blue-500"
                     onClick={(e) => e.stopPropagation()} // Prevents row click when link is clicked
                   >
-                    View Proof
+                    View
                   </a>
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs space-x-3">

@@ -27,6 +27,7 @@ interface RequestData {
   submittedName?: string;
   timestamp?: string;
   declineReason?: string;
+  purpose?: string;
 }
 
 const Request: React.FC = (): JSX.Element => {
@@ -44,7 +45,7 @@ const Request: React.FC = (): JSX.Element => {
       const q = query(
         collection(db, "requests"),
         where("submittedBy", "==", userUid),
-        orderBy("timestamp")
+        orderBy("timestamp", "desc")
       );
       const querySnapshot = await getDocs(q);
       const fetchedRequests: RequestData[] = [];
@@ -104,7 +105,7 @@ const Request: React.FC = (): JSX.Element => {
           <EditRequest
             open={openEditModal}
             handleClose={handleCloseEdit}
-            requestData={editRequestData}
+            requestData={{ ...editRequestData, purpose: editRequestData.purpose || '' }}
             onRequestUpdated={fetchRequests}
           />
         )}

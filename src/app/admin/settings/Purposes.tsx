@@ -2,28 +2,23 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
-const Services = () => {
-  const [services, setServices] = useState<
-    {
-      name: string;
-      price: string;
-    }[]
-  >([]);
+const Purposes = () => {
+  const [purposes, setPurposes] = useState<string[]>([]); // Change state to an array of strings
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      const servicesDoc = await getDoc(doc(db, "settings", "services"));
-      if (servicesDoc.exists()) {
-        setServices(servicesDoc.data().services || []);
+    const fetchPurposes = async () => {
+      const purposesDoc = await getDoc(doc(db, "settings", "purposes"));
+      if (purposesDoc.exists()) {
+        setPurposes(purposesDoc.data().purposes || []);
       }
     };
-    fetchServices();
+    fetchPurposes();
   }, []);
 
-  const saveServices = async () => {
+  const savePurposes = async () => {
     if (!isFormValid()) {
       setError("Please complete all fields.");
       return;
@@ -31,34 +26,26 @@ const Services = () => {
 
     setError(null);
     setLoading(true);
-    await setDoc(doc(db, "settings", "services"), { services });
+    await setDoc(doc(db, "settings", "purposes"), { purposes });
     setLoading(false);
     setIsEditing(false);
   };
 
   const isFormValid = () => {
-    return services.every(
-      (service) => service.name.trim() !== "" && service.price.trim() !== ""
+    return purposes.every((purpose) => purpose.trim() !== ""); // Only check for non-empty strings
+  };
+
+  const handlePurposeChange = (index: number, value: string) => {
+    setPurposes((prevPurposes) =>
+      prevPurposes.map((s, i) => (i === index ? value : s))
     );
   };
 
-  const handleServiceChange = (index: number, field: string, value: any) => {
-    setServices((prevServices) =>
-      prevServices.map((s, i) => (i === index ? { ...s, [field]: value } : s))
-    );
-  };
+  const deletePurpose = (index: number) =>
+    setPurposes(purposes.filter((_, i) => i !== index));
 
-  const deleteService = (index: number) =>
-    setServices(services.filter((_, i) => i !== index));
-
-  const addService = () =>
-    setServices([
-      ...services,
-      {
-        name: "",
-        price: "",
-      },
-    ]);
+  const addPurpose = () =>
+    setPurposes([...purposes, ""]); // Add an empty string to the array
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
@@ -67,7 +54,7 @@ const Services = () => {
   return (
     <div className="bg-white p-5 rounded-lg border flex flex-col gap-3 text-zinc-600">
       <div className="flex justify-between items-center">
-        {/* <span className="font-bold text-primary">Services</span> */}
+        {/* <span className="font-bold text-primary">Purposes</span> */}
         <button
           onClick={toggleEdit}
           className="btn btn-sm text-primary btn-outline rounded-sm ml-auto mr-0"
@@ -78,52 +65,36 @@ const Services = () => {
 
       {error && <div className="text-red-500">{error}</div>}
 
-      {services.length > 0 && (
+      {purposes.length > 0 && (
         <table className="table-auto w-full">
           <thead>
             <tr className="border-b-2 text-primary">
-              <th className="text-left p-2">Service Name</th>
-              <th className="text-left p-2">Price</th>
+              <th className="text-left p-2">Purpose Name</th>
               {isEditing && <th className="text-left p-2">Actions</th>}
             </tr>
           </thead>
           <tbody>
-            {services.map((service, index) => (
+            {purposes.map((purpose, index) => (
               <tr key={index} className="border-b">
                 <td className="p-2 text-sm">
                   {isEditing ? (
                     <input
                       type="text"
-                      placeholder="Service Name"
-                      value={service.name}
+                      placeholder="Purpose Name"
+                      value={purpose}
                       onChange={(e) =>
-                        handleServiceChange(index, "name", e.target.value)
+                        handlePurposeChange(index, e.target.value)
                       }
                       className="p-2 text-sm border-primary border-2 rounded-sm w-full"
                     />
                   ) : (
-                    service.name
-                  )}
-                </td>
-                <td className="p-2">
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      placeholder="Price"
-                      value={service.price}
-                      onChange={(e) =>
-                        handleServiceChange(index, "price", e.target.value)
-                      }
-                      className="p-2 text-sm border-primary border-2 rounded-sm w-full"
-                    />
-                  ) : (
-                    service.price
+                    purpose
                   )}
                 </td>
                 {isEditing && (
                   <td className="p-2">
                     <button
-                      onClick={() => deleteService(index)}
+                      onClick={() => deletePurpose(index)}
                       className="btn btn-sm rounded-sm text-white btn-error"
                     >
                       Delete
@@ -139,13 +110,13 @@ const Services = () => {
       {isEditing && (
         <div className="mt-5 flex gap-5 justify-end">
           <button
-            onClick={addService}
+            onClick={addPurpose}
             className="btn btn-sm text-primary btn-outline"
           >
-            Add Service
+            Add Purpose
           </button>
           <button
-            onClick={saveServices}
+            onClick={savePurposes}
             className="btn btn-sm btn-primary text-white"
             disabled={!isFormValid() || loading}
           >
@@ -157,4 +128,4 @@ const Services = () => {
   );
 };
 
-export default Services;
+export default Purposes;

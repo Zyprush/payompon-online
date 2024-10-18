@@ -60,7 +60,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
     <div className="certificate-list">
       <ReactToPrint
         trigger={() => (
-          <button className="btn btn-sm btn-primary text-white fixed bottom-4 right-4">
+          <button className="btn btn-sm btn-primary text-white fixed bottom-20 right-4">
             Print
           </button>
         )}

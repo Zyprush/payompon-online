@@ -1,8 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { doc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { db, storage } from "@/firebase";
+import { currentTime } from "@/helper/time";
 
 interface EditRequestProps {
   open: boolean;
@@ -12,32 +18,76 @@ interface EditRequestProps {
     requestType: string;
     gcashRefNo: string;
     proofOfPaymentURL: string;
+    purpose: string;
   };
   onRequestUpdated: () => void;
 }
 
-const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestData, onRequestUpdated }): JSX.Element | null => {
-  const [requestType, setRequestType] = useState<string>(requestData.requestType);
+const EditRequest: React.FC<EditRequestProps> = ({
+  open,
+  handleClose,
+  requestData,
+  onRequestUpdated,
+}): JSX.Element | null => {
+  const [requestType, setRequestType] = useState<string>(
+    requestData.requestType
+  );
+  const [purpose, setPurpose] = useState<string>(requestData.purpose);
   const [gcashRefNo, setGcashRefNo] = useState<string>(requestData.gcashRefNo);
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{ requestType?: string; gcashRefNo?: string }>({});
+  const [errors, setErrors] = useState<{
+    requestType?: string;
+    gcashRefNo?: string;
+    purpose?: string;
+  }>({});
+  const [services, setServices] = useState<{ name: string; price: string }[]>(
+    []
+  );
+  // State to hold purposes
+  const [purposes, setPurposes] = useState<string[]>([]); // Change to store purposes as an array of strings
 
-  // Sync state with passed requestData when it changes
   useEffect(() => {
     if (requestData) {
       setRequestType(requestData.requestType);
       setGcashRefNo(requestData.gcashRefNo);
-      // Proof of payment is a file input, so don't set it here directly from URL
-      setProofOfPayment(null);  // Reset file input when new request data is passed
+      setPurpose(requestData.purpose);
+      setProofOfPayment(null);
     }
+
+    // Fetch purposes from Firestore
+    const fetchPurposes = async () => {
+      const purposesDoc = await getDoc(doc(db, "settings", "purposes"));
+      if (purposesDoc.exists()) {
+        setPurposes(purposesDoc.data().purposes || []); // Assuming the data is an array of purpose strings
+      } else {
+        console.log("No such document!");
+      }
+    };
+    const fetchServices = async () => {
+      const servicesDoc = await getDoc(doc(db, "settings", "services"));
+      if (servicesDoc.exists()) {
+        setServices(servicesDoc.data()?.services || []);
+      }
+    };
+    fetchServices();
+
+    fetchPurposes();
   }, [requestData]);
 
   const validateInputs = () => {
-    const errors: { requestType?: string; gcashRefNo?: string } = {};
+    const errors: {
+      requestType?: string;
+      gcashRefNo?: string;
+      purpose?: string;
+    } = {};
 
     if (!requestType) {
       errors.requestType = "Request type is required";
+    }
+
+    if (!purpose) {
+      errors.purpose = "Purpose is required";
     }
 
     if (!gcashRefNo) {
@@ -73,7 +123,10 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
         }
 
         // Upload the new proof of payment
-        const storageRef = ref(storage, `proofOfPayment/${proofOfPayment.name}`);
+        const storageRef = ref(
+          storage,
+          `proofOfPayment/${proofOfPayment.name}`
+        );
         const snapshot = await uploadBytes(storageRef, proofOfPayment);
         downloadURL = await getDownloadURL(snapshot.ref);
       }
@@ -82,9 +135,10 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
       const requestDocRef = doc(db, "requests", requestData.id);
       await updateDoc(requestDocRef, {
         requestType,
+        purpose,
         gcashRefNo,
         proofOfPaymentURL: downloadURL,
-        timestamp: new Date(),
+        timestamp: currentTime,
       });
 
       onRequestUpdated();
@@ -111,33 +165,58 @@ const EditRequest: React.FC<EditRequestProps> = ({ open, handleClose, requestDat
           <h2 className="text-xl font-semibold mb-4">Edit Request</h2>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Request Type</label>
+            <label className="block text-sm font-medium mb-2">
+              Request Type
+            </label>
             <select
               value={requestType}
               onChange={(e) => setRequestType(e.target.value)}
               className="w-full px-3 py-2 border rounded-md"
             >
               <option value="">Select a type</option>
-              <option value="Barangay clearance">Barangay clearance</option>
-              <option value="Indigency">Indigency</option>
-              <option value="Business permit">Business permit</option>
-              <option value="Certificate of residency">Certificate of residency</option>
-              <option value="Certificate of late registration">
-                Certificate of late registration
-              </option>
+              {services.map((service, index) => (
+                <option key={index} value={service.name}>
+                  {service.name}
+                </option>
+              ))}
             </select>
-            {errors.requestType && <p className="text-red-500 text-sm mt-1">{errors.requestType}</p>}
+            {errors.requestType && (
+              <p className="text-red-500 text-sm mt-1">{errors.requestType}</p>
+            )}
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">GCash Reference Number</label>
+            <label className="block text-sm font-medium mb-2">Purpose</label>
+            <select
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value="">Select a purpose</option>
+              {purposes.map((pur, index) => (
+                <option key={index} value={pur}>
+                  {pur}
+                </option>
+              ))}
+            </select>
+            {errors.purpose && (
+              <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">
+              GCash Reference Number
+            </label>
             <input
               type="text"
               value={gcashRefNo}
               onChange={(e) => setGcashRefNo(e.target.value)}
               className="w-full px-3 py-2 border rounded-md"
             />
-            {errors.gcashRefNo && <p className="text-red-500 text-sm mt-1">{errors.gcashRefNo}</p>}
+            {errors.gcashRefNo && (
+              <p className="text-red-500 text-sm mt-1">{errors.gcashRefNo}</p>
+            )}
           </div>
 
           <div className="mb-4">
