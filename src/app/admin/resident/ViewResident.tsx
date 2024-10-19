@@ -14,6 +14,10 @@ interface User {
   validID: string;
   validIDType: string;
   selfie: string;
+  infoErrors?: string;
+  submitted: boolean;
+  verifiedAt?: string;
+  address: string;
 }
 
 interface ViewResidentProps {
@@ -33,30 +37,37 @@ const ViewResident: React.FC<ViewResidentProps> = ({ user, onClose }) => {
     { label: "Gender", value: user.gender },
     { label: "Sitio", value: user.sitio },
     { label: "Civil Status", value: user.civilStatus },
-    { label: "Verified", value: user.verified ? "Yes" : "No" },
+    // { label: "Verified", value: user.verified ? "Yes" : "No" },
     { label: "Valid ID Type", value: user.validIDType },
+    { label: "Address", value: user.address },
   ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-8 rounded-lg w-full max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-4 text-primary">Resident Details</h2>
-
+        <h2 className="text-xl font-bold text-primary drop-shadow ">
+          Resident Details
+        </h2>
+        <hr className=" mb-4" />
         <div className="grid grid-cols-2 gap-4">
           {userDetails.map((detail, index) => (
             <div key={index}>
-              <span className="text-gray-700 font-semibold">{detail.label}:</span> <p className="text-sm text-zinc-600">{detail.value || "N/A"}</p>
+              <span className="text-primary drop-shadow-sm font-bold">
+                {detail.label}:
+              </span>{" "}
+              <p className="text-sm text-zinc-600 font-[300]">
+                {detail.value || "N/A"}
+              </p>
             </div>
           ))}
 
-          <div>
-            <strong>Valid ID:</strong>
+          <div className="mt-4">
             {user.validID ? (
               <a
                 href={user.validID}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500"
+                className="text-white btn-xs btn-primary rounded btn"
               >
                 View ID
               </a>
@@ -65,14 +76,13 @@ const ViewResident: React.FC<ViewResidentProps> = ({ user, onClose }) => {
             )}
           </div>
 
-          <div>
-            <strong>Selfie:</strong>
+          <div className="mt-4">
             {user.selfie ? (
               <a
                 href={user.selfie}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500"
+                className="text-white btn-xs btn-primary rounded btn"
               >
                 View Selfie
               </a>
@@ -83,10 +93,7 @@ const ViewResident: React.FC<ViewResidentProps> = ({ user, onClose }) => {
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button
-            onClick={onClose}
-            className="btn btn-sm btn-neutral rounded"
-          >
+          <button onClick={onClose} className="btn btn-sm btn-neutral rounded">
             Close
           </button>
         </div>

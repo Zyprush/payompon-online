@@ -29,6 +29,8 @@ interface User {
   selfie: string;
   infoErrors?: string;
   submitted: boolean;
+  verifiedAt?: string;
+  address: string;
 }
 
 const UnverifiedResident: React.FC = (): JSX.Element => {
@@ -61,16 +63,19 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   }, []);
 
   const handleVerify = async (userId: string, isVerified: boolean) => {
-    const confirmAction = confirm("Are you sure you want to verify this resident?");
+    const confirmAction = confirm(
+      "Are you sure you want to verify this resident?"
+    );
     if (!confirmAction) return; // If the user cancels, do nothing
-  
+
     try {
       const userRef = doc(db, "users", userId);
+      const currentTime = new Date().toISOString();
       await updateDoc(userRef, {
         verified: isVerified,
+        verifiedAt: currentTime,
       });
-  
-      const currentTime = new Date().toISOString();
+
       const user = users.find((user) => user.id === userId);
       addMessage({
         message: isVerified
@@ -84,7 +89,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         time: currentTime,
         for: "user",
       });
-  
+
       await addNotif({
         for: userId,
         message: isVerified
@@ -94,7 +99,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         type: "user",
         read: false,
       });
-  
+
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === userId ? { ...user, verified: isVerified } : user
@@ -105,10 +110,11 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
       console.error("Error updating user verification status:", error);
     }
   };
-  
 
   const handleReject = async (userId: string) => {
-    const reason = prompt("Please enter the reason for rejection eg: resubmit selfie, enter correct name, etc");
+    const reason = prompt(
+      "Please enter the reason for rejection eg: resubmit selfie, enter correct name, etc"
+    );
     if (!reason) return;
 
     try {
@@ -142,7 +148,9 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === userId ? { ...user, submitted: false, infoErrors: reason } : user
+          user.id === userId
+            ? { ...user, submitted: false, infoErrors: reason }
+            : user
         )
       );
 
@@ -190,13 +198,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 Selfie
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                First Name
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Middle Name
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Last Name
+                Name
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Email
@@ -221,24 +223,20 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                       href={user.selfie}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500"
+                      className=""
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={user.selfie}
                         alt="Selfie"
-                        className="w-14 h-14 object-cover rounded"
+                        className="w-14 h-14 object-cover border shadow-sm rounded-full"
                       />
                     </a>
                   ) : (
                     "No Selfie Uploaded"
                   )}
                 </td>
-                <td className="py-2 px-4 border-b text-xs">{user.firstname}</td>
-                <td className="py-2 px-4 border-b text-xs">
-                  {user.middlename}
-                </td>
-                <td className="py-2 px-4 border-b text-xs">{user.lastname}</td>
+                <td className="py-2 px-4 border-b text-xs">{`${user.firstname} ${user.middlename} ${user.lastname}`}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
@@ -247,19 +245,19 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                     onClick={() => setSelectedUser(user)}
                     className="btn-outline text-primary rounded-sm btn-xs btn mr-3"
                   >
-                    View
+                  details
                   </button>
                   <button
                     onClick={() => handleVerify(user.id, true)}
-                    className="btn btn-xs rounded btn-primary text-white"
+                    className="btn btn-xs rounded-sm btn-primary text-white"
                   >
-                    Verify
+                    verify
                   </button>
                   <button
                     onClick={() => handleReject(user.id)}
-                    className="btn btn-xs ml-2 rounded btn-error text-white"
+                    className="btn btn-xs ml-2 rounded-sm btn-error text-white"
                   >
-                    Reject
+                    reject
                   </button>
                 </td>
               </tr>
