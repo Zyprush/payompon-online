@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { useMessageStore } from "@/state/message";
 import { useNotifStore } from "@/state/notif";
 import ViewResident from "./ViewResident";
+import VerifyModal from "./VerifyModal";
 
 interface User {
   id: string;
@@ -40,6 +41,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState<string>(""); // For search
   const { addMessage } = useMessageStore();
   const { addNotif } = useNotifStore();
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showResident, setShowResident] = useState<boolean>(false);
 
   const fetchUsers = async () => {
     const q = query(
@@ -242,13 +245,19 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
                 <td className="py-2 px-4 border-b text-xs">
                   <button
-                    onClick={() => setSelectedUser(user)}
+                    onClick={() => {
+                      setShowResident(true);
+                      setSelectedUser(user);
+                    }}
                     className="btn-outline text-primary rounded-sm btn-xs btn mr-3"
                   >
-                  details
+                    details
                   </button>
                   <button
-                    onClick={() => handleVerify(user.id, true)}
+                    onClick={() => {
+                      setShowModal(true);
+                      setSelectedUser(user);
+                    }}
                     className="btn btn-xs rounded-sm btn-primary text-white"
                   >
                     verify
@@ -265,10 +274,24 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
           </tbody>
         </table>
       )}
-      {selectedUser && (
+      {showResident && (
         <ViewResident
           user={selectedUser}
-          onClose={() => setSelectedUser(null)}
+          onClose={() => {
+            setSelectedUser(null);
+            setShowResident(false);
+          }}
+        />
+      )}
+
+      {showModal && selectedUser && (
+        <VerifyModal
+          userId={selectedUser.id}
+          onClose={() => {
+            setShowModal(false);
+            setSelectedUser(null);
+          }}
+          onVerified={fetchUsers}
         />
       )}
     </div>

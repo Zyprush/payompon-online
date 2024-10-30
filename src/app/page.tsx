@@ -17,10 +17,10 @@ const Home = () => {
       <SignedIn>
         <LoggedIn />
         <div className="w-full max-w-lg p-8 bg-white shadow-xl rounded-lg text-center">
-          <h1 className="text-4xl font-bold text-primary-600 mb-4">
+          <h1 className="text-2xl font-bold text-primary mb-4">
             Welcome Back!
           </h1>
-          <p className="text-lg text-gray-700">
+          <p className="text-lg text-gray-600">
             Signed in as <span className="font-semibold">{user?.email}</span>
           </p>
           <p className="mt-2 text-md">
@@ -33,7 +33,7 @@ const Home = () => {
           </p>
           <button
             onClick={signOut}
-            className="mt-6 w-full px-6 py-3 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition-all"
+            className="mt-6 w-full px-6 py-3 bg-error text-white rounded-lg font-bold hover:bg-red-600 transition-all"
           >
             Sign Out
           </button>
