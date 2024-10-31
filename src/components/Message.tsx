@@ -5,7 +5,7 @@ import { db } from '@/firebase';
 import { Search, Send, Menu, X } from 'lucide-react';
   
 interface User {
-    id: string;
+    id: string;  
     name: string;
     role: string;
     photoURL: string;
