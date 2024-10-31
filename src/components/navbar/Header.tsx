@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { auth, db } from "@/firebase"; // Import your firebase config
-import { doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import React, {  } from "react";
 import { useRouter } from "next/navigation";
 import GetImage from "../GetImage";
 import MessageIndicator from "./MessageIndicator";

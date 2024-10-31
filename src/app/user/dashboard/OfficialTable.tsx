@@ -81,7 +81,7 @@ const OfficialTable: React.FC = (): JSX.Element => {
               </thead>
               <tbody>
                 {officials.map((official) => (
-                  <tr key={official.id}>
+                  <tr key={official.id} className="font-[300] text-zinc-600">
                     <td className="py-2 px-4 md:px-6 border-b text-xs md:text-sm">
                       {official.name}
                     </td>

@@ -3,9 +3,9 @@ import { collection, query, onSnapshot, orderBy, where, addDoc, serverTimestamp,
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import { Search, Send, Menu, X } from 'lucide-react';
-
+  
 interface User {
-    id: string;
+    id: string;  
     name: string;
     role: string;
     photoURL: string;

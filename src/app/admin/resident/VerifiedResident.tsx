@@ -3,6 +3,8 @@ import { db } from "@/firebase";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import ViewResident from "./ViewResident";
+import Link from "next/link";
+import { format } from "date-fns";
 
 interface User {
   id: string;
@@ -18,6 +20,10 @@ interface User {
   validID: string;
   validIDType: string;
   selfie: string;
+  infoErrors?: string;
+  submitted: boolean;
+  verifiedAt?: string;
+  address: string;
 }
 
 const VerifiedResident: React.FC = (): JSX.Element => {
@@ -84,9 +90,11 @@ const VerifiedResident: React.FC = (): JSX.Element => {
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Name
               </th>
-        
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Email
+              </th>
+              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
+                Verified At
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Contact
@@ -104,6 +112,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
               <tr key={user.id}>
                 <td className="py-2 px-4 border-b text-xs">{user.firstname} {user.middlename} {user.lastname}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
+                <td className="py-2 px-4 border-b text-xs">{user.verifiedAt ? format(new Date(user.verifiedAt), "MMM dd, yyyy") : ""}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
                 <td className="py-2 px-4 border-b text-xs font-semibold flex gap-3">
@@ -111,24 +120,14 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                     onClick={() => setSelectedUser(user)}
                     className="btn-outline text-primary rounded-sm btn-xs btn"
                   >
-                    View
+                    details
                   </button>
-
-                  {user.validID ? (
-                    <button className="btn btn-xs text-white rounded-sm btn-primary">
-                    <a
-                      href={user.validID}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white"
-                    >
-                      View ID
-                    </a>
-                    </button>
-
-                  ) : (
-                    "No ID Uploaded"
-                  )}
+                  <Link
+                  href={`/admin/resident/${user.id}`}
+                    className="text-white btn-primary rounded-sm btn-xs btn"
+                  >
+                    update
+                  </Link>
                 </td>
               </tr>
             ))}

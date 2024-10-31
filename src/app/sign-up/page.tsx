@@ -115,7 +115,7 @@ export default function Page() {
         selfie: selfieURL,
         role: "resident",
         verified: false,
-        submitted: "submitted",
+        submitted: true
       });
 
       router.push("/user/dashboard");

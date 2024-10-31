@@ -126,10 +126,10 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                     href={request.proofOfPaymentURL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500"
+                    className="text-blue-500 btn-outline btn-xs rounded-none btn"
                     onClick={(e) => e.stopPropagation()} // Prevents row click when link is clicked
                   >
-                    View
+                    view
                   </a>
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs space-x-3">

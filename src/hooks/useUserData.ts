@@ -11,7 +11,8 @@ const useUserData = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [verified, setVerified] = useState<boolean>(false);
-
+  const [infoErrors, setInfoErrors] = useState<boolean>(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,6 +40,8 @@ const useUserData = () => {
         setUserEmail(userData?.email || null);
         setUserRole(userData?.role || null);
         setVerified(userData?.verified);
+        setInfoErrors(userData?.infoErrors);
+        setSubmitted(userData?.submitted);
       } else {
         console.error("No such user!");
       }
@@ -47,7 +50,17 @@ const useUserData = () => {
     }
   };
 
-  return { userUid, firstname, middlename, lastname, userEmail, userRole, verified };
+  return {
+    userUid,
+    firstname,
+    middlename,
+    lastname,
+    userEmail,
+    userRole,
+    verified,
+    infoErrors,
+    submitted,
+  };
 };
 
 export default useUserData;
