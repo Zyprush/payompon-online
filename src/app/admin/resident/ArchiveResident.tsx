@@ -18,6 +18,8 @@ interface User {
   validID: string;
   validIDType: string;
   selfie: string;
+  submitted: boolean;
+  address: string;
 }
 
 const VerifiedResident: React.FC = (): JSX.Element => {
