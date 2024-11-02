@@ -122,7 +122,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                     <img
                       src={leftThumb || ""}
                       alt="left thumb"
-                      className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center object-contain"
+                      className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center object-cover"
                     />
                     <span className="text-blue-700 text-center text-[0.6rem] font-serif italic">
                       Left Thumb Mark
@@ -133,7 +133,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                     <img
                       src={rightThumb || ""}
                       alt="right thumb"
-                      className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center object-contain"
+                      className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center object-cover"
                     />
                     <span className="text-blue-700 text-center text-[0.6rem] font-serif italic">
                       Right Thumb Mark
