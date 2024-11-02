@@ -120,8 +120,16 @@ export default function Page() {
 
       router.push("/user/dashboard");
     } catch (error: any) {
-      console.error("Error details:", error);
-      toast.error("An error occurred. Please try again.");
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("Email address is already been used.");
+      } else if (error.code === "auth/invalid-email") {
+        toast.error("Invalid email address.");
+      } else if (error.code === "auth/weak-password") {
+        toast.error("Password must be at least 6 characters.");
+      } else {
+        console.error("Error details:", error);
+        toast.error("An error occurred. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

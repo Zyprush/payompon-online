@@ -1,7 +1,15 @@
 "use client";
 import { db } from "@/firebase";
-import { collection, query, where, getDocs, limit, deleteDoc, doc } from "firebase/firestore";
-import { getAuth, deleteUser } from "firebase/auth";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import ViewResident from "./ViewResident";
 import Link from "next/link";
@@ -60,7 +68,9 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   }, []);
 
   const handleDelete = async (user: User) => {
-    const emailConfirmation = window.prompt(`Type "${user.email}" to confirm deletion:`);
+    const emailConfirmation = window.prompt(
+      `Type "${user.email}" to confirm deletion:`
+    );
     if (emailConfirmation !== user.email) {
       alert("Email does not match. Deletion canceled.");
       return;
@@ -120,6 +130,9 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                 Name
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
+                Name
+              </th>
+              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Email
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
@@ -129,9 +142,6 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                 Contact
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Gender
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Valid ID
               </th>
             </tr>
@@ -139,12 +149,41 @@ const VerifiedResident: React.FC = (): JSX.Element => {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user.id}>
-                <td className="py-2 px-4 border-b text-xs">{user.firstname} {user.middlename} {user.lastname}</td>
+                <td className="py-2 px-4 border-b text-xs font-semibold">
+                  {user.selfie ? (
+                    <a
+                      href={user.selfie}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className=""
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={user.selfie}
+                        alt="Selfie"
+                        className="w-14 h-14 object-cover border shadow-sm rounded-full"
+                      />
+                    </a>
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={"/img/profile.jpg"}
+                      alt="Selfie"
+                      className="w-14 h-14 object-cover border shadow-sm rounded-full"
+                    />
+                  )}
+                </td>
+                <td className="py-2 px-4 border-b text-xs">
+                  {user.firstname} {user.middlename} {user.lastname}
+                </td>
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
-                <td className="py-2 px-4 border-b text-xs">{user.verifiedAt ? format(new Date(user.verifiedAt), "MMM dd, yyyy") : ""}</td>
+                <td className="py-2 px-4 border-b text-xs">
+                  {user.verifiedAt
+                    ? format(new Date(user.verifiedAt), "MMM dd, yyyy")
+                    : ""}
+                </td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
-                <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
-                <td className="py-2 px-4 border-b text-xs font-semibold flex gap-3">
+                <td className="py-2 px-4 border-b text-xs font-semibold space-x-3">
                   <button
                     onClick={() => setSelectedUser(user)}
                     className="btn-outline text-primary rounded-sm btn-xs btn"
@@ -152,7 +191,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                     details
                   </button>
                   <Link
-                  href={`/admin/resident/${user.id}`}
+                    href={`/admin/resident/${user.id}`}
                     className="text-white btn-primary rounded-sm btn-xs btn"
                   >
                     update

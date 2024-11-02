@@ -36,14 +36,7 @@ const Revenue: React.FC = (): JSX.Element => {
 
   return (
     <NavLayout>
-      <ReactToPrint
-        trigger={() => (
-          <button className="btn btn-sm btn-primary text-white fixed bottom-4 right-4">
-            Print
-          </button>
-        )}
-        content={() => printRef.current}
-      />
+
       <div className="flex gap-5 p-5 flex-col" ref={printRef}>
         {/* only show header while printing */}
         <div className="print-header hidden"><Header/></div>
@@ -77,6 +70,14 @@ const Revenue: React.FC = (): JSX.Element => {
                 );
               })}
             </select>
+            <ReactToPrint
+        trigger={() => (
+          <button className="btn-sm btn my-auto btn-primary rounded-sm text-white">
+            Print
+          </button>
+        )}
+        content={() => printRef.current}
+      />
           </div>
         </h1>
 
