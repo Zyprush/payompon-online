@@ -21,7 +21,7 @@ const Verify: FC = () => {
   return (
     <div className="bg-white shadow rounded-lg p-4">
       <div>
-        {userData?.submitted == "submitted" && userData?.verified ? (
+        {userData?.submitted && userData?.verified ? (
           <div className="flex gap-5 md:max-w-[23rem]">
             <Image
               src="/img/rabbit.png"

@@ -81,6 +81,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
           console.log("No such document!");
         }
       };
+      fetchPurposes();
 
       return () => unsubscribe();
     };

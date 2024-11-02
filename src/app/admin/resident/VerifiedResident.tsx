@@ -1,6 +1,7 @@
 "use client";
 import { db } from "@/firebase";
-import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import { collection, query, where, getDocs, limit, deleteDoc, doc } from "firebase/firestore";
+import { getAuth, deleteUser } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import ViewResident from "./ViewResident";
 import Link from "next/link";
@@ -32,9 +33,10 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const auth = getAuth();
+
   const fetchUsers = async () => {
     setLoading(true);
-
     const q = query(
       collection(db, "users"),
       where("role", "==", "resident"),
@@ -56,6 +58,33 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleDelete = async (user: User) => {
+    const emailConfirmation = window.prompt(`Type "${user.email}" to confirm deletion:`);
+    if (emailConfirmation !== user.email) {
+      alert("Email does not match. Deletion canceled.");
+      return;
+    }
+
+    try {
+      // Delete from Firestore
+      await deleteDoc(doc(db, "users", user.id));
+
+      // Delete from Firebase Auth
+      // if (user.email) {
+      //   await deleteUser(authUser);
+      //   alert("User email deleted successfully.");
+      //   console.log("User email deleted successfully.");
+      // }
+
+      // Update local state to remove deleted user
+      setUsers((prevUsers) => prevUsers.filter((u) => u.id !== user.id));
+      alert("User deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Failed to delete user.");
+    }
+  };
 
   const filteredUsers = users.filter((user) =>
     `${user.firstname} ${user.middlename} ${user.lastname}`
@@ -128,6 +157,12 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                   >
                     update
                   </Link>
+                  <button
+                    onClick={() => handleDelete(user)}
+                    className="btn-error text-white rounded-sm btn-xs btn"
+                  >
+                    delete
+                  </button>
                 </td>
               </tr>
             ))}

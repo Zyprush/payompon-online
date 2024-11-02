@@ -8,6 +8,7 @@ import { useRequestStore } from "@/state/request";
 import UnknownDoc from "@/components/UnknownDoc";
 import { getCaptain } from "@/helper/getOfficials";
 import GetImage from "@/components/GetImage";
+import useGetFinger from "@/hooks/useGetFinger";
 
 type PrintContentProps = {
   zoomLevel: number;
@@ -18,6 +19,9 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     const [request, setRequest] = useState<any>();
     const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
+    const { leftThumb, rightThumb } = useGetFinger({
+      uid: request?.submittedBy,
+    });
     const { id } = useRequestStore();
 
     useEffect(() => {
@@ -114,13 +118,23 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
               <div className="flex justify-between items-center p-3">
                 <div className="flex flex-row gap-2 mt-28">
                   <div className="flex justify-center flex-col">
-                    <div className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center"></div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={leftThumb || ""}
+                      alt="left thumb"
+                      className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center object-contain"
+                    />
                     <span className="text-blue-700 text-center text-[0.6rem] font-serif italic">
                       Left Thumb Mark
                     </span>
                   </div>
                   <div className="flex justify-center flex-col">
-                    <div className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center"></div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={rightThumb || ""}
+                      alt="right thumb"
+                      className="border-2 border-green-700 w-24 h-24 hover:bg-green-100 flex items-center justify-center object-contain"
+                    />
                     <span className="text-blue-700 text-center text-[0.6rem] font-serif italic">
                       Right Thumb Mark
                     </span>
