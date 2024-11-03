@@ -13,7 +13,7 @@ interface RequestData {
   proofOfPaymentURL: string;
   status: string;
   submittedName: string;
-  timestamp: any; // Change the type here to 'any' to accommodate Firestore timestamps
+  timestamp: string;
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {
@@ -53,12 +53,6 @@ const PendingCertificate: React.FC = (): JSX.Element => {
 
   const handleDecline = (request: RequestData) => {
     setDeclineRequest(request);
-  };
-
-  // Convert Firestore timestamp to readable date format
-  const formatDate = (timestamp: any) => {
-    const date = timestamp?.seconds ? new Date(timestamp.seconds * 1000) : null;
-    return date ? format(date, "MMM dd, yyyy") : "N/A"; // Use date-fns format
   };
 
   // Filter the requests based on the search term
@@ -102,7 +96,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 Proof of Payment
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                Status
+                Actions
               </th>
             </tr>
           </thead>
@@ -116,7 +110,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                   {request.submittedName}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
-                  {formatDate(request.timestamp)}
+                  {format(request.timestamp,"MMM dd, yyyy - hh:mm a")}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.gcashRefNo}

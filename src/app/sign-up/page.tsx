@@ -13,6 +13,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Link from "next/link";
+import { currentTime } from "@/helper/time";
 
 export default function Page() {
   const router = useRouter();
@@ -115,7 +116,8 @@ export default function Page() {
         selfie: selfieURL,
         role: "resident",
         verified: false,
-        submitted: true
+        submitted: true,
+        verifiedAt: currentTime,
       });
 
       router.push("/user/dashboard");

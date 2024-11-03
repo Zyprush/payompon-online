@@ -4,6 +4,7 @@ import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
 import ReactToPrint from "react-to-print";
 import Header from "@/app/document/[id]/Header";
+import { format } from "date-fns";
 
 interface RequestData {
   id: string;
@@ -14,6 +15,7 @@ interface RequestData {
   submittedName: string;
   issueOn: string;
   amount: string;
+  timestamp: string;
 }
 
 const ApprovedCertificate: React.FC = (): JSX.Element => {
@@ -95,6 +97,9 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                   Name
                 </th>
                 <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                  Date
+                </th>
+                <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                   GCash Ref No
                 </th>
                 <th className="print:hidden py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -113,6 +118,9 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs">
                     {request.submittedName}
+                  </td>
+                  <td className="py-2 px-4 border-b text-left text-xs">
+                    {format(request.timestamp, "MMM dd, yyyy - hh:mm a")}
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs">
                     {request.gcashRefNo}

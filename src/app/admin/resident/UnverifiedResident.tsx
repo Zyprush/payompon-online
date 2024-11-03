@@ -13,6 +13,7 @@ import { useMessageStore } from "@/state/message";
 import { useNotifStore } from "@/state/notif";
 import ViewResident from "./ViewResident";
 import VerifyModal from "./VerifyModal";
+import { format } from "date-fns/format";
 
 interface User {
   id: string;
@@ -64,55 +65,6 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  const handleVerify = async (userId: string, isVerified: boolean) => {
-    const confirmAction = confirm(
-      "Are you sure you want to verify this resident?"
-    );
-    if (!confirmAction) return; // If the user cancels, do nothing
-
-    try {
-      const userRef = doc(db, "users", userId);
-      const currentTime = new Date().toISOString();
-      await updateDoc(userRef, {
-        verified: isVerified,
-        verifiedAt: currentTime,
-      });
-
-      const user = users.find((user) => user.id === userId);
-      addMessage({
-        message: isVerified
-          ? "Your account has been verified."
-          : "Your account has been declined.",
-        sender: "admin",
-        receiverId: userId,
-        receiverName: user ? `${user.firstname} ${user.lastname}` : "Unknown",
-        senderName: "Admin",
-        seen: false,
-        time: currentTime,
-        for: "user",
-      });
-
-      await addNotif({
-        for: userId,
-        message: isVerified
-          ? "Your account has been verified. You can now access services."
-          : "Your account verification has been declined.",
-        time: currentTime,
-        type: "user",
-        read: false,
-      });
-
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, verified: isVerified } : user
-        )
-      );
-      await fetchUsers();
-    } catch (error) {
-      console.error("Error updating user verification status:", error);
-    }
-  };
 
   const handleReject = async (userId: string) => {
     const reason = prompt(
@@ -210,7 +162,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 Contact
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Gender
+                Registered At
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Actions
@@ -236,13 +188,26 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                       />
                     </a>
                   ) : (
-                    "No Selfie Uploaded"
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={"/img/profile.jpg"}
+                      alt="Selfie"
+                      className="w-14 h-14 object-cover border shadow-sm rounded-full"
+                    />
                   )}
                 </td>
                 <td className="py-2 px-4 border-b text-xs">{`${user.firstname} ${user.middlename} ${user.lastname}`}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
-                <td className="py-2 px-4 border-b text-xs">{user.gender}</td>
+                <td className="py-2 px-4 border-b text-xs">
+                  {" "}
+                  {user.verifiedAt
+                    ? format(
+                        new Date(user.verifiedAt),
+                        "MMM dd, yyyy : hh:mm a"
+                      )
+                    : ""}
+                </td>
                 <td className="py-2 px-4 border-b text-xs">
                   <button
                     onClick={() => {

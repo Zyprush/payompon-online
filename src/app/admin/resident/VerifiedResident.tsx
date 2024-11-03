@@ -179,7 +179,10 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                 <td className="py-2 px-4 border-b text-xs">
                   {user.verifiedAt
-                    ? format(new Date(user.verifiedAt), "MMM dd, yyyy")
+                    ? format(
+                        new Date(user.verifiedAt),
+                        "MMM dd, yyyy : hh:mm a"
+                      )
                     : ""}
                 </td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>

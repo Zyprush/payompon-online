@@ -5,6 +5,7 @@ import { db } from "@/firebase";
 import UpdateCertificate from "./UpdateCertificate";
 import DeclineModal from "./DeclineModal";
 import ViewRequestModal from "./ViewRequestModal";
+import { format } from "date-fns";
 
 interface RequestData {
   id: string;
@@ -14,6 +15,7 @@ interface RequestData {
   status: string;
   submittedName: string;
   declineReason: string;
+  timestamp: string;
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {
@@ -52,7 +54,6 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     fetchRequests();
   }, [selectedRequest, declineRequest]);
 
-
   const handleView = (request: RequestData) => {
     setViewRequest(request); // Opens the view modal
   };
@@ -61,7 +62,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
   const filteredRequests = requests.filter((request) =>
     request.submittedName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   return (
     <div className="certificate-list">
       <div className="search-bar mb-4">
@@ -89,6 +90,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 Name
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                Date
+              </th>
+              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                 GCash Ref No
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -107,6 +111,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.submittedName}
+                </td>
+                <td className="py-2 px-4 border-b text-left text-xs">
+                  {format(request.timestamp, "MMM dd, yyyy - hh:mm a")}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.gcashRefNo}

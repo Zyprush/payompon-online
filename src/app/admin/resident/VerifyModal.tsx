@@ -35,7 +35,7 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
 
   const handleVerify = async () => {
     // Confirm verification
-    const isConfirmed = window.confirm("Are you sure you want to verify this resident?");
+    const isConfirmed = window.confirm("Are you sure you want to verify this resident, this action cannot be undone?");
     if (!isConfirmed) return;
 
     if (!leftThumb || !rightThumb) {
