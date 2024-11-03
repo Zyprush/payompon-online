@@ -19,7 +19,7 @@ const AddOfficial: React.FC<OfficialModalProps> = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     // Input validation
-    if (!name || !status || !address || !position) {
+    if (!name || !address || !position) {
       alert("Please fill in all required fields.");
       return;
     }
