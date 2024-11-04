@@ -67,7 +67,7 @@ const SideContent = () => {
       </span>
       <span className="text-center mt-7">
         <p className="text-xl font-bold uppercase text-green-800 bernard-mt">
-          {officials.treasurer}
+          {officials.secretary}
         </p>
         <p className="bernard-mt font-semibold text-blue-700">
           Barangay Secretary
@@ -75,7 +75,7 @@ const SideContent = () => {
       </span>
       <span className="text-center mt-7">
         <p className="text-xl font-bold uppercase text-green-800 bernard-mt">
-          {officials.secretary}
+          {officials.treasurer}
         </p>
         <p className="bernard-mt font-semibold text-blue-700">
           Barangay Treasurer

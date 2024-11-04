@@ -24,7 +24,7 @@ const Account: React.FC = () => {
         <span className="w-full h-auto border-b-2 gap-3 p-3 flex justify-start items-center">
           <span className="w-auto">
             <h1 className="font-bold text-primary">
-              Hello, {userRole === "admin" ? "Admin" : `${firstname} ${lastname}`}!
+              Hello, {userRole === "admin" ? "Admin" : userRole === "staff" ? "Staff" : `${firstname} ${lastname}`}!
             </h1>
             <h1 className="text-xs text-zinc-500">
               {userRole !== "admin" && toTitleCase(userRole || "")}

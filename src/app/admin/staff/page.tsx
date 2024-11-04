@@ -81,7 +81,7 @@ const Staff: React.FC = (): JSX.Element => {
           className="py-2 px-4 bg-primary text-sm font-semibold text-white rounded"
           onClick={() => setIsModalOpen(true)}
         >
-          Add Staff
+          Add Personnel
         </button>
         <AddStaff isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         <EditStaff

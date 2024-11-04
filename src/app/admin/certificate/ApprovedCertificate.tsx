@@ -22,7 +22,9 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<RequestData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // State to store search input
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>("");
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
           fetchedRequests.push({ id: doc.id, ...doc.data() } as RequestData);
         });
         setRequests(fetchedRequests);
-        setFilteredRequests(fetchedRequests); // Initialize filtered requests
+        setFilteredRequests(fetchedRequests);
       } catch (error) {
         console.error("Error fetching requests:", error);
       } finally {
@@ -50,13 +52,24 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
     fetchRequests();
   }, []);
 
-  // Filter requests by submittedName
+  // Filter requests by name, month, and year
   useEffect(() => {
-    const filtered = requests.filter((request) =>
-      request.submittedName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered = requests.filter((request) => {
+      const requestDate = new Date(request.timestamp);
+      const matchesSearch = request.submittedName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesMonth =
+        selectedMonth === "" ||
+        requestDate.getMonth() + 1 === parseInt(selectedMonth);
+      const matchesYear =
+        selectedYear === "" ||
+        requestDate.getFullYear() === parseInt(selectedYear);
+
+      return matchesSearch && matchesMonth && matchesYear;
+    });
     setFilteredRequests(filtered);
-  }, [searchTerm, requests]);
+  }, [searchTerm, selectedMonth, selectedYear, requests]);
 
   return (
     <div className="certificate-list">
@@ -73,14 +86,46 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
           <Header />
         </div>
 
-        {/* Search input */}
-        <input
-          type="text"
-          placeholder="Search by name"
-          className="p-2 text-sm w-60 border rounded mb-4"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="flex gap-5 print:hidden">
+          <input
+            type="text"
+            placeholder="Search by name"
+            className="p-2 text-sm w-60 border rounded mb-4"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="p-2 text-sm w-40 border rounded mb-4"
+          >
+            <option value="">Select Month</option>
+            {[...Array(12)].map((_, index) => (
+              <option key={index} value={index + 1}>
+                {new Date(0, index).toLocaleString("default", {
+                  month: "long",
+                })}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="p-2 text-sm w-28 border rounded mb-4"
+          >
+            <option value="">Select Year</option>
+            {[...Array(5)].map((_, index) => {
+              const year = new Date().getFullYear() - index;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
+        </div>
 
         {loading ? (
           <p className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto justify-center w-40">
@@ -106,7 +151,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                   Proof of Payment
                 </th>
                 <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                  Certficate Link
+                  Certificate Link
                 </th>
               </tr>
             </thead>
