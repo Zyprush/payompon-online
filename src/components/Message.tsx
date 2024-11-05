@@ -4,7 +4,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import { Search, Send, Menu, X } from 'lucide-react';
         
-interface User {
+interface User {  
     id: string;  
     name: string;
     role: string;
