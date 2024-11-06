@@ -1,7 +1,6 @@
 interface RequestData {
     id: string;
     requestType: string;
-    gcashRefNo: string;
     proofOfPaymentURL: string;
     status: string;
     certLink?: string;
@@ -28,9 +27,6 @@ interface RequestData {
               Request Type
             </th>
             <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-              GCash Ref No
-            </th>
-            <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
               Proof of Payment
             </th>
             <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -43,9 +39,6 @@ interface RequestData {
             <tr key={request.id}>
               <td className="py-2 px-4 border-b text-left text-xs">
                 {request.requestType}
-              </td>
-              <td className="py-2 px-4 border-b text-left text-xs">
-                {request.gcashRefNo}
               </td>
               <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                 <a

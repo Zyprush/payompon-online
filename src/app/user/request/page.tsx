@@ -15,7 +15,6 @@ import { ResidentDeclinedTable } from "./ResidentDeclinedTable";
 interface RequestData {
   id: string;
   requestType: string;
-  gcashRefNo: string;
   proofOfPaymentURL: string;
   status: string;
   certLink?: string;

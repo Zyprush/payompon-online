@@ -3,7 +3,6 @@ import React from "react";
 interface RequestData {
   id: string;
   requestType: string;
-  gcashRefNo: string;
   submittedName: string;
   proofOfPaymentURL: string;
   status: string;
@@ -32,13 +31,12 @@ const ViewRequestModal: React.FC<ViewRequestModalProps> = ({ request, onClose })
 };
 
 const RequestDetails: React.FC<{ request: RequestData }> = ({ request }) => {
-  const { requestType, submittedName, gcashRefNo, declineReason } = request;
+  const { requestType, submittedName, declineReason } = request;
 
   return (
     <>
       <DetailRow label="Request Type" value={requestType} />
       <DetailRow label="Name" value={submittedName} />
-      <DetailRow label="GCash Ref No" value={gcashRefNo} />
       <DetailRow label="Reason of Decline" value={declineReason || "N/A"} />
     </>
   );

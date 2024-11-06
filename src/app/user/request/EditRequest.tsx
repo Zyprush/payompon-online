@@ -16,7 +16,6 @@ interface EditRequestProps {
   requestData: {
     id: string;
     requestType: string;
-    gcashRefNo: string;
     proofOfPaymentURL: string;
     purpose: string;
   };
@@ -33,12 +32,10 @@ const EditRequest: React.FC<EditRequestProps> = ({
     requestData.requestType
   );
   const [purpose, setPurpose] = useState<string>(requestData.purpose);
-  const [gcashRefNo, setGcashRefNo] = useState<string>(requestData.gcashRefNo);
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
     requestType?: string;
-    gcashRefNo?: string;
     purpose?: string;
   }>({});
   const [services, setServices] = useState<{ name: string; price: string }[]>(
@@ -50,7 +47,6 @@ const EditRequest: React.FC<EditRequestProps> = ({
   useEffect(() => {
     if (requestData) {
       setRequestType(requestData.requestType);
-      setGcashRefNo(requestData.gcashRefNo);
       setPurpose(requestData.purpose);
       setProofOfPayment(null);
     }
@@ -78,7 +74,6 @@ const EditRequest: React.FC<EditRequestProps> = ({
   const validateInputs = () => {
     const errors: {
       requestType?: string;
-      gcashRefNo?: string;
       purpose?: string;
     } = {};
 
@@ -88,10 +83,6 @@ const EditRequest: React.FC<EditRequestProps> = ({
 
     if (!purpose) {
       errors.purpose = "Purpose is required";
-    }
-
-    if (!gcashRefNo) {
-      errors.gcashRefNo = "GCash reference number is required";
     }
 
     setErrors(errors);
@@ -136,7 +127,6 @@ const EditRequest: React.FC<EditRequestProps> = ({
       await updateDoc(requestDocRef, {
         requestType,
         purpose,
-        gcashRefNo,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
       });
@@ -201,21 +191,6 @@ const EditRequest: React.FC<EditRequestProps> = ({
             </select>
             {errors.purpose && (
               <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">
-              GCash Reference Number
-            </label>
-            <input
-              type="text"
-              value={gcashRefNo}
-              onChange={(e) => setGcashRefNo(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            />
-            {errors.gcashRefNo && (
-              <p className="text-red-500 text-sm mt-1">{errors.gcashRefNo}</p>
             )}
           </div>
 

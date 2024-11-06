@@ -41,7 +41,7 @@ const EditOfficial: React.FC<EditOfficialProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !status || !address || !position) {
+    if (!name || !address || !position) {
       alert("Please fill in all required fields.");
       return;
     }

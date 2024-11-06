@@ -10,7 +10,6 @@ import { format } from "date-fns";
 interface RequestData {
   id: string;
   requestType: string;
-  gcashRefNo: string;
   proofOfPaymentURL: string;
   status: string;
   submittedName: string;
@@ -93,9 +92,6 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 Date
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-                GCash Ref No
-              </th>
-              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                 Proof of Payment
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -114,9 +110,6 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {format(request.timestamp, "MMM dd, yyyy - hh:mm a")}
-                </td>
-                <td className="py-2 px-4 border-b text-left text-xs">
-                  {request.gcashRefNo}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                   <a

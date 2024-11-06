@@ -24,7 +24,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [requestType, setRequestType] = useState<string>("");
   const [purpose, setPurpose] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
-  const [gcashRefNo, setGcashRefNo] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
@@ -112,7 +111,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       return;
     }
 
-    if (!requestType || !purpose || !amount || !gcashRefNo || !proofOfPayment) {
+    if (!requestType || !purpose || !amount || !proofOfPayment) {
       alert("All fields are required.");
       return;
     }
@@ -130,7 +129,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
         submittedBy: userUid,
         requestType,
         purpose,
-        gcashRefNo,
         amount,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
@@ -218,21 +216,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-
-          {/* GCash Reference Number */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-zinc-700">
-              GCash Reference Number
-            </label>
-            <input
-              type="text"
-              value={gcashRefNo}
-              required
-              onChange={(e) => setGcashRefNo(e.target.value)}
-              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
-              disabled={loading}
-            />
           </div>
 
           {/* Proof of Payment */}
