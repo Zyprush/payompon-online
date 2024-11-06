@@ -16,9 +16,9 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   selectedRequest,
   onClose,
 }) => {
-  const [orNo, setOrNo] = useState<string>("");
+  // const [orNo, setOrNo] = useState<string>("");
   const [issueOn, setIssueOn] = useState<string>("");
-  const [certNo, setCertNo] = useState<string>("");
+  // const [certNo, setCertNo] = useState<string>("");
   const [affiant, setAffiant] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { addNotif } = useNotifStore();
@@ -29,18 +29,18 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
     // Auto-generate unique OR No and Cert No
     const generateUniqueNumber = () => {
       const timestamp = Date.now().toString(); // Use current timestamp
-      const uniqueCertNo = `CERT-${timestamp}`;
-      const uniqueOrNo = `OR-${uuidv4().substring(0, 8)}`; // Generate part of a UUID for OR No
+      // const uniqueCertNo = `CERT-${timestamp}`;
+      // const uniqueOrNo = `OR-${uuidv4().substring(0, 8)}`; // Generate part of a UUID for OR No
 
-      setCertNo(uniqueCertNo);
-      setOrNo(uniqueOrNo);
+      // setCertNo(uniqueCertNo);
+      // setOrNo(uniqueOrNo);
     };
 
     generateUniqueNumber();
   }, []); // This will run once when the component mounts
 
   const handleUpdate = async () => {
-    if (!orNo || !issueOn || !certNo || !affiant) {
+    if (!issueOn || !affiant) {
       alert("Please fill in all the required fields.");
       return;
     }
@@ -50,15 +50,13 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
     try {
       const requestDoc = doc(db, "requests", selectedRequest.id);
       await updateDoc(requestDoc, {
-        orNo,
         issueOn,
-        certNo,
         affiant,
         status: "approved",
         certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
       });
       await addMessage({
-        message: `Your certification request (${selectedRequest.requestType}) has been approved. OR NO: ${orNo}, CERT NO: ${certNo}`,
+        message: `Your certification request (${selectedRequest.requestType}) has been approved.`,
         certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
         sender: "admin",
         receiverId: selectedRequest.submittedBy,
@@ -78,9 +76,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
 
       await addRevenue({
         amount: selectedRequest.amount,
-        orNo,
         issueOn,
-        certNo,
         certType: selectedRequest.requestType,
         name: selectedRequest.submittedName,
       });
@@ -101,28 +97,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary drop-shadow">
           Update Certificate
         </h2>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Certificate No.
-          </label>
-          <input
-            type="text"
-            value={certNo}
-            disabled
-            className="w-full border rounded px-3 py-2 text-sm bg-gray-200 cursor-not-allowed"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            OR No.
-          </label>
-          <input
-            type="text"
-            value={orNo}
-            disabled
-            className="w-full border rounded px-3 py-2 text-sm bg-gray-200 cursor-not-allowed"
-          />
-        </div>
+   
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Issue On
