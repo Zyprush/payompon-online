@@ -38,7 +38,7 @@ const EditRequest: React.FC<EditRequestProps> = ({
     requestType?: string;
     purpose?: string;
   }>({});
-  const [services, setServices] = useState<{ name: string; price: string }[]>(
+  const [services, setServices] = useState<{ name: string; format: string; price: string }[]>(
     []
   );
   // State to hold purposes

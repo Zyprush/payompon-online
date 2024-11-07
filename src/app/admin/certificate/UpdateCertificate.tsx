@@ -24,6 +24,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const { addNotif } = useNotifStore();
   const { addRevenue } = useRevenueStore();
   const { addMessage } = useMessages();
+  const baseURL = typeof window !== "undefined" ? window.location.origin : "";
 
   useEffect(() => {
     // Auto-generate unique OR No and Cert No
@@ -53,11 +54,11 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         issueOn,
         affiant,
         status: "approved",
-        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
+        certLink: `${baseURL}/document/${selectedRequest.format}/${selectedRequest.id}`,
       });
       await addMessage({
         message: `Your certification request (${selectedRequest.requestType}) has been approved.`,
-        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
+        certLink: `${baseURL}/document/${selectedRequest.format}/${selectedRequest.id}`,
         sender: "admin",
         receiverId: selectedRequest.submittedBy,
         receiverName: selectedRequest.submittedName,
@@ -68,7 +69,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
       });
       await addNotif({
         message: `Your certification request (${selectedRequest.requestType}) has been approved.`,
-        certLink: `https://payompon-online.vercel.app/document/${selectedRequest.id}`,
+        certLink: `${baseURL}/document/${selectedRequest.format}/${selectedRequest.id}`,
         for: selectedRequest.submittedBy,
         read: false,
         time: currentTime,

@@ -13,6 +13,7 @@ interface RequestData {
   status: string;
   submittedName: string;
   timestamp: string;
+  format: string;
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {

@@ -7,6 +7,7 @@ const Services = () => {
     {
       name: string;
       price: string;
+      format: string;
     }[]
   >([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -57,6 +58,7 @@ const Services = () => {
       {
         name: "",
         price: "",
+        format: "",
       },
     ]);
 
@@ -83,6 +85,7 @@ const Services = () => {
           <thead>
             <tr className="border-b-2 text-primary">
               <th className="text-left p-2">Service Name</th>
+              <th className="text-left p-2">Document Format</th>
               <th className="text-left p-2">Price</th>
               {isEditing && <th className="text-left p-2">Actions</th>}
             </tr>
@@ -105,6 +108,23 @@ const Services = () => {
                     service.name
                   )}
                 </td>
+                <td className="p-2">
+                  {isEditing ? (
+                    <select
+                      value={service.format}
+                      onChange={(e) =>
+                        handleServiceChange(index, "format", e.target.value)
+                      }
+                      className="p-2 text-sm border-primary border-2 rounded-sm w-full"
+                    >
+                      <option value="">Select Format</option>
+                      <option value="certfication">Certification</option>
+                      <option value="certificate">Certificate</option>
+                    </select>
+                  ) : (
+                    <p className="capitalize">{service.format}</p>
+                  )}
+                </td> 
                 <td className="p-2">
                   {isEditing ? (
                     <input

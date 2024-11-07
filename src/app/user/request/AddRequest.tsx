@@ -24,13 +24,14 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [requestType, setRequestType] = useState<string>("");
   const [purpose, setPurpose] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
+  const [format, setFormat] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [contact, setContact] = useState<string>("");
-  const [services, setServices] = useState<{ name: string; price: string }[]>(
+  const [services, setServices] = useState<{ name: string; format: string; price: string }[]>(
     []
   );
   const [purposes, setPurposes] = useState<string[]>([]); // Change to store purposes as an array of strings
@@ -45,8 +46,10 @@ const AddRequest: React.FC<AddRequestProps> = ({
     console.log("e.target.value", e.target.value);
     if (selectedService) {
       setAmount(selectedService.price);
+      setFormat(selectedService.format);
     } else {
-      setAmount(""); // Reset amount if no service is selected
+      setAmount("");
+      setFormat("");
     }
   };
 
@@ -130,6 +133,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         requestType,
         purpose,
         amount,
+        format,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
         status: "pending",

@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/firebase";
 import ReactToPrint from "react-to-print";
-import Header from "@/app/document/[id]/Header";
 import { format } from "date-fns";
+import Header from "@/app/document/certification/[id]/Header";
 
 interface RequestData {
   id: string;
@@ -25,6 +25,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const printRef = useRef<HTMLDivElement>(null);
+  const baseURL = typeof window !== "undefined" ? window.location.origin : "";
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -175,7 +176,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                     <a
-                      href={`https://payompon-online.vercel.app/document/${request.id}`}
+                      href={`${baseURL}/document/format-1/${request.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500"

@@ -1,5 +1,5 @@
 "use client";
-import Header from "@/app/document/[id]/Header";
+import Header from "@/app/document/format-1/[id]/Header";
 import NavLayout from "@/components/NavLayout";
 import { useRevenueStore } from "@/state/revenue";
 import { format, parseISO } from "date-fns";
