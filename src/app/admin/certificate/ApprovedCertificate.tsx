@@ -15,6 +15,7 @@ interface RequestData {
   issueOn: string;
   amount: string;
   timestamp: string;
+  certLink: string;
 }
 
 const ApprovedCertificate: React.FC = (): JSX.Element => {
@@ -25,7 +26,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const printRef = useRef<HTMLDivElement>(null);
-  const baseURL = typeof window !== "undefined" ? window.location.origin : "";
+  // const baseURL = typeof window !== "undefined" ? window.location.origin : "";
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -176,7 +177,7 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                     <a
-                      href={`${baseURL}/document/format-1/${request.id}`}
+                      href={request.certLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500"

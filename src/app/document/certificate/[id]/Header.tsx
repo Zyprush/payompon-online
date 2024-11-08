@@ -1,6 +1,5 @@
 import GetText from "@/app/admin/settings/GetText";
 import GetImage from "@/components/GetImage";
-import Image from "next/image";
 import React from "react";
 
 const Header = () => {
