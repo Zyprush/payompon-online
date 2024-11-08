@@ -1,6 +1,6 @@
 import { getOfficials } from "@/helper/getOfficials";
 import React, { useEffect, useState } from "react";
-import QrCode from "./QrCode";
+import CertificateQrCode from "./CertificateQrCode";
 
 const SideContent = () => {
   const [officials, setOfficials] = useState({
@@ -81,7 +81,7 @@ const SideContent = () => {
           Barangay Treasurer
         </p>
       </span>
-      <QrCode />
+      <CertificateQrCode />
     </div>
   );
 };

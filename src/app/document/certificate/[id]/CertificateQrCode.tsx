@@ -3,10 +3,9 @@ import QRCode from "qrcode.react";
 import { db } from "@/firebase";
 import { useRequestStore } from "@/state/request";
 import { doc, getDoc } from "firebase/firestore";
-import { format } from "date-fns";
 import GetText from "@/app/admin/settings/GetText";
 
-const QrCode = () => {
+const CertificateQrCode = () => {
   // Get the current URL or define any URL you want to encode in the QR code
   const qrValue = window.location.href; // or any other URL/string you want to encode
   const [request, setRequest] = useState<any>();
@@ -37,14 +36,9 @@ const QrCode = () => {
 
   return (
     <span className="flex flex-col mt-auto mb-0 text-sm text-green-800 font-serif italic">
-      {/* Display the QR code here */}
       <QRCode value={qrValue} size={100} />
-      {/* <p>Paid Under O.R: {request?.orNo}</p> */}
-      {/* <p>Res. Cert. No: {request?.certNo}</p> */}
-      <p>Issued on: {request?.issueOn} </p>
-      <p>Issued at: <GetText name="address" title="adress"/></p>
     </span>
   );
 };
 
-export default QrCode;
+export default CertificateQrCode;

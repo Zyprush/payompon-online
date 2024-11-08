@@ -9,6 +9,7 @@ import { getCaptain } from "@/helper/getOfficials";
 import GetImage from "@/components/GetImage";
 import useGetFinger from "@/hooks/useGetFinger";
 import GetText from "@/app/admin/settings/GetText";
+import CertificateQrCode from "./CertificateQrCode";
 
 type PrintContentProps = {
   zoomLevel: number;
@@ -112,6 +113,9 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   </p>
                 </div>
               </div>
+            </div>
+            <div className="absolute bottom-24 left-5">
+              <CertificateQrCode/>
             </div>
           </div>
           <span className=" courier-prime text-green-800 font-bold mx-16 text-center">
