@@ -20,6 +20,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const [issueOn, setIssueOn] = useState<string>("");
   // const [certNo, setCertNo] = useState<string>("");
   const [affiant, setAffiant] = useState<string>("");
+  const [format, setFormat] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { addNotif } = useNotifStore();
   const { addRevenue } = useRevenueStore();
@@ -41,7 +42,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   }, []); // This will run once when the component mounts
 
   const handleUpdate = async () => {
-    if (!issueOn || !affiant) {
+    if (!issueOn || !affiant || !format) {
       alert("Please fill in all the required fields.");
       return;
     }
@@ -54,11 +55,12 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
         issueOn,
         affiant,
         status: "approved",
-        certLink: `${baseURL}/document/${selectedRequest.format}/${selectedRequest.id}`,
+        format,
+        certLink: `${baseURL}/document/${format}/${selectedRequest.id}`,
       });
       await addMessage({
         message: `Your certification request (${selectedRequest.requestType}) has been approved.`,
-        certLink: `${baseURL}/document/${selectedRequest.format}/${selectedRequest.id}`,
+        certLink: `${baseURL}/document/${format}/${selectedRequest.id}`,
         sender: "admin",
         receiverId: selectedRequest.submittedBy,
         receiverName: selectedRequest.submittedName,
@@ -112,6 +114,21 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
           />
         </div>
 
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Format
+          </label>
+          <select
+            required
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Format</option>
+            <option value="certificate">Certificate</option>
+            <option value="certification">Certification</option>
+          </select>
+        </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, Ref } from "react";
+import React, { useState, useEffect, forwardRef, Ref, use } from "react";
 import Header from "./Header";
 import { formatIssueDate } from "@/helper/time";
 import SideContent from "./SideContent";
@@ -19,6 +19,8 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     const [request, setRequest] = useState<any>();
     const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
+    const [purposes, setPurposes] = useState<string[]>([]); 
+
     const { leftThumb, rightThumb } = useGetFinger({
       uid: request?.submittedBy,
     });
@@ -49,6 +51,19 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
       fetchRequest();
     }, [id, setRequest]);
 
+
+    useEffect(() => {
+      const fetchPurposes = async () => {
+        const purposesDoc = await getDoc(doc(db, "settings", "purposes"));
+        if (purposesDoc.exists()) {
+          setPurposes(purposesDoc.data().purposes || []); // Assuming the data is an array of purpose strings
+        } else {
+          console.log("No such document!");
+        }
+      };
+      fetchPurposes();
+    }, []);
+
     if (!loading && !request) {
       return <UnknownDoc />;
     }
@@ -69,12 +84,14 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
           <Header />
           <div className="flex flex-row border-4 border-green-700 w-full h-full mt-2">
             {/* SideComponent */}
+            <div className="absolute w-[90%] ml-[3%] mt-[10%] opacity-15 z-0">
+              <GetImage storageLink="settings/brgyLogo" />
+            </div>
             <SideContent />
             <div className="flex flex-col w-2/3 courier-prime">
-              {/* certification */}
               <div className="flex flex-col p-3">
                 <span className="text-green-800 text-justify text-[3.5rem] mx-auto italic font-bold underline bernard-mt">
-                  Certificate
+                  Certification
                 </span>
                 <span className="text-gray-700 text-justify text-lg font-bold mt-10">
                   TO WHOM IT MAY CONCERN:
@@ -92,8 +109,12 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 <span className="text-green-800 text-justify text-lg font-bold mt-10">
                   AS PER REQUIREMENT AND/OR TO SUPPORT HIS/HER
                 </span>
-                <span className="text-gray-600 text-justify font-bold uppercase">
-                  {request?.requestType}
+                <span className="text-gray-600 grid grid-cols-2 text-justify font-bold uppercase">
+                {purposes.map((pur, index) => (
+                <div key={index} className={`${pur == request?.purpose ? "bg-yellow-300" : ""}`}>
+                  (){pur}
+                </div>
+              ))}
                 </span>
               </div>
 

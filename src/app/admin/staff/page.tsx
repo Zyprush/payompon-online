@@ -77,6 +77,7 @@ const Staff: React.FC = (): JSX.Element => {
   return (
     <NavLayout>
       <div className="p-4">
+        <h2 className="text-2xl font-bold mb-8 text-primary">User Management</h2>
         <button
           className="py-2 px-4 bg-primary text-sm font-semibold text-white rounded"
           onClick={() => setIsModalOpen(true)}

@@ -20,9 +20,6 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     const [request, setRequest] = useState<any>();
     const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
-    const { leftThumb, rightThumb } = useGetFinger({
-      uid: request?.submittedBy,
-    });
     const { id } = useRequestStore();
 
     useEffect(() => {
@@ -58,7 +55,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
       <div
         ref={ref as Ref<HTMLDivElement>}
         id="document"
-        className="relative w-[8.27in] h-[11.69in] border border-gray-300 p-4"
+        className="relative w-[8.27in] h-[11.69in] border bg-white border-gray-300 p-4"
         style={{
           transform: `scale(${zoomLevel})`,
           transformOrigin: "top left",
@@ -68,11 +65,14 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
         <div className="flex flex-col w-full h-full">
           {/* Header*/}
           <Header />
-          <div className="flex flex-row p-5  w-full h-full mt-2">
-            <div className="flex flex-col w-full courier-prime">
+          <div className="relative flex flex-row p-5  w-full h-full mt-2">
+            <div className="absolute w-[90%] ml-[3%] mt-[10%]  opacity-20 z-0">
+              <GetImage storageLink="settings/brgyLogo" />
+            </div>
+            <div className="flex flex-col w-full courier-prime z-30">
               {/* certification */}
               <div className="flex flex-col p-3">
-                <span className="capitalize text-blue-700 text-justify text-[3rem] mx-auto italic font-serif font-semibold">
+                <span className="capitalize text-blue-700 text-[3rem] mx-auto italic font-serif font-semibold text-center">
                   {request?.requestType}
                 </span>
                 <span className="text-gray-700 text-justify text-lg font-bold mt-10">
@@ -88,11 +88,11 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
 
               <div className="flex flex-col p-3 mt-4">
                 <span className="text-gray-600 text-justify indent-8">
-                  This cetification is being issued upon the request  of the above-mention name for {request?.purpose}. <b>PURPUSE ONLY</b>
+                  This cetification is being issued upon the request of the
+                  above-mention name for {request?.purpose}. <b>PURPUSE ONLY</b>
                 </span>
               </div>
 
-              
               <div className="flex flex-col p-3 mt-4">
                 <span className="text-gray-600 text-justify indent-8">
                   Issued this {formatIssueDate(request?.issueOn)} at Barangay
@@ -115,7 +115,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
               </div>
             </div>
             <div className="absolute bottom-24 left-5">
-              <CertificateQrCode/>
+              <CertificateQrCode />
             </div>
           </div>
           <span className=" courier-prime text-green-800 font-bold mx-16 text-center">
