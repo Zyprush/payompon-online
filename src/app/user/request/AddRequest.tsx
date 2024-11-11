@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect} from "react";
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage, db } from "@/firebase";
@@ -7,7 +7,6 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNotifStore } from "@/state/notif";
 import { currentTime } from "@/helper/time";
 import GetImage from "@/components/GetImage";
-import { fetchFromSettings } from "@/helper/getSettings";
 import GetText from "@/app/admin/settings/GetText";
 
 interface AddRequestProps {
@@ -23,6 +22,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
 }): JSX.Element | null => {
   const [requestType, setRequestType] = useState<string>("");
   const [purpose, setPurpose] = useState<string>("");
+  const [showOtherPurpose, setShowOtherPurpose] = useState(false);
   const [amount, setAmount] = useState<string>("");
   const [format, setFormat] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
@@ -30,10 +30,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [userName, setUserName] = useState<string | null>(null);
   const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [contact, setContact] = useState<string>("");
-  const [services, setServices] = useState<{ name: string; format: string; price: string }[]>(
-    []
-  );
+  const [services, setServices] = useState<
+    { name: string; format: string; price: string }[]
+  >([]);
   const [purposes, setPurposes] = useState<string[]>([]); // Change to store purposes as an array of strings
 
   const addNotif = useNotifStore((state) => state.addNotif);
@@ -63,8 +62,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
         } else {
           setUserUid(null);
         }
-        const getContact = await fetchFromSettings("gcash");
-        setContact(getContact);
       });
       // Fetch services from Firestore
       const fetchServices = async () => {
@@ -108,6 +105,10 @@ const AddRequest: React.FC<AddRequestProps> = ({
     }
   };
 
+  const handleShowOtherPurpose = () => {
+    setShowOtherPurpose(!showOtherPurpose);
+  };
+
   const handleSubmit = async () => {
     if (!userUid) {
       alert("You must be logged in to submit a request.");
@@ -130,6 +131,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         submittedName: userName,
         sitio: userSitio,
         submittedBy: userUid,
+        otherPurpose: showOtherPurpose,
         requestType,
         purpose,
         amount,
@@ -202,29 +204,61 @@ const AddRequest: React.FC<AddRequestProps> = ({
             </select>
           </div>
 
-          {/* Purpose Dropdown */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-zinc-700">
-              Purpose
+          {!showOtherPurpose && (
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-zinc-700">
+                Purpose
+              </label>
+              <select
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
+                disabled={loading}
+              >
+                <option value="">Select a purpose</option>
+                {purposes.map((pur, index) => (
+                  <option key={index} value={pur}>
+                    {pur}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="mb-4 flex items-center">
+            <input
+              type="checkbox"
+              checked={showOtherPurpose}
+              onChange={handleShowOtherPurpose}
+              className="mr-2"
+            />
+            <label className="text-sm font-semibold text-zinc-700">
+              Other Purpose
             </label>
-            <select
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
-              disabled={loading}
-            >
-              <option value="">Select a purpose</option>
-              {purposes.map((pur, index) => (
-                <option key={index} value={pur}>
-                  {pur}
-                </option>
-              ))}
-            </select>
           </div>
+          {/* Other Purpose Input */}
+          {showOtherPurpose && (
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2 text-zinc-700">
+                Other Purpose
+              </label>
+              <input
+                type="text"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                className="w-full px-3 py-2 border rounded-sm text-sm text-zinc-700"
+                placeholder="Please enter your purpose"
+                required
+              />
+            </div>
+          )}
 
           {/* Proof of Payment */}
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-zinc-700" htmlFor="proof">
+            <label
+              className="block text-sm font-semibold mb-2 text-zinc-700"
+              htmlFor="proof"
+            >
               Proof of Payment
             </label>
             <input
@@ -268,7 +302,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
         </div>
       </div>
     </div>
-
   );
 };
 

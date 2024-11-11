@@ -71,17 +71,17 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
       <div
         ref={ref as Ref<HTMLDivElement>}
         id="document"
-        className="relative w-[8.5in] h-[13in] border border-gray-300 p-4 overflow-hidden"
+        className="relative w-[8.5in] h-[13in] border border-gray-300 p-3 overflow-hidden"
         style={{
           transform: `scale(${zoomLevel})`,
           transformOrigin: "top left",
           overflow: "auto", // Ensure scrollbars appear if content overflows
         }}
       >
-        <div className="flex flex-col w-full h-full text-sm">
+        <div className="flex flex-col w-full h-full text-sm gap-3">
           {/* Header*/}
           <Header />
-          <div className="flex flex-row border-4 border-green-700 w-full h-full mt-2">
+          <div className="flex flex-row border-4 border-green-700 w-full h-full">
             {/* SideComponent */}
             <div className="absolute w-[90%] ml-[3%] mt-[10%] opacity-15 -z-50">
               <GetImage storageLink="settings/brgyLogo" />
@@ -114,17 +114,22 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   {purposes.map((pur, index) => (
                     <div
                       key={index}
-                      className={`text-left text-sm font-normal  ${
-                        pur == request?.purpose ? "bg-yellow-300 font-bold" : ""
+                      className={`text-left text-sm font-normal capitalize  ${
+                        pur == request.purpose ? "bg-yellow-300 font-bold" : ""
                       }`}
                     >
                       (){pur}
                     </div>
                   ))}
+                  {request?.otherPurpose && (
+                    <span className="bg-yellow-300 text-left text-sm font-normal">
+                      ()OTHER:<p className="underline capitalize">{request.purpose}</p>
+                    </span>
+                  )}
                 </span>
               </div>
 
-              <div className="flex flex-col p-3 mt-5 text-sm">
+              <div className="flex flex-col p-3 text-sm">
                 <span className="text-gray-600 text-justify indent-8">
                   <b>IN WITNESS WHEREOF</b> I have hereunto set my hand and
                   affixed the Official seal of this office. Done at

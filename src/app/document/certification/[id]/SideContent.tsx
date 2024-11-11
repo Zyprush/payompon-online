@@ -37,7 +37,7 @@ const SideContent = () => {
       </h1>
       <div className="mt-4 text-lg flex justify-center flex-col">
         <span className="text-center mt-7">
-          <p className="text-xl font-bold uppercase text-green-800 bernard-mt">
+          <p className="text-lg font-bold uppercase text-green-800 bernard-mt">
             HON. {officials.punongBarangay}
           </p>
           <p className="bernard-mt font-semibold text-blue-700">
@@ -52,7 +52,7 @@ const SideContent = () => {
           {officials.kagawad.map((name, index) => (
             <p
               key={index}
-              className="text-xl font-bold uppercase text-green-800 bernard-mt"
+              className="text-lg font-bold uppercase text-green-800 bernard-mt"
             >
               HON. {name}
             </p>
@@ -60,13 +60,13 @@ const SideContent = () => {
         </span>
       </div>
       <span className="text-center mt-7">
-        <p className="text-xl font-bold uppercase text-green-800 bernard-mt">
+        <p className="text-lg font-bold uppercase text-green-800 bernard-mt">
           HON. {officials.skChairman}
         </p>
         <p className="bernard-mt font-semibold text-blue-700">Sk Chairman</p>
       </span>
       <span className="text-center mt-7">
-        <p className="text-xl font-bold uppercase text-green-800 bernard-mt">
+        <p className="text-lg font-bold uppercase text-green-800 bernard-mt">
           {officials.secretary}
         </p>
         <p className="bernard-mt font-semibold text-blue-700">
@@ -74,7 +74,7 @@ const SideContent = () => {
         </p>
       </span>
       <span className="text-center mt-7">
-        <p className="text-xl font-bold uppercase text-green-800 bernard-mt">
+        <p className="text-lg font-bold uppercase text-green-800 bernard-mt">
           {officials.treasurer}
         </p>
         <p className="bernard-mt font-semibold text-blue-700">

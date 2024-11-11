@@ -27,9 +27,9 @@ export const ApprovedTable: React.FC<{
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Proof of Payment
           </th>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+          {/* <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Cert No
-          </th>
+          </th> */}
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Issue On
           </th>
@@ -57,9 +57,9 @@ export const ApprovedTable: React.FC<{
                 View Proof
               </a>
             </td>
-            <td className="py-2 px-4 border-b text-left text-xs">
+            {/* <td className="py-2 px-4 border-b text-left text-xs">
               {request.certNo || "N/A"}
-            </td>
+            </td> */}
             <td className="py-2 px-4 border-b text-left text-xs">
               {request.issueOn || "N/A"}
             </td>

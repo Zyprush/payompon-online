@@ -14,6 +14,7 @@ interface RequestData {
   submittedName: string;
   timestamp: string;
   format: string;
+  purpose: string;
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {
@@ -87,6 +88,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 Name
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                Purpose
+              </th>
+              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
                 Date
               </th>
               <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -105,6 +109,9 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {request.submittedName}
+                </td>
+                <td className="py-2 px-4 border-b text-left text-xs">
+                  {request.purpose}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs">
                   {format(request.timestamp,"MMM dd, yyyy - hh:mm a")}

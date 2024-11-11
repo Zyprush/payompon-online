@@ -43,7 +43,7 @@ const RecentRevenue: React.FC = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {['Document', 'Amount', 'Date', 'OR No'].map((header) => (
+              {['Document', 'Amount', 'Date'].map((header) => (
                 <th
                   key={header}
                   scope="col"
@@ -66,11 +66,11 @@ const RecentRevenue: React.FC = () => {
                 <td className="py-3 px-6 whitespace-nowrap text-xs text-zinc-600">
                   {formatDate(order.time)}
                 </td>
-                <td className="py-3 px-6 whitespace-nowrap text-xs">
+                {/* <td className="py-3 px-6 whitespace-nowrap text-xs">
                   <span className="text-primary btn btn-outline btn-xs">
                     {order.orNo}
                   </span>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
