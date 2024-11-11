@@ -19,7 +19,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     const [request, setRequest] = useState<any>();
     const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
-    const [purposes, setPurposes] = useState<string[]>([]); 
+    const [purposes, setPurposes] = useState<string[]>([]);
 
     const { leftThumb, rightThumb } = useGetFinger({
       uid: request?.submittedBy,
@@ -51,7 +51,6 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
       fetchRequest();
     }, [id, setRequest]);
 
-
     useEffect(() => {
       const fetchPurposes = async () => {
         const purposesDoc = await getDoc(doc(db, "settings", "purposes"));
@@ -72,53 +71,60 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
       <div
         ref={ref as Ref<HTMLDivElement>}
         id="document"
-        className="relative w-[8.5in] h-[13in] border border-gray-300 p-4"
+        className="relative w-[8.5in] h-[13in] border border-gray-300 p-4 overflow-hidden"
         style={{
           transform: `scale(${zoomLevel})`,
           transformOrigin: "top left",
           overflow: "auto", // Ensure scrollbars appear if content overflows
         }}
       >
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-full text-sm">
           {/* Header*/}
           <Header />
           <div className="flex flex-row border-4 border-green-700 w-full h-full mt-2">
             {/* SideComponent */}
-            <div className="absolute w-[90%] ml-[3%] mt-[10%] opacity-15 z-0">
+            <div className="absolute w-[90%] ml-[3%] mt-[10%] opacity-15 -z-50">
               <GetImage storageLink="settings/brgyLogo" />
             </div>
             <SideContent />
             <div className="flex flex-col w-2/3 courier-prime">
-              <div className="flex flex-col p-3">
-                <span className="text-green-800 text-justify text-[3.5rem] mx-auto italic font-bold underline bernard-mt">
+              <div className="flex flex-col p-3 text-sm">
+                <span className="text-green-800 text-justify text-[3.5rem] mx-auto italic font-bold underline bernard-mt mt-5">
                   Certification
                 </span>
                 <span className="text-gray-700 text-justify text-lg font-bold mt-10">
                   TO WHOM IT MAY CONCERN:
                 </span>
-                <span className="text-gray-600 text-justify mt-8">
+                <span className="text-gray-600 text-justify mt-6">
                   This is to certify that MR./MS.{" "}
-                  <b className="text-green-800">{request?.submittedName}</b> is
-                  a bonafide resident of Purok/Sitio {request?.sitio}, Brgy.
+                  <b className="text-green-800 text-sm">
+                    {request?.submittedName}
+                  </b>{" "}
+                  is a bonafide resident of Purok/Sitio {request?.sitio}, Brgy.
                   Payompon, Mamburao, Occidental Mindoro is known to me of good
                   moral character and has no derogatory records on file in this
                   office. It appeared in this document his/her thumb mark,
                   residence certificate and signature as proofs of his/her
                   identity.
                 </span>
-                <span className="text-green-800 text-justify text-lg font-bold mt-10">
+                <span className="text-green-800 text-justify text-lg font-bold mt-5">
                   AS PER REQUIREMENT AND/OR TO SUPPORT HIS/HER
                 </span>
                 <span className="text-gray-600 grid grid-cols-2 text-justify font-bold uppercase">
-                {purposes.map((pur, index) => (
-                <div key={index} className={`${pur == request?.purpose ? "bg-yellow-300" : ""}`}>
-                  (){pur}
-                </div>
-              ))}
+                  {purposes.map((pur, index) => (
+                    <div
+                      key={index}
+                      className={`text-left text-sm font-normal  ${
+                        pur == request?.purpose ? "bg-yellow-300 font-bold" : ""
+                      }`}
+                    >
+                      (){pur}
+                    </div>
+                  ))}
                 </span>
               </div>
 
-              <div className="flex flex-col p-3 mt-5">
+              <div className="flex flex-col p-3 mt-5 text-sm">
                 <span className="text-gray-600 text-justify indent-8">
                   <b>IN WITNESS WHEREOF</b> I have hereunto set my hand and
                   affixed the Official seal of this office. Done at
@@ -172,6 +178,15 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                   </p>
                 </div>
               </div>
+              <span className="flex text-center text-green-700 italic text-sm mx-auto">
+                <span className="text-blue-700 text-md">*</span>
+                <span className="text-red-700 text-md">*</span>
+                <span className="text-yellow-700 text-md">*</span>
+                Note: Valid for six (6) months uppon issued
+                <span className="text-blue-700 text-md">*</span>
+                <span className="text-red-700 text-md">*</span>
+                <span className="text-yellow-700 text-md">*</span>
+              </span>
             </div>
           </div>
           <span className=" courier-prime text-green-800 font-bold mx-16 text-center">

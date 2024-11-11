@@ -31,8 +31,8 @@ const SideContent = () => {
   }, []);
   
   return (
-    <div className="flex flex-col w-1/3 border-r-4 border-green-700 p-3">
-      <h1 className="text-[2.25rem] italic bernard-mt text-center text-green-800 font-semibold">
+    <div className="flex flex-col w-1/3 border-r-4 border-green-700 p-3 z-20">
+      <h1 className="text-[2.25rem] italic bernard-mt text-center text-green-800 leading-none font-semibold">
         Barangay Officials
       </h1>
       <div className="mt-4 text-lg flex justify-center flex-col">
