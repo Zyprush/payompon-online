@@ -44,6 +44,7 @@ export default function Page() {
     setShowConfirmPassword(!showConfirmPassword);
 
   const validateInputs = () => {
+    const emailRegex = /^[^\s@]+@(gmail\.com|yahoo\.com)$/;   
     if (
       !firstname ||
       !lastname ||
@@ -61,6 +62,10 @@ export default function Page() {
       !selfie
     ) {
       toast.error("All fields are required!");
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address, gmail.com or yahoo.com.");
       return false;
     }
     if (password !== confirmPassword) {
