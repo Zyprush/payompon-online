@@ -129,7 +129,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 </span>
               </div>
 
-              <div className="flex flex-col p-3 text-sm">
+              <div className="flex flex-col p-3 text-sm mt-10">
                 <span className="text-gray-600 text-justify indent-8">
                   <b>IN WITNESS WHEREOF</b> I have hereunto set my hand and
                   affixed the Official seal of this office. Done at
@@ -147,8 +147,8 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
               </div>
 
               {/* Thumb */}
-              <div className="flex justify-between items-center p-3">
-                <div className="flex flex-row gap-2 mt-28">
+              <div className="flex justify-between items-center p-3 mt-8">
+                <div className="flex flex-row gap-2">
                   <div className="flex justify-center flex-col">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
