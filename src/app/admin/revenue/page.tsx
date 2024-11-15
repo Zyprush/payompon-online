@@ -8,10 +8,11 @@ import ReactToPrint from "react-to-print";
 
 const Revenue: React.FC = (): JSX.Element => {
   const { revenue, fetchRevenue, loadingRevenue } = useRevenueStore();
+  const currentYear = new Date().getFullYear().toString();
 
   // State for filtering
   const [selectedMonth, setSelectedMonth] = useState<string>("");
-  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>(currentYear);
 
   // Ref to the printable content
   const printRef = useRef<HTMLDivElement>(null);
@@ -23,22 +24,25 @@ const Revenue: React.FC = (): JSX.Element => {
 
   // Function to filter revenue by selected month and year
   const filteredRevenue = revenue?.filter((item) => {
-    const itemDate = parseISO(item.time); // Convert time to Date object
-    const itemMonth = format(itemDate, "MM"); // Get month in "MM" format
-    const itemYear = format(itemDate, "yyyy"); // Get year in "yyyy" format
+    const itemDate = parseISO(item.time);
+    const itemMonth = format(itemDate, "MM");
+    const itemYear = format(itemDate, "yyyy");
 
-    // Check if the month and year match the selected values
     const isMonthMatch = selectedMonth ? itemMonth === selectedMonth : true;
-    const isYearMatch = selectedYear ? itemYear === selectedYear : true;
+    const isYearMatch = itemYear === selectedYear;
 
     return isMonthMatch && isYearMatch;
   });
 
+  // Calculate total revenue for filtered data
+  const totalRevenue = filteredRevenue?.reduce((sum, item) => {
+    const amount = parseFloat(item.amount);
+    return !isNaN(amount) ? sum + amount : sum;
+  }, 0);
+
   return (
     <NavLayout>
-
       <div className="flex gap-5 p-5 flex-col" ref={printRef}>
-        {/* only show header while printing */}
         <div className="print-header hidden"><Header/></div>
         <h1 className="text-xl text-primary flex gap-2 items-center font-bold print:hidden">
           <span className="ml-2">Revenue</span>
@@ -60,7 +64,6 @@ const Revenue: React.FC = (): JSX.Element => {
               onChange={(e) => setSelectedYear(e.target.value)}
               className="p-2 border rounded text-sm"
             >
-              <option value="">All Years</option>
               {Array.from({ length: 10 }, (_, i) => {
                 const year = new Date().getFullYear() - i;
                 return (
@@ -71,15 +74,25 @@ const Revenue: React.FC = (): JSX.Element => {
               })}
             </select>
             <ReactToPrint
-        trigger={() => (
-          <button className="btn-sm btn my-auto btn-primary rounded-sm text-white">
-            Print
-          </button>
-        )}
-        content={() => printRef.current}
-      />
+              trigger={() => (
+                <button className="btn-sm btn my-auto btn-primary rounded-sm text-white">
+                  Print
+                </button>
+              )}
+              content={() => printRef.current}
+            />
           </div>
         </h1>
+
+        {/* Display Total Revenue */}
+        <div className="mb-4 p-4 bg-primary/10 rounded-md text-primary">
+          <h2 className="text-sm font-semibold mb-2">
+            Total Revenue for {selectedMonth ? format(new Date(2024, parseInt(selectedMonth) - 1), "MMMM") : "Year"} {selectedYear}
+          </h2>
+          <p className="text-xl font-bold">
+            ₱{totalRevenue?.toLocaleString() || "0"}
+          </p>
+        </div>
 
         {/* Content to Print */}
         <div>

@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 interface RequestData {
   id: string;
   requestType: string;
@@ -10,6 +12,7 @@ interface RequestData {
   orNo?: string;
   submittedBy?: string;
   submittedName?: string;
+  timestamp?: string;
 }
 
 export const RequestTable: React.FC<{
@@ -25,6 +28,9 @@ export const RequestTable: React.FC<{
             Request Type
           </th>
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+            Date
+          </th>
+          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Proof of Payment
           </th>
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
@@ -37,6 +43,9 @@ export const RequestTable: React.FC<{
           <tr key={request.id}>
             <td className="py-2 px-4 border-b text-left text-xs">
               {request.requestType}
+            </td>
+            <td className="py-2 px-4 border-b text-left text-xs">
+              {request.timestamp ? format(new Date(request.timestamp), "MMM dd, yyyy : hh:mm a") : "N/A"}
             </td>
             <td className="py-2 px-4 border-b text-left text-xs font-semibold">
               <a
