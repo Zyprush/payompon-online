@@ -14,6 +14,8 @@ import { useNotifStore } from "@/state/notif";
 import ViewResident from "./ViewResident";
 import VerifyModal from "./VerifyModal";
 import { format } from "date-fns/format";
+import { useLogs } from "@/hooks/useLogs";
+import { add } from "date-fns";
 
 interface User {
   id: string;
@@ -44,6 +46,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const { addNotif } = useNotifStore();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showResident, setShowResident] = useState<boolean>(false);
+  const {addLog} = useLogs();
 
   const fetchUsers = async () => {
     const q = query(
@@ -92,6 +95,11 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         time: currentTime,
         for: "user",
       });
+    
+      addLog({
+        name:  `Rejected ${user?.firstname + ' ' + user?.lastname} account verification`,
+        date: currentTime
+      })
 
       await addNotif({
         for: userId,
@@ -100,6 +108,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
         type: "user",
         read: false,
       });
+
+
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>

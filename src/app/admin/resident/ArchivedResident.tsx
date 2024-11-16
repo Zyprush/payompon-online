@@ -5,7 +5,6 @@ import {
   query,
   where,
   getDocs,
-  limit,
   deleteDoc,
   doc,
   getDoc,
@@ -16,6 +15,8 @@ import React, { useEffect, useState } from "react";
 import ViewResident from "./ViewResident";
 import Link from "next/link";
 import { format } from "date-fns";
+import { useLogs } from "@/hooks/useLogs";
+import { currentTime } from "@/helper/time";
 
 interface User {
   id: string;
@@ -42,6 +43,8 @@ const ArchivedResident: React.FC = (): JSX.Element => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const {addLog} = useLogs();
+
 
   const auth = getAuth();
 
@@ -82,6 +85,10 @@ const ArchivedResident: React.FC = (): JSX.Element => {
       await setDoc(restoredRef, userDoc.data());
       await deleteDoc(userRef);
       setUsers((prev) => prev.filter((item) => item.id !== userId));
+      addLog({
+        name:  `Restored ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
+        date: currentTime
+      })
       window.alert("Resident restored successfully!");
     } catch (error) {
       console.error("Error restoring resident: ", error);

@@ -9,6 +9,7 @@ export const adminNavItems = [
     { href: "/admin/announce", icon: IconInfoSquare, label: "Announcement" },
     { href: "/admin/notification", icon: IconNotification, label: "Notification" },
     { href: "/admin/revenue", icon: IconPremiumRights, label: "Revenue"},
+    { href: "/admin/logs", icon: IconDeviceFloppy, label: "Logs"},
     { href: "/admin/settings", icon: IconSettings, label: "Settings" },
 ];
 

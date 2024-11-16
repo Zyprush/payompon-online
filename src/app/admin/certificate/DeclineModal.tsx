@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import { useLogs } from "@/hooks/useLogs";
+import { currentTime } from "@/helper/time";
 
 interface DeclineModalProps {
   declineRequest: any;
@@ -12,6 +14,8 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
   onClose,
 }) => {
   const [declineMessage, setDeclineMessage] = useState<string>("");
+  const {addLog} = useLogs();
+
 
   const handleDecline = async () => {
     if (!declineMessage.trim()) {
@@ -25,6 +29,11 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
         status: "declined",
         declineReason: `${declineMessage}. You may send us a message to request a refund or make another request using the same Screenshot of the Gcash transaction.`,
       });
+      
+      addLog({
+        name: `Declined ${declineRequest.requestType} Request`,
+        date: currentTime
+      })
 
       alert("Request has been declined successfully.");
       onClose();

@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { storage, db } from "@/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
+import { useLogs } from "@/hooks/useLogs";
+import { currentTime } from "@/helper/time";
 
 interface VerifyModalProps {
   userId: string;
@@ -20,6 +22,7 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [leftThumbPreview, setLeftThumbPreview] = useState<string | null>(null);
   const [rightThumbPreview, setRightThumbPreview] = useState<string | null>(null);
+  const {addLog} = useLogs();
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -67,6 +70,10 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
         leftThumb: leftUrl,
         rightThumb: rightUrl,
       });
+      addLog({
+        name:  `Verified ${userId} account`,
+        date: currentTime
+      })
 
       onVerified();
     } catch (error) {

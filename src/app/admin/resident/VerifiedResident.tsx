@@ -16,6 +16,8 @@ import React, { useEffect, useState } from "react";
 import ViewResident from "./ViewResident";
 import Link from "next/link";
 import { format } from "date-fns";
+import { currentTime } from "@/helper/time";
+import { useLogs } from "@/hooks/useLogs";
 
 interface User {
   id: string;
@@ -42,6 +44,8 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const {addLog} = useLogs();
+
 
   const auth = getAuth();
 
@@ -83,6 +87,10 @@ const VerifiedResident: React.FC = (): JSX.Element => {
       await setDoc(archivedRef, userDoc.data());
       await deleteDoc(userRef);
       setUsers((prev) => prev.filter((item) => item.id !== userId));
+      addLog({
+        name:  `Archived ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
+        date: currentTime
+      })
       window.alert("Resident archived successfully!");
     } catch (error) {
       console.error("Error archiving resident: ", error);
