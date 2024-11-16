@@ -37,7 +37,7 @@ interface User {
   address: string;
 }
 
-const VerifiedResident: React.FC = (): JSX.Element => {
+const ArchivedResident: React.FC = (): JSX.Element => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -48,9 +48,8 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   const fetchUsers = async () => {
     setLoading(true);
     const q = query(
-      collection(db, "users"),
+      collection(db, "archived"),
       where("role", "==", "resident"),
-      where("verified", "==", true),
     );
 
     const querySnapshot = await getDocs(q);
@@ -68,25 +67,25 @@ const VerifiedResident: React.FC = (): JSX.Element => {
     fetchUsers();
   }, []);
 
-  const handleArchive = async (userId: string) => {
-    const confirmArchive = window.confirm(
-      "Are you sure you want to archive this resident?"
+  const handleRestore = async (userId: string) => {
+    const confirmRestore = window.confirm(
+      "Are you sure you want to restore this resident?"
     );
-    if (!confirmArchive) return;
+    if (!confirmRestore) return;
     try {
-      const userRef = doc(db, "users", userId);
-      const archivedRef = doc(db, "archived", userId); // Use the same document ID
+      const userRef = doc(db, "archived", userId);
+      const restoredRef = doc(db, "users", userId); // Use the same document ID
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) {
         throw new Error("User document does not exist.");
       }
-      await setDoc(archivedRef, userDoc.data());
+      await setDoc(restoredRef, userDoc.data());
       await deleteDoc(userRef);
       setUsers((prev) => prev.filter((item) => item.id !== userId));
-      window.alert("Resident archived successfully!");
+      window.alert("Resident restored successfully!");
     } catch (error) {
-      console.error("Error archiving resident: ", error);
-      window.alert("Error archiving resident. Please try again.");
+      console.error("Error restoring resident: ", error);
+      window.alert("Error restoring resident. Please try again.");
     }
   };
 
@@ -194,10 +193,10 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                     update
                   </Link>
                   <button
-                    onClick={() => handleArchive(user.id)}
+                    onClick={() => handleRestore(user.id)}
                     className="btn-error text-white rounded-sm btn-xs btn"
                   >
-                    archive
+                    restore
                   </button>
                 </td>
               </tr>
@@ -215,4 +214,4 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   );
 };
 
-export default VerifiedResident;
+export default ArchivedResident;

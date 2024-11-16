@@ -3,9 +3,10 @@ import NavLayout from "@/components/NavLayout";
 import React, { useState } from "react";
 import UnverifiedResident from "./UnverifiedResident";
 import VerifiedResident from "./VerifiedResident";
+import ArchivedResident from "./ArchivedResident";
 
 const Resident: React.FC = (): JSX.Element => {
-  const [filter, setFilter] = useState<"unverified" | "verified">("unverified");
+  const [filter, setFilter] = useState<"unverified" | "verified" | "archived">("unverified");
 
   return (
     <NavLayout>
@@ -31,14 +32,31 @@ const Resident: React.FC = (): JSX.Element => {
           >
             Verified
           </button>
+          <button
+            onClick={() => setFilter("archived")}
+            className={`w-40 py-2 px-4 ${
+              filter === "archived"
+                ? "btn btn-primary text-white rounded-none"
+                : "btn btn-outline text-neutral rounded-none"
+            }`}
+          >
+            Archived
+          </button>
         </div>
         <hr className="w-full mb-5" />
 
         {/* Render the selected component */}
-        {filter === "unverified" ? <UnverifiedResident /> : <VerifiedResident />}
+        {filter === "unverified" ? (
+          <UnverifiedResident />
+        ) : filter === "verified" ? (
+          <VerifiedResident />
+        ) : (
+          <ArchivedResident />
+        )}
       </div>
     </NavLayout>
   );
 };
 
 export default Resident;
+
