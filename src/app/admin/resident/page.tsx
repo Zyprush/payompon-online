@@ -4,9 +4,12 @@ import React, { useState } from "react";
 import UnverifiedResident from "./UnverifiedResident";
 import VerifiedResident from "./VerifiedResident";
 import ArchivedResident from "./ArchivedResident";
+import Link from "next/link";
 
 const Resident: React.FC = (): JSX.Element => {
-  const [filter, setFilter] = useState<"unverified" | "verified" | "archived">("unverified");
+  const [filter, setFilter] = useState<"unverified" | "verified" | "archived">(
+    "unverified"
+  );
 
   return (
     <NavLayout>
@@ -42,6 +45,12 @@ const Resident: React.FC = (): JSX.Element => {
           >
             Archived
           </button>
+          <Link
+          href={"/admin/resident/add-resident"}
+            className={`w-40 py-2 px-4 btn btn-outline text-neutral rounded-none`}
+          >
+            Add Resident
+          </Link>
         </div>
         <hr className="w-full mb-5" />
 
@@ -59,4 +68,3 @@ const Resident: React.FC = (): JSX.Element => {
 };
 
 export default Resident;
-
