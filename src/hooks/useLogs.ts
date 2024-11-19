@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   orderBy,
   query,
@@ -13,6 +15,7 @@ interface Log {
   id: string;
   date: string;  // Date and time of the log
   name: string; // Name associated with the log
+  role: string; // Role associated with the log
 }
 
 // Custom hook for logs
@@ -61,5 +64,19 @@ export const useLogs = () => {
     }
   }, []);
 
-  return { logs, loadingLogs, addLog, fetchLogsByAdmin };
+
+  const deleteLog = useCallback(async (logId: string) => {
+    try {
+      await deleteDoc(doc(db, "logs", logId));
+      setLogs((prevLogs) => 
+        prevLogs ? prevLogs.filter((log) => log.id !== logId) : null
+      );
+      return true;
+    } catch (error) {
+      console.error("Error deleting log:", error);
+      return false;
+    }
+  }, []);
+
+  return { logs, loadingLogs, addLog, deleteLog, fetchLogsByAdmin };
 };

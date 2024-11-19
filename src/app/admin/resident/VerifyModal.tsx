@@ -5,6 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { useLogs } from "@/hooks/useLogs";
 import { currentTime } from "@/helper/time";
+import useUserData from "@/hooks/useUserData";
 
 interface VerifyModalProps {
   userId: string;
@@ -21,8 +22,11 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
   const [rightThumb, setRightThumb] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [leftThumbPreview, setLeftThumbPreview] = useState<string | null>(null);
-  const [rightThumbPreview, setRightThumbPreview] = useState<string | null>(null);
-  const {addLog} = useLogs();
+  const [rightThumbPreview, setRightThumbPreview] = useState<string | null>(
+    null
+  );
+  const { addLog } = useLogs();
+  const { userRole } = useUserData();
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -38,7 +42,9 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
 
   const handleVerify = async () => {
     // Confirm verification
-    const isConfirmed = window.confirm("Are you sure you want to verify this resident, this action cannot be undone?");
+    const isConfirmed = window.confirm(
+      "Are you sure you want to verify this resident, this action cannot be undone?"
+    );
     if (!isConfirmed) return;
 
     if (!leftThumb || !rightThumb) {
@@ -71,9 +77,10 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
         rightThumb: rightUrl,
       });
       addLog({
-        name:  `Verified ${userId} account`,
-        date: currentTime
-      })
+        name: `Verified ${userId} account`,
+        date: currentTime,
+        role: userRole,
+      });
 
       onVerified();
     } catch (error) {
@@ -96,7 +103,9 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleFileChange(e, setLeftThumb, setLeftThumbPreview)}
+              onChange={(e) =>
+                handleFileChange(e, setLeftThumb, setLeftThumbPreview)
+              }
               className="input w-full mb-2"
             />
             {leftThumbPreview ? (
@@ -118,7 +127,9 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleFileChange(e, setRightThumb, setRightThumbPreview)}
+              onChange={(e) =>
+                handleFileChange(e, setRightThumb, setRightThumbPreview)
+              }
               className="input w-full mb-2"
             />
             {rightThumbPreview ? (

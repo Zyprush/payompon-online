@@ -18,6 +18,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { currentTime } from "@/helper/time";
 import { useLogs } from "@/hooks/useLogs";
+import useUserData from "@/hooks/useUserData";
 
 interface User {
   id: string;
@@ -45,6 +46,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const {addLog} = useLogs();
+  const {userRole} = useUserData();
 
 
   const auth = getAuth();
@@ -89,7 +91,8 @@ const VerifiedResident: React.FC = (): JSX.Element => {
       setUsers((prev) => prev.filter((item) => item.id !== userId));
       addLog({
         name:  `Archived ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
-        date: currentTime
+        date: currentTime,
+        role: userRole
       })
       window.alert("Resident archived successfully!");
     } catch (error) {

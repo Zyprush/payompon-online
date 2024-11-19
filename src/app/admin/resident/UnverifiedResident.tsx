@@ -16,6 +16,7 @@ import VerifyModal from "./VerifyModal";
 import { format } from "date-fns/format";
 import { useLogs } from "@/hooks/useLogs";
 import { add } from "date-fns";
+import useUserData from "@/hooks/useUserData";
 
 interface User {
   id: string;
@@ -47,6 +48,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showResident, setShowResident] = useState<boolean>(false);
   const {addLog} = useLogs();
+  const {userRole} = useUserData();
 
   const fetchUsers = async () => {
     const q = query(
@@ -98,7 +100,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
     
       addLog({
         name:  `Rejected ${user?.firstname + ' ' + user?.lastname} account verification`,
-        date: currentTime
+        date: currentTime,
+        role: userRole
       })
 
       await addNotif({

@@ -7,6 +7,7 @@ import { useRevenueStore } from "@/state/revenue";
 import { useMessages } from "@/hooks/useMessages";
 import { v4 as uuidv4 } from "uuid"; // Import UUID library
 import { useLogs } from "@/hooks/useLogs";
+import useUserData from "@/hooks/useUserData";
 
 interface UpdateCertificateProps {
   selectedRequest: any;
@@ -28,6 +29,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const { addMessage } = useMessages();
   const baseURL = typeof window !== "undefined" ? window.location.origin : "";
   const {addLog} = useLogs();
+  const {userRole} = useUserData();
   
 
   useEffect(() => {
@@ -75,7 +77,8 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
 
       addLog({
         name:  `Approved ${selectedRequest.submittedName}'s ${selectedRequest.requestType} request`,
-        date: currentTime
+        date: currentTime,
+        role: userRole
       })
       await addNotif({
         message: `Your certification request (${selectedRequest.requestType}) has been approved.`,

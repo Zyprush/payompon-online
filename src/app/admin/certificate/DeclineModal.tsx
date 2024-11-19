@@ -3,6 +3,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useLogs } from "@/hooks/useLogs";
 import { currentTime } from "@/helper/time";
+import useUserData from "@/hooks/useUserData";
 
 interface DeclineModalProps {
   declineRequest: any;
@@ -15,6 +16,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
 }) => {
   const [declineMessage, setDeclineMessage] = useState<string>("");
   const {addLog} = useLogs();
+  const {userRole} = useUserData();
 
 
   const handleDecline = async () => {
@@ -32,7 +34,8 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
       
       addLog({
         name: `Declined ${declineRequest.requestType} Request`,
-        date: currentTime
+        date: currentTime,
+        role: userRole
       })
 
       alert("Request has been declined successfully.");

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { useLogs } from "@/hooks/useLogs";
 import { currentTime } from "@/helper/time";
+import useUserData from "@/hooks/useUserData";
 
 interface User {
   id: string;
@@ -44,6 +45,7 @@ const ArchivedResident: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const {addLog} = useLogs();
+  const {userRole} = useUserData();
 
 
   const auth = getAuth();
@@ -87,7 +89,8 @@ const ArchivedResident: React.FC = (): JSX.Element => {
       setUsers((prev) => prev.filter((item) => item.id !== userId));
       addLog({
         name:  `Restored ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
-        date: currentTime
+        date: currentTime,
+        role: userRole
       })
       window.alert("Resident restored successfully!");
     } catch (error) {
