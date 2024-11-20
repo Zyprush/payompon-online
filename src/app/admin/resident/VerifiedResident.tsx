@@ -208,7 +208,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                     onClick={() => handleArchive(user.id)}
                     className="btn-error text-white rounded-sm btn-xs btn"
                   >
-                    archive
+                    delete
                   </button>
                 </td>
               </tr>
