@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/firebase";
+import { useLogs } from "@/hooks/useLogs";
+import useUserData from "@/hooks/useUserData";
 
 interface AddAnnounceProps {
   onClose: () => void; // Prop to handle modal close
@@ -15,6 +17,9 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {addLog} = useLogs();
+  const {name, userRole} = useUserData();
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(e.target.files);
@@ -53,6 +58,12 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         createdAt: currentTime,
       });
 
+      addLog({
+        name: `Added ${what} announcement`,
+        date: currentTime,
+        role: userRole,
+        actionBy: name
+      })
       setWhat("");
       setWhen("");
       setWho("");

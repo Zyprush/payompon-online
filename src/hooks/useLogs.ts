@@ -16,6 +16,7 @@ interface Log {
   date: string;  // Date and time of the log
   name: string; // Name associated with the log
   role: string; // Role associated with the log
+  actionBy: string | null; // User who performed the log
 }
 
 // Custom hook for logs

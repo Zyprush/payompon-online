@@ -29,7 +29,7 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
   const { addMessage } = useMessages();
   const baseURL = typeof window !== "undefined" ? window.location.origin : "";
   const {addLog} = useLogs();
-  const {userRole} = useUserData();
+  const {userRole, name} = useUserData();
   
 
   useEffect(() => {
@@ -78,7 +78,8 @@ const UpdateCertificate: React.FC<UpdateCertificateProps> = ({
       addLog({
         name:  `Approved ${selectedRequest.submittedName}'s ${selectedRequest.requestType} request`,
         date: currentTime,
-        role: userRole
+        role: userRole,
+        actionBy: name
       })
       await addNotif({
         message: `Your certification request (${selectedRequest.requestType}) has been approved.`,

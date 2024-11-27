@@ -143,6 +143,9 @@ const ActivityLog = () => {
                         Role
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        User Acess
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Date
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -160,6 +163,9 @@ const ActivityLog = () => {
                           </td>
                           <td className="px-4 py-2 text-sm text-gray-800 whitespace-nowrap capitalize">
                             {log.role}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-800 whitespace-nowrap capitalize">
+                            {log.actionBy}
                           </td>
                           <td className="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">
                             {format(

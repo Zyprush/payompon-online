@@ -9,6 +9,7 @@ const useUserData = () => {
   const [middlename, setMiddlename] = useState<string | null>(null);
   const [lastname, setLastname] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>("");
   const [verified, setVerified] = useState<boolean>(false);
   const [infoErrors, setInfoErrors] = useState<boolean>(false);
@@ -38,6 +39,7 @@ const useUserData = () => {
         setMiddlename(userData?.middlename || null);
         setLastname(userData?.lastname || null);
         setUserEmail(userData?.email || null);
+        setName(userData?.name || null);
         setUserRole(userData?.role || "");
         setVerified(userData?.verified);
         setInfoErrors(userData?.infoErrors);
@@ -60,6 +62,7 @@ const useUserData = () => {
     verified,
     infoErrors,
     submitted,
+    name
   };
 };
 

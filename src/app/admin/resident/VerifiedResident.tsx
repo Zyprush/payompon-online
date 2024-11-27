@@ -46,7 +46,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const {addLog} = useLogs();
-  const {userRole} = useUserData();
+  const {userRole, name} = useUserData();
 
 
   const auth = getAuth();
@@ -92,7 +92,8 @@ const VerifiedResident: React.FC = (): JSX.Element => {
       addLog({
         name:  `Archived ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
         date: currentTime,
-        role: userRole
+        role: userRole,
+        actionBy: name
       })
       window.alert("Resident archived successfully!");
     } catch (error) {
