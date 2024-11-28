@@ -3,9 +3,9 @@ import { collection, query, onSnapshot, orderBy, where, addDoc, serverTimestamp,
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import { Search, Send, Menu, X } from 'lucide-react';
-        
-interface User {  
-    id: string;  
+
+interface User {
+    id: string;
     name: string;
     role: string;
     photoURL: string;
@@ -89,7 +89,7 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
 
     const filterUsers = (allUsers: User[], currentUser: User | null) => {
         if (!currentUser) return;
-
+    
         let filtered: User[];
         if (currentUser.role === 'resident') {
             filtered = allUsers.filter(user => ['admin', 'staff'].includes(user.role));
@@ -98,14 +98,14 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
         } else {
             filtered = [];
         }
-
+    
+        // Modify sorting to prioritize by last message timestamp
         filtered.sort((a, b) => {
-            if (b.unreadCount !== a.unreadCount) {
-                return b.unreadCount - a.unreadCount;
-            }
-            return b.lastMessageTimestamp - a.lastMessageTimestamp;
+            const aTimestamp = a.lastMessageTimestamp?.seconds || 0;
+            const bTimestamp = b.lastMessageTimestamp?.seconds || 0;
+            return bTimestamp - aTimestamp;
         });
-
+    
         setFilteredUsers(filtered);
     };
 
@@ -233,7 +233,7 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                         : message.read
                             ? 'bg-white text-gray-800 rounded-bl-none shadow-md'
                             : 'bg-yellow-100 text-gray-800 rounded-bl-none shadow-md'
-                    }`}
+                        }`}
                 >
                     <p>{message.text}</p>
                     <span className={`text-xs ${isCurrentUser ? 'text-blue-100' : 'text-gray-500'}`}>
@@ -248,8 +248,9 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white w-full h-full md:w-3/4 md:h-3/4 lg:w-2/3 lg:h-2/3 rounded-lg flex flex-col">
-                <div className="flex flex-row items-center p-4 border-b border-gray-300">
+            <div className="bg-white w-full h-full md:w-3/4 md:h-3/4 lg:w-2/3 lg:h-2/3 rounded-lg flex flex-col overflow-hidden">
+                {/* Header */}
+                <div className="flex flex-row items-center p-4 border-b border-gray-300 flex-shrink-0">
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                         <X className="h-6 w-6" />
                     </button>
@@ -261,12 +262,13 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                     </button>
                 </div>
 
+                {/* Main Content Area */}
                 <div className="flex-1 flex overflow-hidden">
                     {/* Sidebar */}
                     <aside
-                        className={`md:flex ${isSidebarOpen ? 'block' : 'hidden'} md:w-1/4 w-full flex-col bg-gray-100 border-r border-gray-300`}
+                        className={`md:flex ${isSidebarOpen ? 'block' : 'hidden'} md:w-1/4 w-full flex-col bg-gray-100 border-r border-gray-300 overflow-hidden`}
                     >
-                        <div className="p-4">
+                        <div className="p-4 flex-shrink-0">
                             <div className="relative mb-4">
                                 <Search className="absolute top-2 left-2 h-5 w-5 text-gray-400" />
                                 <input
@@ -277,17 +279,24 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                                     onChange={handleSearch}
                                 />
                             </div>
+                        </div>
 
-                            <ul className="space-y-2">
+                        {/* Scrollable User List */}
+                        <div className="flex-1 overflow-y-auto">
+                            <ul className="space-y-2 px-4 pb-4">
                                 {filteredUsers.map(user => (
                                     <li
                                         key={user.id}
-                                        className={`p-2 flex items-center justify-between cursor-pointer ${selectedUser?.id === user.id ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}
+                                        className={`p-2 flex items-center justify-between cursor-pointer rounded-lg ${selectedUser?.id === user.id ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}
                                         onClick={() => setSelectedUser(user)}
                                     >
                                         <div className="flex items-center">
-                                            <img src={user.photoURL || '/img/profile.jpg'} alt={user.name} className="h-8 w-8 rounded-full mr-3" />
-                                            <span className="font-medium">{user.name}</span>
+                                            <img
+                                                src={user.photoURL || '/img/profile.jpg'}
+                                                alt={user.name}
+                                                className="h-8 w-8 rounded-full mr-3 object-cover"
+                                            />
+                                            <span className="font-medium truncate max-w-[150px]">{user.name}</span>
                                         </div>
                                         {user.unreadCount > 0 && (
                                             <span className="bg-red-500 text-white rounded-full px-2 py-1 text-xs font-semibold">
@@ -300,16 +309,20 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                         </div>
                     </aside>
 
-                    {/* Chat area */}
-                    <div className="flex-1 flex flex-col">
+                    {/* Chat Area */}
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                        {/* Scrollable Messages */}
                         <div className="flex-1 p-4 overflow-y-auto">
                             {messages.map(renderMessage)}
                             <div ref={messagesEndRef}></div>
                         </div>
 
-                        {/* Message input */}
+                        {/* Message Input */}
                         {selectedUser && (
-                            <form onSubmit={sendMessage} className="flex p-4 border-t border-gray-300">
+                            <form
+                                onSubmit={sendMessage}
+                                className="flex p-4 border-t border-gray-300 flex-shrink-0"
+                            >
                                 <input
                                     type="text"
                                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -319,7 +332,7 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                                 />
                                 <button
                                     type="submit"
-                                    className="ml-2 p-2 bg-blue-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="ml-2 p-2 bg-blue-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-600 active:bg-blue-700"
                                 >
                                     <Send className="h-6 w-6" />
                                 </button>

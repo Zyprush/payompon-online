@@ -6,15 +6,14 @@ import { db } from '@/firebase';
 import Message from './Message';
 
 interface UserData {
-  unreadCounts?: Record<string, number>;
-  // Add other fields that might be in your user document
+    unreadCounts?: Record<string, number>;
 }
 
 const FloatingMessageIcon: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
-    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [totalUnreadCount, setTotalUnreadCount] = useState(0);
     const [hasNewMessage, setHasNewMessage] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     useEffect(() => {
         const auth = getAuth();
@@ -33,12 +32,20 @@ const FloatingMessageIcon: React.FC = () => {
 
         const usersRef = collection(db, 'users');
         const q = query(usersRef, where('id', '==', currentUserId));
+
         const unsubscribe = onSnapshot(q, (snapshot) => {
             if (!snapshot.empty) {
                 const userData = snapshot.docs[0].data() as UserData;
-                const totalUnreadCount = Object.values(userData.unreadCounts || {}).reduce((a, b) => a + b, 0);
-                setUnreadCount(totalUnreadCount);
-                setHasNewMessage(totalUnreadCount > 0);
+                
+                // Calculate total unread count
+                const unreadCounts = userData.unreadCounts || {};
+                const totalCount = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+                
+                setTotalUnreadCount(totalCount);
+                
+                // Check if there are any messages at all
+                const hasMessages = Object.keys(unreadCounts).length > 0;
+                setHasNewMessage(hasMessages);
             }
         });
 
@@ -52,12 +59,10 @@ const FloatingMessageIcon: React.FC = () => {
                 className="fixed bottom-4 right-4 p-3 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
             >
                 <MessageCircle size={24} />
-                {hasNewMessage && (
-                    <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
-                )}
-                {unreadCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                        {unreadCount}
+                {(totalUnreadCount > 0 || hasNewMessage) && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center 
+                        animate-pulse hover:animate-none transition-all duration-300">
+                        {totalUnreadCount > 0 ? totalUnreadCount : ''}
                     </span>
                 )}
             </button>
