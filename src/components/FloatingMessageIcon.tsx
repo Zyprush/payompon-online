@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
-import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import { collection, query, onSnapshot, where, doc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import Message from './Message';
@@ -23,6 +23,7 @@ const FloatingMessageIcon: React.FC = () => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setCurrentUserId(user.uid);
+                //console.log("Current User ID:", user.uid);
             } else {
                 setCurrentUserId(null);
             }
@@ -33,21 +34,17 @@ const FloatingMessageIcon: React.FC = () => {
     useEffect(() => {
         if (!currentUserId) return;
 
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('id', '==', currentUserId));
+        const usersRef = doc(db, 'users', currentUserId);
+        const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const userData = snapshot.data() as UserData;
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            if (!snapshot.empty) {
-                const userData = snapshot.docs[0].data() as UserData;
-                
                 // Calculate total unread count
                 const unreadCounts = userData.unreadCounts || {};
                 const totalCount = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
 
-                console.log("Total Unread Count:", totalCount);
-                
                 setTotalUnreadCount(totalCount);
-                
+
                 // Check if there are any messages at all
                 const hasMessages = Object.keys(unreadCounts).length > 0;
                 setHasNewMessage(hasMessages);
@@ -65,8 +62,7 @@ const FloatingMessageIcon: React.FC = () => {
             >
                 <IconMessage size={24} />
                 {(totalUnreadCount > 0 || hasNewMessage) && (
-                    <span className="absolute -top-1 -left-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center 
-                        animate-pulse hover:animate-none transition-all duration-300">
+                    <span className="absolute -top-1 -left-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center ">
                         {totalUnreadCount > 0 ? totalUnreadCount : '0'}
                     </span>
                 )}
