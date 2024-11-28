@@ -45,7 +45,7 @@ const ArchivedResident: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const {addLog} = useLogs();
-  const {userRole} = useUserData();
+  const {userRole, name} = useUserData();
 
 
   const auth = getAuth();
@@ -90,7 +90,8 @@ const ArchivedResident: React.FC = (): JSX.Element => {
       addLog({
         name:  `Restored ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
         date: currentTime,
-        role: userRole
+        role: userRole,
+        actionBy: name
       })
       window.alert("Resident restored successfully!");
     } catch (error) {

@@ -48,7 +48,7 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showResident, setShowResident] = useState<boolean>(false);
   const {addLog} = useLogs();
-  const {userRole} = useUserData();
+  const {userRole, name} = useUserData();
 
   const fetchUsers = async () => {
     const q = query(
@@ -101,7 +101,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
       addLog({
         name:  `Rejected ${user?.firstname + ' ' + user?.lastname} account verification`,
         date: currentTime,
-        role: userRole
+        role: userRole,
+        actionBy: name
       })
 
       await addNotif({

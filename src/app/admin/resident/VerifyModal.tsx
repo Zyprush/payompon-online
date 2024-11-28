@@ -26,7 +26,7 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
     null
   );
   const { addLog } = useLogs();
-  const { userRole } = useUserData();
+  const { userRole, name } = useUserData();
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -80,6 +80,7 @@ const VerifyModal: React.FC<VerifyModalProps> = ({
         name: `Verified ${userId} account`,
         date: currentTime,
         role: userRole,
+        actionBy: name
       });
 
       onVerified();
