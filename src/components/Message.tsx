@@ -11,6 +11,7 @@ interface User {
     photoURL: string;
     unreadCount: number;
     lastMessageTimestamp: any;
+    unreadCounts?: Record<string, number>;
 }
 
 interface Message {
@@ -89,7 +90,7 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
 
     const filterUsers = (allUsers: User[], currentUser: User | null) => {
         if (!currentUser) return;
-    
+
         let filtered: User[];
         if (currentUser.role === 'resident') {
             filtered = allUsers.filter(user => ['admin', 'staff'].includes(user.role));
@@ -98,14 +99,14 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
         } else {
             filtered = [];
         }
-    
+
         // Modify sorting to prioritize by last message timestamp
         filtered.sort((a, b) => {
             const aTimestamp = a.lastMessageTimestamp?.seconds || 0;
             const bTimestamp = b.lastMessageTimestamp?.seconds || 0;
             return bTimestamp - aTimestamp;
         });
-    
+
         setFilteredUsers(filtered);
     };
 
@@ -296,17 +297,26 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                                                 alt={user.name}
                                                 className="h-8 w-8 rounded-full mr-3 object-cover"
                                             />
-                                            <span className="font-medium truncate max-w-[150px]">{user.name}</span>
+                                            <div className='flex flex-col'>
+                                                {/*<span className={`${user.unreadCounts && Object.values(user.unreadCounts).reduce((a, b) => a + b, 0) > 0 ? 'font-medium' : 'font-light'} truncate max-w-[150px]`}>*/}
+                                                <span className='font-medium truncate max-w-[150px]'>
+                                                    {user.name}
+                                                </span>
+                                                {/*<span className='text-sm'>{`${user.unreadCounts && Object.values(user.unreadCounts).reduce((a, b) => a + b, 0) > 0 ? 'Unseen' : 'Seen'}`}</span>*/}
+                                            </div>
                                         </div>
-                                        {user.unreadCount > 0 && (
+                                        {/**
+                                        {user.unreadCounts && Object.values(user.unreadCounts).reduce((a, b) => a + b, 0) > 0 && (
                                             <span className="bg-red-500 text-white rounded-full px-2 py-1 text-xs font-semibold">
-                                                {user.unreadCount}
+                                                {Object.values(user.unreadCounts).reduce((a, b) => a + b, 0)}
                                             </span>
                                         )}
+                                         */}
                                     </li>
                                 ))}
                             </ul>
                         </div>
+
                     </aside>
 
                     {/* Chat Area */}
@@ -339,6 +349,7 @@ const Message: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                             </form>
                         )}
                     </div>
+
                 </div>
             </div>
         </div>
