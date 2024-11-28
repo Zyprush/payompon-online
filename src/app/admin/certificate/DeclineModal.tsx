@@ -16,7 +16,7 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
 }) => {
   const [declineMessage, setDeclineMessage] = useState<string>("");
   const {addLog} = useLogs();
-  const {userRole} = useUserData();
+  const {userRole, name} = useUserData();
 
 
   const handleDecline = async () => {
@@ -35,7 +35,8 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
       addLog({
         name: `Declined ${declineRequest.requestType} Request`,
         date: currentTime,
-        role: userRole
+        role: userRole,
+        actionBy: name
       })
 
       alert("Request has been declined successfully.");
