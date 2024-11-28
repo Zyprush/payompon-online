@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '@/firebase';
 import Message from './Message';
 import { IconMessage } from '@tabler/icons-react';
-
+ 
 interface UserData {
     unreadCounts?: Record<string, number>;
 }
