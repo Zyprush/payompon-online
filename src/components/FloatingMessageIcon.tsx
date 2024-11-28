@@ -14,7 +14,7 @@ const FloatingMessageIcon: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     // add random number 1-5 haha
     const random = Math.floor(Math.random() * 3);
-    const [totalUnreadCount, setTotalUnreadCount] = useState(random);
+    const [totalUnreadCount, setTotalUnreadCount] = useState(0);
     const [hasNewMessage, setHasNewMessage] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
