@@ -1,22 +1,15 @@
 "use client";
 import { db } from "@/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useMessageStore } from "@/state/message";
 import { useNotifStore } from "@/state/notif";
 import ViewResident from "./ViewResident";
 import VerifyModal from "./VerifyModal";
-import { format } from "date-fns/format";
+import { format } from "date-fns";
 import { useLogs } from "@/hooks/useLogs";
-import { add } from "date-fns";
 import useUserData from "@/hooks/useUserData";
+import Link from "next/link";
 
 interface User {
   id: string;
@@ -43,12 +36,10 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>(""); // For search
-  const { addMessage } = useMessageStore();
-  const { addNotif } = useNotifStore();
+  const [sitioList, setSitioList] = useState<string[]>([]);
+  const [selectedSitio, setSelectedSitio] = useState<string>("All"); // For sitio filtering
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showResident, setShowResident] = useState<boolean>(false);
-  const {addLog} = useLogs();
-  const {userRole, name} = useUserData();
 
   const fetchUsers = async () => {
     const q = query(
@@ -60,10 +51,16 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
     const querySnapshot = await getDocs(q);
 
     const usersList: User[] = [];
+    const sitioSet = new Set<string>();
+
     querySnapshot.forEach((doc) => {
-      usersList.push({ id: doc.id, ...doc.data() } as User);
+      const user = { id: doc.id, ...doc.data() } as User;
+      usersList.push(user);
+      if (user.sitio) sitioSet.add(user.sitio);
     });
+
     setUsers(usersList);
+    setSitioList(["All", ...Array.from(sitioSet)]);
     setLoading(false);
   };
 
@@ -71,84 +68,48 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
     fetchUsers();
   }, []);
 
-  const handleReject = async (userId: string) => {
-    const reason = prompt(
-      "Please enter the reason for rejection eg: resubmit selfie, enter correct name, etc"
-    );
-    if (!reason) return;
-
-    try {
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, {
-        infoErrors: reason,
-        submitted: false,
-      });
-
-      const currentTime = new Date().toISOString();
-      const user = users.find((user) => user.id === userId);
-
-      addMessage({
-        message: "Your account verification has been rejected.",
-        sender: "admin",
-        receiverId: userId,
-        receiverName: user ? `${user.firstname} ${user.lastname}` : "Unknown",
-        senderName: "Admin",
-        seen: false,
-        time: currentTime,
-        for: "user",
-      });
-    
-      addLog({
-        name:  `Rejected ${user?.firstname + ' ' + user?.lastname} account verification`,
-        date: currentTime,
-        role: userRole,
-        actionBy: name
-      })
-
-      await addNotif({
-        for: userId,
-        message: "Your account verification was rejected. Reason: " + reason,
-        time: currentTime,
-        type: "user",
-        read: false,
-      });
-
-
-
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId
-            ? { ...user, submitted: false, infoErrors: reason }
-            : user
-        )
-      );
-
-      await fetchUsers();
-    } catch (error) {
-      console.error("Error rejecting user:", error);
-    }
-  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-  const filteredUsers = users.filter((user) =>
-    `${user.firstname} ${user.middlename} ${user.lastname}`
+  const handleSitioChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSitio(event.target.value);
+  };
+
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch = `${user.firstname} ${user.middlename} ${user.lastname}`
       .toLowerCase()
-      .includes(searchTerm)
-  );
+      .includes(searchTerm);
+    const matchesSitio = selectedSitio === "All" || user.sitio === selectedSitio;
+
+    return matchesSearch && matchesSitio;
+  });
 
   return (
     <div className="flex flex-col">
       {/* Search Input */}
-      <input
-        type="text"
-        placeholder="Search by name"
-        value={searchTerm}
-        onChange={handleSearch}
-        className="p-2 mb-4 border w-60 text-sm rounded-md"
-      />
+      <div className="flex gap-5">
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="p-2 mb-4 border w-60 text-sm rounded-md"
+        />
+
+        <select
+          value={selectedSitio}
+          onChange={handleSitioChange}
+          className="p-2 mb-4 border w-60 text-sm rounded-md"
+        >
+          {sitioList.map((sitio) => (
+            <option key={sitio} value={sitio}>
+              {sitio}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {loading ? (
         <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto">
@@ -192,7 +153,6 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                       href={user.selfie}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className=""
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -214,12 +174,8 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
                 <td className="py-2 px-4 border-b text-xs">{user.number}</td>
                 <td className="py-2 px-4 border-b text-xs">
-                  {" "}
                   {user.verifiedAt
-                    ? format(
-                        new Date(user.verifiedAt),
-                        "MMM dd, yyyy : hh:mm a"
-                      )
+                    ? format(new Date(user.verifiedAt), "MMM dd, yyyy : hh:mm a")
                     : ""}
                 </td>
                 <td className="py-2 px-4 border-b text-xs">
@@ -241,19 +197,20 @@ const UnverifiedResident: React.FC = (): JSX.Element => {
                   >
                     verify
                   </button>
-                  <button
-                    onClick={() => handleReject(user.id)}
-                    className="btn btn-xs ml-2 rounded-sm btn-error text-white"
+                  <Link
+                    href={"/admin/resident/reject/" + user.id}
+                    className="btn btn-xs rounded-sm btn-outline text-error ml-2"
                   >
                     reject
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      {showResident && (
+
+{showResident && (
         <ViewResident
           user={selectedUser}
           onClose={() => {

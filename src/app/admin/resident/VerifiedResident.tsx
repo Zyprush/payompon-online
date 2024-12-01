@@ -5,7 +5,6 @@ import {
   query,
   where,
   getDocs,
-  limit,
   deleteDoc,
   doc,
   getDoc,
@@ -42,12 +41,13 @@ interface User {
 
 const VerifiedResident: React.FC = (): JSX.Element => {
   const [users, setUsers] = useState<User[]>([]);
+  const [sitioList, setSitioList] = useState<string[]>([]);
+  const [selectedSitio, setSelectedSitio] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const {addLog} = useLogs();
-  const {userRole, name} = useUserData();
-
+  const { addLog } = useLogs();
+  const { userRole, name } = useUserData();
 
   const auth = getAuth();
 
@@ -56,17 +56,23 @@ const VerifiedResident: React.FC = (): JSX.Element => {
     const q = query(
       collection(db, "users"),
       where("role", "==", "resident"),
-      where("verified", "==", true),
+      where("verified", "==", true)
     );
 
     const querySnapshot = await getDocs(q);
     const usersList: User[] = [];
+    const sitioSet: Set<string> = new Set();
 
     querySnapshot.forEach((doc) => {
-      usersList.push({ id: doc.id, ...doc.data() } as User);
+      const userData = { id: doc.id, ...doc.data() } as User;
+      usersList.push(userData);
+      if (userData.sitio) {
+        sitioSet.add(userData.sitio);
+      }
     });
 
     setUsers(usersList);
+    setSitioList(Array.from(sitioSet));
     setLoading(false);
   };
 
@@ -90,11 +96,11 @@ const VerifiedResident: React.FC = (): JSX.Element => {
       await deleteDoc(userRef);
       setUsers((prev) => prev.filter((item) => item.id !== userId));
       addLog({
-        name:  `Archived ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
+        name: `Archived ${userDoc.data()?.firstname + " " + userDoc.data()?.lastname} account`,
         date: currentTime,
         role: userRole,
-        actionBy: name
-      })
+        actionBy: name,
+      });
       window.alert("Resident archived successfully!");
     } catch (error) {
       console.error("Error archiving resident: ", error);
@@ -102,11 +108,13 @@ const VerifiedResident: React.FC = (): JSX.Element => {
     }
   };
 
-  const filteredUsers = users.filter((user) =>
-    `${user.firstname} ${user.middlename} ${user.lastname}`
+  const filteredUsers = users.filter((user) => {
+    const matchesName = `${user.firstname} ${user.middlename} ${user.lastname}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+      .includes(searchTerm.toLowerCase());
+    const matchesSitio = selectedSitio ? user.sitio === selectedSitio : true;
+    return matchesName && matchesSitio;
+  });
 
   return (
     <div className="md:px-4 flex flex-col">
@@ -118,6 +126,18 @@ const VerifiedResident: React.FC = (): JSX.Element => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="input input-sm input-bordered w-full max-w-xs"
         />
+        <select
+          value={selectedSitio}
+          onChange={(e) => setSelectedSitio(e.target.value)}
+          className="select select-sm select-bordered max-w-xs"
+        >
+          <option value="">All Sitios</option>
+          {sitioList.map((sitio) => (
+            <option key={sitio} value={sitio}>
+              {sitio}
+            </option>
+          ))}
+        </select>
       </div>
       {loading ? (
         <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto">
@@ -136,9 +156,6 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                 Name
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Name
-              </th>
-              <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Email
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
@@ -148,7 +165,7 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                 Contact
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Valid ID
+                Actions
               </th>
             </tr>
           </thead>
@@ -156,30 +173,6 @@ const VerifiedResident: React.FC = (): JSX.Element => {
             {filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td className="py-2 px-4 border-b text-xs font-semibold">
-                  {user.selfie ? (
-                    <a
-                      href={user.selfie}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className=""
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={user.selfie}
-                        alt="Selfie"
-                        className="w-14 h-14 object-cover border shadow-sm rounded-full"
-                      />
-                    </a>
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={"/img/profile.jpg"}
-                      alt="Selfie"
-                      className="w-14 h-14 object-cover border shadow-sm rounded-full"
-                    />
-                  )}
-                </td>
-                <td className="py-2 px-4 border-b text-xs">
                   {user.firstname} {user.middlename} {user.lastname}
                 </td>
                 <td className="py-2 px-4 border-b text-xs">{user.email}</td>
@@ -197,19 +190,19 @@ const VerifiedResident: React.FC = (): JSX.Element => {
                     onClick={() => setSelectedUser(user)}
                     className="btn-outline text-primary rounded-sm btn-xs btn"
                   >
-                    details
+                    Details
                   </button>
                   <Link
                     href={`/admin/resident/${user.id}`}
                     className="text-white btn-primary rounded-sm btn-xs btn"
                   >
-                    update
+                    Update
                   </Link>
                   <button
                     onClick={() => handleArchive(user.id)}
                     className="btn-error text-white rounded-sm btn-xs btn"
                   >
-                    delete
+                    Delete
                   </button>
                 </td>
               </tr>
