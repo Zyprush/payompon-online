@@ -33,9 +33,9 @@ export const RequestTable: React.FC<{
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Proof of Payment
           </th>
-          <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+          {/* <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             {showEditButton ? "Actions" : "Status"}
-          </th>
+          </th> */}
         </tr>
       </thead>
       <tbody>
@@ -57,7 +57,7 @@ export const RequestTable: React.FC<{
                 View Proof
               </a>
             </td>
-            {showEditButton ? (
+            {/* {showEditButton ? (
               <td className="py-2 px-4 border-b text-left text-xs">
                 <button
                   onClick={() => handleOpenEdit(request)}
@@ -70,7 +70,7 @@ export const RequestTable: React.FC<{
               <td className="py-2 px-4 border-b text-left text-xs">
                 {request.status}
               </td>
-            )}
+            )} */}
           </tr>
         ))}
       </tbody>

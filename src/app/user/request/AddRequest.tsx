@@ -120,6 +120,10 @@ const AddRequest: React.FC<AddRequestProps> = ({
       return;
     }
 
+    if (!confirm("This action cannot be undone. Are you sure you want to proceed?")) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -141,9 +145,6 @@ const AddRequest: React.FC<AddRequestProps> = ({
         status: "pending",
       };
 
-      const docRef = await addDoc(collection(db, "requests"), newRequest);
-
-      // Create notifications
       await addNotif({
         for: "admin",
         message: `${userName} Request for ${requestType}`,
@@ -159,6 +160,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         type: "user",
         read: false,
       });
+
       onRequestAdded();
       alert("Request submitted successfully!");
       handleClose();
