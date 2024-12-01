@@ -56,7 +56,7 @@ const MonthlyRevenue: React.FC = () => {
   // Chart options
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Allow the chart to fill the container
+    maintainAspectRatio: true, // Allow the chart to fill the container
     plugins: {
       legend: {
         position: 'bottom' as const,
@@ -69,7 +69,7 @@ const MonthlyRevenue: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 h-96 overflow-y-auto">
+    <div className="flex-1 p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50">
       <h2 className="font-bold text-primary mb-4">Monthly Revenue</h2>
       <div className="w-full h-full">
         <Bar data={data} options={options} />

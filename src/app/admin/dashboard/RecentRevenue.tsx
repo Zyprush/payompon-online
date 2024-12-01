@@ -1,5 +1,5 @@
-import { useRevenueStore } from '@/state/revenue';
-import React, { useEffect } from 'react';
+import { useRevenueStore } from "@/state/revenue";
+import React, { useEffect } from "react";
 
 const RecentRevenue: React.FC = () => {
   const { revenue, loadingRevenue, fetchRecentRevenue } = useRevenueStore();
@@ -12,7 +12,9 @@ const RecentRevenue: React.FC = () => {
   if (loadingRevenue) {
     return (
       <div className="p-6 bg-white rounded-lg shadow">
-        <h2 className="text-xl font-bold text-primary mb-4">Loading Recent Orders...</h2>
+        <h2 className="text-xl font-bold text-primary mb-4">
+          Loading Recent Orders...
+        </h2>
       </div>
     );
   }
@@ -21,7 +23,9 @@ const RecentRevenue: React.FC = () => {
   if (!revenue || revenue.length === 0) {
     return (
       <div className="p-6 bg-white rounded-lg shadow-sm">
-        <h2 className="text-xl font-bold text-primary mb-4">No Recent Orders Found</h2>
+        <h2 className="text-xl font-bold text-primary mb-4">
+          No Recent Orders Found
+        </h2>
       </div>
     );
   }
@@ -29,21 +33,25 @@ const RecentRevenue: React.FC = () => {
   // Format the date
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   return (
     <div className="flex-1 p-5 bg-white rounded-2xl shadow-sm border border-gray-300 border-opacity-50 h-96 overflow-y-auto">
       <h2 className="font-bold text-primary mb-4">Recent Orders</h2>
-      <div className="overflow-x-auto h-full"> {/* Ensures horizontal scroll on small screens */}
+      <div className="overflow-x-auto h-full">
+        {" "}
+        {/* Ensures horizontal scroll on small screens */}
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 sticky top-0 z-10">
+            {" "}
+            {/* Make the header sticky */}
             <tr>
-              {['Document', 'Amount', 'Date'].map((header) => (
+              {["Document", "Amount", "Date"].map((header) => (
                 <th
                   key={header}
                   scope="col"
@@ -66,11 +74,6 @@ const RecentRevenue: React.FC = () => {
                 <td className="py-3 px-6 whitespace-nowrap text-xs text-zinc-600">
                   {formatDate(order.time)}
                 </td>
-                {/* <td className="py-3 px-6 whitespace-nowrap text-xs">
-                  <span className="text-primary btn btn-outline btn-xs">
-                    {order.orNo}
-                  </span>
-                </td> */}
               </tr>
             ))}
           </tbody>
