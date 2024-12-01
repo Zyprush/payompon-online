@@ -56,6 +56,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         where,
         files: uploadedFiles,
         createdAt: currentTime,
+        addedBy: name
       });
 
       addLog({

@@ -15,6 +15,7 @@ interface Announcement {
   where: string;
   createdAt: string;
   files: string[];
+  addedBy: string;
 }
 
 const Announce: React.FC = (): JSX.Element => {
@@ -99,6 +100,9 @@ const Announce: React.FC = (): JSX.Element => {
                   <p className="font-bold text-sm text-gray-700">
                     {announce.what}
                   </p>
+                  <p className="font-light text-xs text-gray-700">
+                    {announce.addedBy}
+                  </p>
                   <div className="flex items-center ">
                     <div className="text-xs text-zinc-500">
                       <p>{getRelativeTime(announce.createdAt)}</p>
@@ -145,8 +149,11 @@ const Announce: React.FC = (): JSX.Element => {
                   </div>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4">
+              <h3 className="text-xl font-semibold mb-1">
                 {selectedAnnouncement.what}
+              </h3>
+              <h3 className="text-xs font-light mb-4">
+                {selectedAnnouncement.addedBy}
               </h3>
               <p className="text-sm mb-2">
                 <strong>When:</strong> {format(new Date(selectedAnnouncement.when), "MMM dd, yyyy")}
