@@ -49,7 +49,6 @@ export default function Page() {
     if (
       !firstname ||
       !lastname ||
-      !middlename ||
       !address ||
       !email ||
       !number ||
@@ -166,6 +165,7 @@ export default function Page() {
                       onChange={(e) => setFirstname(e.target.value)}
                       value={firstname}
                       className="sn-input"
+                      required
                     />
                   </div>
 
@@ -176,6 +176,7 @@ export default function Page() {
                       onChange={(e) => setMiddlename(e.target.value)}
                       value={middlename}
                       className="sn-input"
+
                     />
                   </div>
                   <div className="mt-2">
@@ -185,6 +186,7 @@ export default function Page() {
                       onChange={(e) => setLastname(e.target.value)}
                       value={lastname}
                       className="sn-input"
+                      required
                     />
                   </div>
                   <div>
@@ -195,6 +197,7 @@ export default function Page() {
                         onChange={(e) => setSitio(e.target.value)}
                         value={sitio}
                         className="sn-input"
+                        required
                       />
                     </div>
                   </div>
@@ -206,6 +209,7 @@ export default function Page() {
                     onChange={(e) => setAddress(e.target.value)}
                     value={address}
                     className="sn-input"
+                    required
                   />
                 </div>
 
@@ -216,6 +220,7 @@ export default function Page() {
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     className="sn-input"
+                    required
                   />
                   <input
                     placeholder="Contact Number"
@@ -236,6 +241,7 @@ export default function Page() {
                     onChange={(e) => setGender(e.target.value)}
                     value={gender}
                     className="sn-input"
+                    required
                   >
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
@@ -245,6 +251,7 @@ export default function Page() {
                     onChange={(e) => setCivilStatus(e.target.value)}
                     value={civilStatus}
                     className="sn-input"
+                    required
                   >
                     <option value="">Select Civil Status</option>
                     <option value="single">Single</option>
@@ -262,6 +269,7 @@ export default function Page() {
                         onChange={(e) => setPassword(e.target.value)}
                         value={password}
                         className="sn-input"
+                        required
                       />
                       <button
                         type="button"
@@ -280,6 +288,7 @@ export default function Page() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         value={confirmPassword}
                         className="sn-input"
+                        required
                       />
                       <button
                         type="button"
@@ -298,6 +307,7 @@ export default function Page() {
                       onChange={(e) => setValidIDType(e.target.value)}
                       value={validIDType}
                       className="sn-input"
+                      required
                     >
                       <option value="">Select Valid ID</option>
                       <optgroup label="Primary ID">
@@ -353,6 +363,7 @@ export default function Page() {
                       accept="image/*,.pdf"
                       onChange={(e) => setValidID(e.target.files?.[0] || null)}
                       className="sn-input"
+                      required
                     />
                   </div>
                 </div>
@@ -360,6 +371,7 @@ export default function Page() {
                   <label
                     htmlFor="selfie"
                     className="block text-xs font-medium text-gray-700"
+
                   >
                     Upload Selfie
                   </label>
@@ -370,6 +382,7 @@ export default function Page() {
                       accept="image/*"
                       onChange={(e) => setSelfie(e.target.files?.[0] || null)}
                       className="sn-input"
+                      required
                     />
                   </div>
                 </div>
