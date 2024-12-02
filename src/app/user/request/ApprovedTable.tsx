@@ -1,3 +1,36 @@
+import React from 'react';
+
+// Timestamp formatting utility function
+const formatTimestamp = (timestamp?: string): string => {
+  if (!timestamp) return 'N/A';
+
+  try {
+    const date = new Date(timestamp);
+    
+    // Extract components
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    
+    // Handle hours, minutes, seconds
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+    // Determine AM/PM
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    // Convert to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // handle midnight (0 hours)
+    const formattedHours = hours.toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${formattedHours}:${minutes}:${seconds} ${ampm}`;
+  } catch (error) {
+    return 'Invalid Date';
+  }
+};
+
 interface RequestData {
   id: string;
   requestType: string;
@@ -10,6 +43,7 @@ interface RequestData {
   orNo?: string;
   submittedBy?: string;
   submittedName?: string;
+  timestamp?: string;
 }
 
 export const ApprovedTable: React.FC<{
@@ -27,11 +61,8 @@ export const ApprovedTable: React.FC<{
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Proof of Payment
           </th>
-          {/* <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-            Cert No
-          </th> */}
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
-            Issue On
+            Timestamp
           </th>
           <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
             Cert Link
@@ -57,11 +88,8 @@ export const ApprovedTable: React.FC<{
                 View Proof
               </a>
             </td>
-            {/* <td className="py-2 px-4 border-b text-left text-xs">
-              {request.certNo || "N/A"}
-            </td> */}
             <td className="py-2 px-4 border-b text-left text-xs">
-              {request.issueOn || "N/A"}
+              {formatTimestamp(request.timestamp)}
             </td>
             <td className="py-2 px-4 border-b text-left text-xs font-semibold">
               {request.certLink ? (
