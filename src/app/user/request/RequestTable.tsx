@@ -64,6 +64,7 @@ export const RequestTable: React.FC<{
                   data-tip="Request cannot be edited after 6 minutes of submission"
                   className="btn-outline btn btn-sm text-neutral rounded-md"
                   disabled={request.timestamp ? (new Date().getTime() - new Date(request.timestamp).getTime()) / 60000 < 6 : false}
+                  hidden
                 >
                   Edit
                 </button>

@@ -176,7 +176,7 @@ export default function Page() {
                       onChange={(e) => setMiddlename(e.target.value)}
                       value={middlename}
                       className="sn-input"
-
+                      required
                     />
                   </div>
                   <div className="mt-2">

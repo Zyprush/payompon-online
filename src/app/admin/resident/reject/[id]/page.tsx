@@ -125,9 +125,10 @@ export default function RejectPage({ params }: InfoProps) {
                     className="sn-input"
                   >
                     <option value="">Select a reason for rejection</option>
-                    <option value="Invalid ID">Invalid ID</option>
-                    <option value="Name and ID don't match">Name and ID do not match</option>
-                    <option value="Incomplete information">Incomplete information</option>
+                    <option value="Blurry, unreadable ID">Blurry, unreadable ID</option>
+                    <option value="Details don&apos;t match your ID">Details don&apos;t match your ID</option>
+                    <option value="Selfie is unclear or doesn&apos;t match your ID">Selfie is unclear or doesn&apos;t match your ID</option>
+                    <option value="Address doesn&apos;t match your documents">Address doesn&apos;t match your documents</option>
                   </select>
                 </div>
                 <div className="flex gap-2 pt-10 ml-auto justify-end">

@@ -88,7 +88,8 @@ export const ApprovedTable: React.FC<{
               </td>
             ) : (
               <td className="py-2 px-4 border-b text-left text-xs">
-                {request.status}
+                {request.status.charAt(0).toUpperCase() +
+                  request.status.slice(1).toLowerCase()} 
               </td>
             )}
           </tr>

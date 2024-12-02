@@ -120,7 +120,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       return;
     }
 
-    if (!confirm("This action cannot be undone. Are you sure you want to proceed?")) {
+    if (!confirm("Notice: Review before submitting. \n\n Your request will be process in 6 minutes. Ensure all details are correct, as cancellation are not allowed once submitted. \n\n Are you sure you want to proceed?")) {
       return;
     }
 
