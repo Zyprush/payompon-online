@@ -20,13 +20,13 @@ const DashVerified = () => {
   return (
     <div className="flex items-center justify-between p-6 w-full bg-white shadow rounded-lg">
       {/* Icon Section */}
-      <div className="flex items-center justify-center w-16 h-16 bg-orange-100 rounded-full">
-        <MdVerified className="text-orange-600 text-4xl" />
+      <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
+        <MdVerified className="text-blue-600 text-4xl" />
       </div>
 
       <div className="ml-4 flex-1">
         <h3 className="text-lg font-semibold text-gray-700">Verified Resident</h3>
-        <div className="mt-2 text-4xl font-bold text-primary flex items-center">
+        <div className="mt-2 text-4xl font-bold text-primary flex items-center m-5">
         {verifiedCount}
         </div>
         <p className="mt-1 text-xs text-gray-500">Verified registered resident</p>

@@ -25,7 +25,7 @@ const MonthRevenue: React.FC = () => {
       {/* Revenue Details Section */}
       <div className="ml-4 flex-1">
         <h3 className="text-lg font-semibold text-gray-700">Monthly Revenue</h3>
-        <div className="mt-2 text-4xl font-bold text-primary flex items-center">
+        <div className="mt-2 text-4xl font-bold text-primary flex items-center ml-5">
           {monthlyRevenue !== null ? (
             `₱${monthlyRevenue.toLocaleString()}`
           ) : (

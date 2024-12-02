@@ -26,7 +26,7 @@ const DashNotVerified = () => {
 
       <div className="ml-4 flex-1">
         <h3 className="text-lg font-semibold text-gray-700">Verification</h3>
-        <div className="mt-2 text-4xl font-bold text-primary flex items-center">
+        <div className="mt-2 text-4xl font-bold text-primary flex items-center ml-5">
         {unverifiedCount}
         </div>
         <p className="mt-1 text-xs text-gray-500">Pending account verification</p>
