@@ -7,15 +7,20 @@ const formatTimestamp = (timestamp?: string): string => {
   try {
     const date = new Date(timestamp);
     
-    // Extract components
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+    // Create an array of month names
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
     
-    // Handle hours, minutes, seconds
+    // Extract components
+    const month = months[date.getMonth()];
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    // Handle hours and minutes
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
     
     // Determine AM/PM
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -23,9 +28,8 @@ const formatTimestamp = (timestamp?: string): string => {
     // Convert to 12-hour format
     hours = hours % 12;
     hours = hours ? hours : 12; // handle midnight (0 hours)
-    const formattedHours = hours.toString().padStart(2, '0');
     
-    return `${year}-${month}-${day} ${formattedHours}:${minutes}:${seconds} ${ampm}`;
+    return `${month} ${day}, ${year} - ${hours}:${minutes} ${ampm}`;
   } catch (error) {
     return 'Invalid Date';
   }

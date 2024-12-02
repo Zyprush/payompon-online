@@ -14,17 +14,31 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
   declineRequest,
   onClose,
 }) => {
-  const [declineMessage, setDeclineMessage] = useState<string>("");
-  const {addLog} = useLogs();
-  const {userRole, name} = useUserData();
+  const { userRole, name } = useUserData();
+  
+  // Format current date like "December 1, 2024, 10:30 AM"
+  const formattedCurrentDate = new Date().toLocaleString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
 
+  const prewrittenMessage = `**Dear Resident,**
+We regret to inform you that your request cannot be processed because the GCash reference number you provided is incorrect. Kindly verify the number and resubmit your request.
+Thank you for your cooperation.\n
+**${formattedCurrentDate}** \n${name}`;
+
+  const [declineMessage, setDeclineMessage] = useState<string>(prewrittenMessage);
+  const {addLog} = useLogs();
 
   const handleDecline = async () => {
     if (!declineMessage.trim()) {
       alert("Please enter a decline message.");
       return;
     }
-
     try {
       const requestDoc = doc(db, "requests", declineRequest.id);
       await updateDoc(requestDoc, {
@@ -38,7 +52,6 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
         role: userRole,
         actionBy: name
       })
-
       alert("Request has been declined successfully.");
       onClose();
     } catch (error) {
