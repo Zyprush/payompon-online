@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconLoader2 } from "@tabler/icons-react";
 import NavLayout from "@/components/NavLayout";
+import { currentTime } from "@/helper/time";
+import { useLogs } from "@/hooks/useLogs";
+import useUserData from "@/hooks/useUserData";
 interface InfoProps {
   params: {
     id: string;
@@ -32,6 +35,8 @@ export default function EditProfile({ params }: InfoProps) {
   const [validIDType, setValidIDType] = useState("");
   const [validID, setValidID] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
+  const {addLog} = useLogs();
+  const {name, userRole} = useUserData();
 
   const [existingValidIDURL, setExistingValidIDURL] = useState("");
   const [existingSelfieURL, setExistingSelfieURL] = useState("");
@@ -129,6 +134,12 @@ export default function EditProfile({ params }: InfoProps) {
       }
 
       await updateDoc(userDocRef, updatedData);
+      addLog({
+        name: `Updated ${firstname} ${lastname} account information`,
+        date: currentTime,
+        role: userRole,
+        actionBy: name
+      })
       toast.success("Profile updated successfully!");
       router.push("/admin/resident");
     } catch (error) {

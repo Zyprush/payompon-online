@@ -120,6 +120,7 @@ export default function Page() {
         gender,
         sitio,
         civilStatus,
+        validIDType,
         validID: validIDURL,
         selfie: selfieURL,
         role: "resident",

@@ -47,7 +47,6 @@ const ArchivedResident: React.FC = (): JSX.Element => {
   const {addLog} = useLogs();
   const {userRole, name} = useUserData();
 
-
   const auth = getAuth();
 
   const fetchUsers = async () => {
@@ -100,6 +99,41 @@ const ArchivedResident: React.FC = (): JSX.Element => {
     }
   };
 
+  const handleDelete = async (userId: string, email: string) => {
+    const confirmDelete = window.prompt(
+      "Are you sure you want to permanently delete this resident? This action cannot be undone. Please enter your email address to confirm."
+    );
+    if (!confirmDelete || confirmDelete !== email) return;
+    
+    try {
+      const userRef = doc(db, "archived", userId);
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) {
+        throw new Error("User document does not exist.");
+      }
+
+      // Delete the document from the archived collection
+      await deleteDoc(userRef);
+
+      // Remove the user from the local state
+      setUsers((prev) => prev.filter((item) => item.id !== userId));
+
+      // Log the deletion
+      addLog({
+        name: `Permanently deleted ${userDoc.data()?.firstname + ' ' + userDoc.data()?.lastname} account`,
+        date: currentTime,
+        role: userRole,
+        actionBy: name
+      });
+
+      window.alert("Resident permanently deleted!");
+    } catch (error) {
+      console.error("Error deleting resident: ", error);
+      window.alert("Error deleting resident. Please try again.");
+    }
+  };
+
   const filteredUsers = users.filter((user) =>
     `${user.firstname} ${user.middlename} ${user.lastname}`
       .toLowerCase()
@@ -124,14 +158,14 @@ const ArchivedResident: React.FC = (): JSX.Element => {
         </span>
       ) : filteredUsers.length === 0 ? (
         <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto">
-          No verified residents found.
+          No archived residents found.
         </span>
       ) : (
         <table className="min-w-full bg-white border">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Name
+                Selfie
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
                 Name
@@ -146,7 +180,7 @@ const ArchivedResident: React.FC = (): JSX.Element => {
                 Contact
               </th>
               <th className="py-2 px-4 border-b text-sm text-gray-700 font-semibold text-left">
-                Valid ID
+                Actions
               </th>
             </tr>
           </thead>
@@ -155,19 +189,21 @@ const ArchivedResident: React.FC = (): JSX.Element => {
               <tr key={user.id}>
                 <td className="py-2 px-4 border-b text-xs font-semibold">
                   {user.selfie ? (
-                    <a
-                      href={user.selfie}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className=""
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={user.selfie}
-                        alt="Selfie"
-                        className="w-14 h-14 object-cover border shadow-sm rounded-full"
-                      />
-                    </a>
+                    <>
+                      <a
+                        href={user.selfie}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className=""
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={user.selfie}
+                          alt="Selfie"
+                          className="w-14 h-14 object-cover border shadow-sm rounded-full"
+                        />
+                      </a>
+                    </>
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -205,9 +241,15 @@ const ArchivedResident: React.FC = (): JSX.Element => {
                   </Link>
                   <button
                     onClick={() => handleRestore(user.id)}
-                    className="btn-error text-white rounded-sm btn-xs btn"
+                    className="btn-success text-white rounded-sm btn-xs btn"
                   >
                     restore
+                  </button>
+                  <button
+                    onClick={() => handleDelete(user.id, user.email)}
+                    className="btn-error text-white rounded-sm btn-xs btn"
+                  >
+                    delete
                   </button>
                 </td>
               </tr>

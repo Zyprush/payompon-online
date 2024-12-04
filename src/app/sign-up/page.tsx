@@ -118,6 +118,7 @@ export default function Page() {
         sitio,
         civilStatus,
         validID: validIDURL,
+        validIDType,
         selfie: selfieURL,
         role: "resident",
         verified: false,

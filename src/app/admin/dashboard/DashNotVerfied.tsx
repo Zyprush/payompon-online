@@ -9,7 +9,12 @@ const DashNotVerified = () => {
   useEffect(() => {
     const fetchUnverifiedUsersCount = async () => {
       const usersRef = collection(db, "users");
-      const unverifiedUsersQuery = query(usersRef, where("verified", "==", false));
+      const unverifiedUsersQuery = query(
+        usersRef,
+        where("verified", "==", false),
+        where("role", "==", "resident"),
+        where("submitted", "==", true)
+      );
       const querySnapshot = await getDocs(unverifiedUsersQuery);
       setUnverifiedCount(querySnapshot.size);
     };
@@ -27,9 +32,11 @@ const DashNotVerified = () => {
       <div className="ml-4 flex-1">
         <h3 className="text-lg font-semibold text-gray-700">Verification</h3>
         <div className="mt-2 text-4xl font-bold text-primary flex items-center ml-5">
-        {unverifiedCount}
+          {unverifiedCount}
         </div>
-        <p className="mt-1 text-xs text-gray-500">Pending account verification</p>
+        <p className="mt-1 text-xs text-gray-500">
+          Pending account verification
+        </p>
       </div>
     </div>
   );
