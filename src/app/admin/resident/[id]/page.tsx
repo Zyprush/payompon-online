@@ -13,11 +13,13 @@ import NavLayout from "@/components/NavLayout";
 import { currentTime } from "@/helper/time";
 import { useLogs } from "@/hooks/useLogs";
 import useUserData from "@/hooks/useUserData";
+
 interface InfoProps {
   params: {
     id: string;
   };
 }
+
 export default function EditProfile({ params }: InfoProps) {
   const { id } = params;
   const router = useRouter();
@@ -35,8 +37,8 @@ export default function EditProfile({ params }: InfoProps) {
   const [validIDType, setValidIDType] = useState("");
   const [validID, setValidID] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
-  const {addLog} = useLogs();
-  const {name, userRole} = useUserData();
+  const { addLog } = useLogs();
+  const { name, userRole } = useUserData();
 
   const [existingValidIDURL, setExistingValidIDURL] = useState("");
   const [existingSelfieURL, setExistingSelfieURL] = useState("");
@@ -95,6 +97,15 @@ export default function EditProfile({ params }: InfoProps) {
     return true;
   };
 
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setFile: React.Dispatch<React.SetStateAction<File | null>>
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      setFile(event.target.files[0]);
+    }
+  };
+
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!validateInputs()) return;
@@ -103,9 +114,9 @@ export default function EditProfile({ params }: InfoProps) {
     try {
       if (!id) {
         toast.error("User ID is not available.");
-        return; // Exit if user ID is not available
+        return;
       }
-      const userDocRef = doc(db, "users", id); // Ensure user.uid is defined
+      const userDocRef = doc(db, "users", id);
       const updatedData: any = {
         firstname,
         lastname,
@@ -120,13 +131,14 @@ export default function EditProfile({ params }: InfoProps) {
         submitted: true,
       };
 
-      // If the user uploads new valid ID or selfie, update in storage
+      // Update valid ID if uploaded
       if (validID) {
         const validIDRef = ref(storage, `validIDs/${id}`);
         await uploadBytes(validIDRef, validID);
         updatedData.validID = await getDownloadURL(validIDRef);
       }
 
+      // Update selfie if uploaded
       if (selfie) {
         const selfieRef = ref(storage, `selfies/${id}`);
         await uploadBytes(selfieRef, selfie);
@@ -138,8 +150,8 @@ export default function EditProfile({ params }: InfoProps) {
         name: `Updated ${firstname} ${lastname} account information`,
         date: currentTime,
         role: userRole,
-        actionBy: name
-      })
+        actionBy: name,
+      });
       toast.success("Profile updated successfully!");
       router.push("/admin/resident");
     } catch (error) {
@@ -155,7 +167,7 @@ export default function EditProfile({ params }: InfoProps) {
       <section>
         <div className="flex">
           <div className="mx-auto shadow-md p-4 min-w-[22rem] xl:max-w-md 2xl:max-w-lg rounded-xl m-auto bg-white">
-            <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
+            <h2 className="text-lg font-bold mt-10 md:mt-0 mb-4 text-primary drop-shadow">
               Edit Profile
             </h2>
             <form className="mt-8" method="POST" onSubmit={onSubmit}>
@@ -197,61 +209,114 @@ export default function EditProfile({ params }: InfoProps) {
                   value={address}
                   className="sn-input"
                 />
-                <div className="flex justify-between gap-2">
+                <input
+                  placeholder="Contact Number"
+                  type="number"
+                  onChange={(e) => setNumber(e.target.value)}
+                  value={number}
+                  className="sn-input"
+                />
+                <select
+                  onChange={(e) => setGender(e.target.value)}
+                  value={gender}
+                  className="sn-input"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+                <select
+                  onChange={(e) => setCivilStatus(e.target.value)}
+                  value={civilStatus}
+                  className="sn-input"
+                >
+                  <option value="">Select Civil Status</option>
+                  <option value="single">Single</option>
+                  <option value="widow">Widow</option>
+                  <option value="married">Married</option>
+                </select>
+                <div>
+                  <label className="block font-bold">Valid ID Type</label>
+                  <select
+                    value={validIDType}
+                    onChange={(e) => setValidIDType(e.target.value)}
+                    className="sn-input"
+                  >
+                    <option value="">Select ID Type</option>
+                    <option value="Driver's License">Drivers License</option>
+                    <option value="Passport">Passport</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold">Valid ID</label>
                   <input
-                    placeholder="Contact Number"
-                    type="number"
-                    onChange={(e) => setNumber(e.target.value)}
-                    value={number}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, setValidID)}
                     className="sn-input"
                   />
+                  {existingValidIDURL && !validID && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={existingValidIDURL}
+                      alt="Existing Valid ID"
+                      className="mt-3 w-40 h-auto rounded-md"
+                    />
+                  )}
+                  {validID && (
+                    <p className="mt-3 text-primary">
+                      {validID.name || "New valid ID selected"}
+                    </p>
+                  )}
                 </div>
-                <div className="mt-2 flex gap-2">
-                  <select
-                    onChange={(e) => setGender(e.target.value)}
-                    value={gender}
+                <div>
+                  <label className="block font-bold">Selfie</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, setSelfie)}
                     className="sn-input"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                  <select
-                    onChange={(e) => setCivilStatus(e.target.value)}
-                    value={civilStatus}
-                    className="sn-input"
-                  >
-                    <option value="">Select Civil Status</option>
-                    <option value="single">Single</option>
-                    <option value="widow">Widow</option>
-                    <option value="married">Married</option>
-                  </select>
+                  />
+                  {existingSelfieURL && !selfie && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={existingSelfieURL}
+                      alt="Existing Selfie"
+                      className="mt-3 w-40 h-auto rounded-md"
+                    />
+                  )}
+                  {selfie && (
+                    <p className="mt-3 text-primary">
+                      {selfie.name || "New selfie selected"}
+                    </p>
+                  )}
                 </div>
-                <div className="flex gap-2 pt-10 ml-auto justify-end">
-                  <Link
-                    href="/admin/resident"
-                    className=" btn text-primary btn-outline btn-sm"
-                  >
-                    Back
-                  </Link>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="btn btn-primary btn-sm text-white"
-                  >
-                    {loading ? (
-                      <IconLoader2 className="animate-spin" />
-                    ) : (
-                      "Save"
-                    )}
-                  </button>
-                </div>
-                <ToastContainer />
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <button
+                  type="submit"
+                  className="sn-button-primary"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <IconLoader2 className="animate-spin" />
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+                <Link
+                  href="/admin/resident"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Cancel
+                </Link>
               </div>
             </form>
           </div>
         </div>
       </section>
+      <ToastContainer />
     </NavLayout>
   );
 }
