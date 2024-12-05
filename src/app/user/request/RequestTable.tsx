@@ -59,15 +59,15 @@ export const RequestTable: React.FC<{
             </td>
             {showEditButton ? (
               <td className="py-2 px-4 border-b text-left text-xs">
-                <button
-                  onClick={() => handleOpenEdit(request)}
-                  data-tip="Request cannot be edited after 6 minutes of submission"
-                  className="btn-outline btn btn-sm text-neutral rounded-md"
-                  disabled={request.timestamp ? (new Date().getTime() - new Date(request.timestamp).getTime()) / 60000 < 6 : false}
-                  hidden
-                >
-                  Edit
-                </button>
+                {request.timestamp && (new Date().getTime() - new Date(request.timestamp).getTime()) / 60000 <= 6 ? (
+                  <button
+                    onClick={() => handleOpenEdit(request)}
+                    data-tip="Request cannot be edited after 6 minutes of submission"
+                    className="btn-outline btn btn-sm text-neutral rounded-md"
+                  >
+                    Edit
+                  </button>
+                ) : null}
               </td>
             ) : (
               <td className="py-2 px-4 border-b text-left text-xs">

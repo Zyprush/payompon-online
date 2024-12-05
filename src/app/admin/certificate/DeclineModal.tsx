@@ -28,8 +28,8 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
 
   const prewrittenMessage = `**Dear Resident,**
 We regret to inform you that your request cannot be processed because the GCash reference number you provided is incorrect. Kindly verify the number and resubmit your request.
-Thank you for your cooperation.\n
-**${formattedCurrentDate}** \n${name? name : "Admin"}`;
+Thank you for your cooperation.\n\n
+**${formattedCurrentDate}** \n\n${name? name : "Admin"}`;
 
   const [declineMessage, setDeclineMessage] = useState<string>(prewrittenMessage);
   const {addLog} = useLogs();
@@ -43,7 +43,7 @@ Thank you for your cooperation.\n
       const requestDoc = doc(db, "requests", declineRequest.id);
       await updateDoc(requestDoc, {
         status: "declined",
-        declineReason: `${declineMessage}. You may send us a message to request a refund or make another request using the same Screenshot of the Gcash transaction.`,
+        declineReason: `${declineMessage}.`,
       });
       
       addLog({

@@ -36,11 +36,10 @@ export const useNotifStore = create<NotifStore>((set) => ({
     set({ loadingNotif: false });
   },
 
-  fetchNotifByUser: async (userId) => {
-    console.log('userId', userId)
+  fetchNotifByUser: async (userId: string) => {
+    console.log('userId', userId);
     set({ loadingNotif: true });
     try {
-      // Fetch unread notifications for the user first
       const unreadNotifByUserQuery = query(
         collection(db, "notif"),
         where("for", "==", userId),
@@ -48,7 +47,7 @@ export const useNotifStore = create<NotifStore>((set) => ({
         orderBy("time", "desc")
       );
       const unreadNotifDocSnap = await getDocs(unreadNotifByUserQuery);
-      // Fetch read notifications for the user
+
       const readNotifByUserQuery = query(
         collection(db, "notif"),
         where("for", "==", userId),
@@ -56,9 +55,7 @@ export const useNotifStore = create<NotifStore>((set) => ({
         orderBy("time", "desc")
       );
       const readNotifDocSnap = await getDocs(readNotifByUserQuery);
-      console.log("readNotifDocSnap", readNotifDocSnap);
-      console.log("unreadNotifDocSnap", unreadNotifDocSnap);
-      // Combine unread and read notifications
+
       const allNotifications = [
         ...unreadNotifDocSnap.docs.map((doc) => ({
           id: doc.id,
@@ -74,10 +71,10 @@ export const useNotifStore = create<NotifStore>((set) => ({
         notif: allNotifications,
         loadingNotif: false,
       });
-    } catch (error: any) {
-      console.log("error", error);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      set({ loadingNotif: false });
     }
-    set({ loadingNotif: false });
   },
 
   fetchNotifByAdmin: async () => {

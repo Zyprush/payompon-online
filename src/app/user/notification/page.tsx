@@ -25,7 +25,7 @@ const UserNotif: React.FC = (): JSX.Element => {
     };
 
     fetchUserNotifications();
-  }, [fetchNotifByUser, userId]);
+  }, []);
 
   const handleCheckboxChange = (id: string) => {
     setSelectedNotifications(prevSelected => {

@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
+import useUserData from "@/hooks/useUserData";
 
 interface Notification {
   id: string;
@@ -20,13 +21,16 @@ interface Notification {
 const NotificationsDropdown: React.FC = () => {
   const { notif, fetchNotifByAdmin } = useNotifStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { userRole } = useUserData();
 
   // Calculate unread count
   const unreadCount = notif?.filter(n => !n.read).length || 0;
 
   useEffect(() => {
-    fetchNotifByAdmin();
-  }, [fetchNotifByAdmin]);
+    if (userRole === "staff" || userRole === "admin") {
+      fetchNotifByAdmin();
+    }
+  }, []);
 
   const handleMarkAsRead = async (id: string) => {
     try {
