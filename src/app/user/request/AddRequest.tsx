@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect} from "react";
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage, db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -144,6 +144,9 @@ const AddRequest: React.FC<AddRequestProps> = ({
         timestamp: currentTime,
         status: "pending",
       };
+
+      const requestDocRef = doc(collection(db, "requests"));
+      await setDoc(requestDocRef, newRequest);
 
       await addNotif({
         for: "admin",

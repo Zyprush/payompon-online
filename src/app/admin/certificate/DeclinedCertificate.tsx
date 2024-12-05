@@ -1,6 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import UpdateCertificate from "./UpdateCertificate";
 import DeclineModal from "./DeclineModal";
@@ -23,7 +31,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
   const [selectedRequest, setSelectedRequest] = useState<RequestData | null>(
     null
   );
-  const [viewRequest, setViewRequest] = useState<RequestData | null>(null); // Added for viewing
+  const [viewRequest, setViewRequest] = useState<RequestData | null>(null);
   const [declineRequest, setDeclineRequest] = useState<RequestData | null>(
     null
   );
@@ -53,8 +61,26 @@ const PendingCertificate: React.FC = (): JSX.Element => {
     fetchRequests();
   }, [selectedRequest, declineRequest]);
 
+  const handleDelete = async (request: RequestData) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the request from ${request.submittedName}?`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const docRef = doc(db, "requests", request.id);
+      await deleteDoc(docRef);
+      setRequests((prev) =>
+        prev.filter((existingRequest) => existingRequest.id !== request.id)
+      );
+      console.log(`Request with ID ${request.id} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting request:", error);
+    }
+  };
+
   const handleView = (request: RequestData) => {
-    setViewRequest(request); // Opens the view modal
+    setViewRequest(request);
   };
 
   // Filter the requests based on the search term
@@ -128,6 +154,12 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                     className="btn-xs rounded-sm btn-outline btn text-info"
                   >
                     View
+                  </button>
+                  <button
+                    onClick={() => handleDelete(request)}
+                    className="btn-xs rounded-sm btn-outline btn text-error"
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
