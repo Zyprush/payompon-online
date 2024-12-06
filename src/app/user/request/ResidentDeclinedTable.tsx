@@ -32,29 +32,50 @@ interface RequestData {
             <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
               Reason of Decline
             </th>
+            {showEditButton && (
+              <th className="py-2 px-4 border-b text-left text-xs text-gray-700">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
           {requests.map((request) => (
             <tr key={request.id}>
               <td className="py-2 px-4 border-b text-left text-xs">
-                {request.requestType}
+                <>
+                  {request.requestType}
+                </>
               </td>
               <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                 <a
                   href={request.proofOfPaymentURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500"
+                  className="text-blue-500 hover:underline"
                 >
                   View Proof
                 </a>
               </td>
-              <td className="py-2 px-4 border-b text-left text-xs max-w-xs">{request.declineReason}</td>
+              <td 
+                className="py-2 px-4 border-b text-left text-xs max-w-xs"
+                dangerouslySetInnerHTML={{ 
+                  __html: request.declineReason || 'No specific reason provided' 
+                }}
+              />
+              {showEditButton && (
+                <td className="py-2 px-4 border-b text-left text-xs">
+                  <button
+                    onClick={() => handleOpenEdit(request)}
+                    className="btn btn-xs btn-primary rounded-sm"
+                  >
+                    Edit
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
     );
   };
-  
