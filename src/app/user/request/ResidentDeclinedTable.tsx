@@ -58,7 +58,7 @@ interface RequestData {
                 </a>
               </td>
               <td 
-                className="py-2 px-4 border-b text-left text-xs max-w-xs"
+                className="py-2 px-4 border-b text-left text-xs max-w-xs quill-content"
                 dangerouslySetInnerHTML={{ 
                   __html: request.declineReason || 'No specific reason provided' 
                 }}

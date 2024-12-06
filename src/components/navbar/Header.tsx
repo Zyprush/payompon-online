@@ -31,7 +31,7 @@ const Header = () => {
         </button> */}
         <div>
           {/** notification bitch */}
-          <NotificationsDropdown />
+          {userRole === "staff" || userRole === "admin" ? <NotificationsDropdown /> : null}
 
         </div>
         <details className="dropdown dropdown-end">
