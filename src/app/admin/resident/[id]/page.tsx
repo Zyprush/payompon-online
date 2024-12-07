@@ -242,10 +242,39 @@ export default function EditProfile({ params }: InfoProps) {
                     onChange={(e) => setValidIDType(e.target.value)}
                     className="sn-input"
                   >
-                    <option value="">Select ID Type</option>
-                    <option value="Driver's License">Drivers License</option>
-                    <option value="Passport">Passport</option>
-                    <option value="Other">Other</option>
+            <option value="">Select Valid ID</option>
+                    <optgroup label="Primary ID">
+                      <option value="Philippine Passport">
+                        Philippine Passport
+                      </option>
+                      <option value="Driver’s License">Driver’s License</option>
+                      <option value="Unified Multi-Purpose ID (UMID)">
+                        Unified Multi-Purpose ID (UMID)
+                      </option>
+                      <option value="Voter’s ID or Voter’s Certification">
+                        Voter’s ID or Voter’s Certification
+                      </option>
+                      <option value="Postal ID">Postal ID</option>
+                      <option value="PhilSys ID (National ID)">
+                        PhilSys ID (National ID)
+                      </option>
+                      <option value="RC License">RC License</option>
+                    </optgroup>
+                    <optgroup label="Secondary ID">
+                      <option value="Barangay ID or Barangay Clearance">
+                        Barangay ID or Barangay Clearance
+                      </option>
+                      <option value="Company ID">Company ID</option>
+                      <option value="School ID">School ID</option>
+                      <option value="PhilHealth ID">PhilHealth ID</option>
+                      <option value="NBI Clearance">NBI Clearance</option>
+                      <option value="Police Clearance">Police Clearance</option>
+                      <option value="Senior Citizen ID">
+                        Senior Citizen ID
+                      </option>
+                      <option value="PWD ID">PWD ID</option>
+                      <option value="TIN ID">TIN ID</option>
+                    </optgroup>
                   </select>
                 </div>
                 <div>
