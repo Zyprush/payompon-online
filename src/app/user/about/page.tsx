@@ -5,6 +5,7 @@ import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import GetImage from "@/components/GetImage";
 import GetText from "@/app/admin/settings/GetText";
+import Link from "next/link";
 
 const About: React.FC = (): JSX.Element => {
   
@@ -49,7 +50,7 @@ const About: React.FC = (): JSX.Element => {
               <p className="text-sm text-zinc-500"><GetText name="email" title="Email"/></p>
             </div>
           </div>
-
+          <Link href="/user/change-email" className="btn btn-sm btn-primary text-white">Change Email</Link>
       </div>
     </UserNavLayout>
   );

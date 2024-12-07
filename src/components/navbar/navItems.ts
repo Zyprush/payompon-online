@@ -34,6 +34,7 @@ export const userNavItems = [
     { href: "/user/announce", icon: IconInfoSquare, label: "Announcement" },
     { href: "/user/notification", icon: IconNotification, label: "Notification" },
     { href: "/user/about", icon: IconHelpHexagon, label: "About" },
+    { href: "/user/change-email", icon: IconSettings, label: "Settings" },
 ];
 
 
