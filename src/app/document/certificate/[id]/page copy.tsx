@@ -21,21 +21,6 @@ const DocumentComponent: React.FC<InfoProps> = ({ params }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  useEffect(() => {
-    const metaViewportTag = document.querySelector('meta[name="viewport"]');
-    if (metaViewportTag) {
-      metaViewportTag.setAttribute(
-        "content",
-        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-      );
-    }
-    return () => {
-      if (metaViewportTag) {
-        metaViewportTag.setAttribute("content", "width=device-width, initial-scale=1.0");
-      }
-    };
-  }, []);
-
   const handleZoomIn = () => {
     setZoomLevel((prevZoomLevel) => Math.min(prevZoomLevel + 0.1, 3)); // Max zoom 300%
   };
@@ -91,4 +76,3 @@ const DocumentComponent: React.FC<InfoProps> = ({ params }) => {
 DocumentComponent.displayName = "DocumentComponent";
 
 export default DocumentComponent;
-
