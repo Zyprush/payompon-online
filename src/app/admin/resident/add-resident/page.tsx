@@ -34,6 +34,7 @@ export default function Page() {
   const [sitio, setSitio] = useState("");
   const [civilStatus, setCivilStatus] = useState("");
   const [validID, setValidID] = useState<File | null>(null);
+  const [validIDBack, setValidIDBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
   const [validIDType, setValidIDType] = useState("");
 
@@ -96,16 +97,21 @@ export default function Page() {
       const user = userCredential.user;
 
       const validIDRef = ref(storage, `validIDs/${user.uid}`);
+      const validIDBackRef = ref(storage, `validIDBacks/${user.uid}`);
       const selfieRef = ref(storage, `selfies/${user.uid}`);
 
       if (validID) {
         await uploadBytes(validIDRef, validID);
+      }
+      if (validIDBack) {
+        await uploadBytes(validIDBackRef, validIDBack);
       }
       if (selfie) {
         await uploadBytes(selfieRef, selfie);
       }
 
       const validIDURL = await getDownloadURL(validIDRef);
+      const validIDBackURL = await getDownloadURL(validIDBackRef);
       const selfieURL = await getDownloadURL(selfieRef);
       await sendEmailVerification();
 
@@ -122,6 +128,7 @@ export default function Page() {
         civilStatus,
         validIDType,
         validID: validIDURL,
+        validIDBack: validIDBackURL,
         selfie: selfieURL,
         role: "resident",
         verified: false,
@@ -370,9 +377,26 @@ export default function Page() {
                 </div>
                 <div>
                   <label
+                    htmlFor="validIDBack"
+                    className="block text-xs font-medium text-gray-700"
+                  >
+                    Upload Valid ID Back
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="file"
+                      id="validIDBack"
+                      accept="image/*,.pdf"
+                      onChange={(e) => setValidIDBack(e.target.files?.[0] || null)}
+                      className="sn-input"
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
                     htmlFor="selfie"
                     className="block text-xs font-medium text-gray-700"
-
                   >
                     Upload Selfie
                   </label>

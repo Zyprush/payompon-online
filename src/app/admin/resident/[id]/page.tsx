@@ -36,12 +36,14 @@ export default function EditProfile({ params }: InfoProps) {
   const [civilStatus, setCivilStatus] = useState("");
   const [validIDType, setValidIDType] = useState("");
   const [validID, setValidID] = useState<File | null>(null);
+  const [validIDBack, setValidIDBack] = useState<File | null>(null); // Added state for validIDBack
   const [selfie, setSelfie] = useState<File | null>(null);
   const { addLog } = useLogs();
   const { name, userRole } = useUserData();
 
   const [existingValidIDURL, setExistingValidIDURL] = useState("");
   const [existingSelfieURL, setExistingSelfieURL] = useState("");
+  const [existingValidIDBackURL, setExistingValidIDBackURL] = useState(""); // Added state for existing validIDBack
 
   // Fetch user information
   useEffect(() => {
@@ -63,6 +65,7 @@ export default function EditProfile({ params }: InfoProps) {
           setValidIDType(data.validIDType || "");
           setExistingValidIDURL(data.validID || "");
           setExistingSelfieURL(data.selfie || "");
+          setExistingValidIDBackURL(data.validIDBack || ""); // Fetch existing validIDBack
         } else {
           toast.error("User data not found.");
         }
@@ -136,6 +139,11 @@ export default function EditProfile({ params }: InfoProps) {
         const validIDRef = ref(storage, `validIDs/${id}`);
         await uploadBytes(validIDRef, validID);
         updatedData.validID = await getDownloadURL(validIDRef);
+      }
+      if (validIDBack) {
+        const validIDBackRef = ref(storage, `validIDsBack/${id}`); // Corrected reference for validIDBack
+        await uploadBytes(validIDBackRef, validIDBack);
+        updatedData.validIDBack = await getDownloadURL(validIDBackRef); // Corrected assignment for validIDBack
       }
 
       // Update selfie if uploaded
@@ -277,6 +285,7 @@ export default function EditProfile({ params }: InfoProps) {
                     </optgroup>
                   </select>
                 </div>
+
                 <div>
                   <label className="block font-bold">Valid ID</label>
                   <input
@@ -299,6 +308,30 @@ export default function EditProfile({ params }: InfoProps) {
                     </p>
                   )}
                 </div>
+
+                <div>
+                  <label className="block font-bold">Valid ID Back</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, setValidIDBack)} // Corrected to setValidIDBack
+                    className="sn-input"
+                  />
+                  {existingValidIDBackURL && !validIDBack && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={existingValidIDBackURL}
+                      alt="Existing Back of Valid ID"
+                      className="mt-3 w-40 h-auto rounded-md"
+                    />
+                  )}
+                  {validIDBack && (
+                    <p className="mt-3 text-primary">
+                      {validIDBack.name || "New valid ID back selected"}
+                    </p>
+                  )}
+                </div>
+
                 <div>
                   <label className="block font-bold">Selfie</label>
                   <input

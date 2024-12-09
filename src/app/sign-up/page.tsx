@@ -33,6 +33,7 @@ export default function Page() {
   const [sitio, setSitio] = useState("");
   const [civilStatus, setCivilStatus] = useState("");
   const [validID, setValidID] = useState<File | null>(null);
+  const [validIDBack, setValidIDBack] = useState<File | null>(null);
   const [selfie, setSelfie] = useState<File | null>(null);
   const [validIDType, setValidIDType] = useState("");
 
@@ -59,6 +60,7 @@ export default function Page() {
       !confirmPassword ||
       !validIDType ||
       !validID ||
+      !validIDBack ||
       !selfie
     ) {
       toast.error("All fields are required!");
@@ -93,16 +95,21 @@ export default function Page() {
       const user = userCredential.user;
 
       const validIDRef = ref(storage, `validIDs/${user.uid}`);
+      const validIDBackRef = ref(storage, `validIDsBack/${user.uid}`);
       const selfieRef = ref(storage, `selfies/${user.uid}`);
 
       if (validID) {
         await uploadBytes(validIDRef, validID);
+      }
+      if (validIDBack) {
+        await uploadBytes(validIDBackRef, validIDBack);
       }
       if (selfie) {
         await uploadBytes(selfieRef, selfie);
       }
 
       const validIDURL = await getDownloadURL(validIDRef);
+      const validIDBackURL = await getDownloadURL(validIDBackRef);
       const selfieURL = await getDownloadURL(selfieRef);
       await sendEmailVerification();
 
@@ -119,6 +126,7 @@ export default function Page() {
         civilStatus,
         validID: validIDURL,
         validIDType,
+        validIDBack: validIDBackURL,
         selfie: selfieURL,
         role: "resident",
         verified: false,
@@ -340,7 +348,7 @@ export default function Page() {
                   htmlFor="validID"
                   className="block text-xs font-medium text-gray-700"
                 >
-                  Upload Valid ID
+                  Upload Front of Valid ID
                 </label>
                 <div className="mt-1">
                   <input
@@ -348,6 +356,23 @@ export default function Page() {
                     id="validID"
                     accept="image/*,.pdf"
                     onChange={(e) => setValidID(e.target.files?.[0] || null)}
+                    className="sn-input"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="validIDBack"
+                  className="block text-xs font-medium text-gray-700"
+                >
+                  Upload Back of Valid ID
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="file"
+                    id="validIDBack"
+                    accept="image/*,.pdf"
+                    onChange={(e) => setValidIDBack(e.target.files?.[0] || null)}
                     className="sn-input"
                   />
                 </div>
