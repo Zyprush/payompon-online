@@ -79,7 +79,7 @@ const DocumentComponent: React.FC<InfoProps> = ({ params }) => {
           copyStyles={true}
         />
       </div>
-      <div className="flex">
+      <div className="flex w-screen">
         <div id="document" className="mx-auto bernard-mt"> {/* Added the bernard-mt class */}
           <PrintContent zoomLevel={zoomLevel} />
         </div>
