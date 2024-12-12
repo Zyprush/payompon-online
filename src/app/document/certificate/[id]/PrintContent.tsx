@@ -89,7 +89,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
               <div className="flex flex-col p-3 mt-4">
                 <span className="text-gray-600 text-justify indent-8">
                   This cetification is being issued upon the request of the
-                  above-mention name for {request?.purpose}. <b>PURPUSE ONLY</b>
+                  above-mention name for {request?.purpose}. <b>PURPOSE ONLY</b>
                 </span>
               </div>
 
