@@ -60,7 +60,8 @@ const DeclineModal: React.FC<DeclineModalProps> = ({
       const requestDoc = doc(db, "requests", declineRequest.id);
       await updateDoc(requestDoc, {
         status: "declined",
-        declineReason: declineMessage,
+        timestamp: currentTime,
+        declineReason: declineMessage,  
       });
       
       addLog({
