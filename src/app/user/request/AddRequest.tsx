@@ -23,7 +23,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [requestType, setRequestType] = useState<string>("");
   const [purpose, setPurpose] = useState<string>("");
   const [showOtherPurpose, setShowOtherPurpose] = useState(false);
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
   const [format, setFormat] = useState<string>("");
   const [proofOfPayment, setProofOfPayment] = useState<File | null>(null);
   const [userUid, setUserUid] = useState<string | null>(null);
@@ -31,7 +31,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
   const [userSitio, setUserSitio] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [services, setServices] = useState<
-    { name: string; format: string; price: string }[]
+    { name: string; format: string; price: number }[]
   >([]);
   const [purposes, setPurposes] = useState<string[]>([]); // Change to store purposes as an array of strings
 
@@ -45,9 +45,10 @@ const AddRequest: React.FC<AddRequestProps> = ({
     console.log("e.target.value", e.target.value);
     if (selectedService) {
       setAmount(selectedService.price);
+      console.log('amount', amount)
       setFormat(selectedService.format);
     } else {
-      setAmount("");
+      setAmount(0);
       setFormat("");
     }
   };
@@ -115,7 +116,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
       return;
     }
 
-    if (!requestType || !purpose || !amount || !proofOfPayment) {
+    if (!requestType || !purpose) {
       alert("All fields are required.");
       return;
     }
@@ -125,11 +126,13 @@ const AddRequest: React.FC<AddRequestProps> = ({
     }
 
     setLoading(true);
-
     try {
-      const storageRef = ref(storage, `proofOfPayment/${proofOfPayment.name}`);
-      const snapshot = await uploadBytes(storageRef, proofOfPayment);
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      let downloadURL = "n/a";
+      if (amount > 0 && proofOfPayment) {
+        const storageRef = ref(storage, `proofOfPayment/${proofOfPayment.name}`);
+        const snapshot = await uploadBytes(storageRef, proofOfPayment);
+        downloadURL = await getDownloadURL(snapshot.ref);
+      }
 
       const newRequest = {
         submittedName: userName,
@@ -138,7 +141,7 @@ const AddRequest: React.FC<AddRequestProps> = ({
         otherPurpose: showOtherPurpose,
         requestType,
         purpose,
-        amount,
+        amount: amount ? amount : "0",
         format,
         proofOfPaymentURL: downloadURL,
         timestamp: currentTime,
@@ -259,24 +262,26 @@ const AddRequest: React.FC<AddRequestProps> = ({
           )}
 
           {/* Proof of Payment */}
-          <div className="mb-4">
-            <label
-              className="block text-sm font-semibold mb-2 text-zinc-700"
-              htmlFor="proof"
-            >
-              Proof of Payment
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              id="proof"
-              onChange={(e) => {
-                if (e.target.files) setProofOfPayment(e.target.files[0]);
-              }}
-              className="w-full px-3 py-2 border rounded-sm"
-              disabled={loading}
-            />
-          </div>
+          {amount > 0 && (
+            <div className="mb-4">
+              <label
+                className="block text-sm font-semibold mb-2 text-zinc-700"
+                htmlFor="proof"
+              >
+                Proof of Payment
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                id="proof"
+                onChange={(e) => {
+                  if (e.target.files) setProofOfPayment(e.target.files[0]);
+                }}
+                className="w-full px-3 py-2 border rounded-sm"
+                disabled={loading}
+              />
+            </div>
+          )}
 
           {/* Gcash QR and Buttons */}
           <div className="flex flex-col md:flex-row gap-5 justify-between items-center">

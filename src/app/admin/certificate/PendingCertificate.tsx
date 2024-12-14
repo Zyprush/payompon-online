@@ -15,6 +15,7 @@ interface RequestData {
   timestamp: string;
   format: string;
   purpose: string;
+  amount: string;
 }
 
 const PendingCertificate: React.FC = (): JSX.Element => {
@@ -117,6 +118,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                   {format(request.timestamp,"MMM dd, yyyy - hh:mm a")}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs font-semibold">
+                {request.amount !== "0" && (
                   <a
                     href={request.proofOfPaymentURL}
                     target="_blank"
@@ -126,6 +128,7 @@ const PendingCertificate: React.FC = (): JSX.Element => {
                   >
                     view
                   </a>
+                )}
                 </td>
                 <td className="py-2 px-4 border-b text-left text-xs space-x-3">
                   <button

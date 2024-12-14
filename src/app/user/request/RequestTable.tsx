@@ -48,14 +48,16 @@ export const RequestTable: React.FC<{
               {request.timestamp ? format(new Date(request.timestamp), "MMM dd, yyyy : hh:mm a") : "N/A"}
             </td>
             <td className="py-2 px-4 border-b text-left text-xs font-semibold">
-              <a
-                href={request.proofOfPaymentURL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                View Proof
-              </a>
+              {request.proofOfPaymentURL !== "n/a" && (
+                <a
+                  href={request.proofOfPaymentURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500" 
+                >
+                  View Proof
+                </a>
+              )}
             </td>
             {showEditButton ? (
               <td className="py-2 px-4 border-b text-left text-xs">

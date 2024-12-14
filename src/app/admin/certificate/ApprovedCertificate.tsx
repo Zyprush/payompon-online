@@ -166,14 +166,16 @@ const ApprovedCertificate: React.FC = (): JSX.Element => {
                     {format(request.timestamp, "MMM dd, yyyy - hh:mm a")}
                   </td>
                   <td className="print:hidden py-2 px-4 border-b text-left text-xs font-semibold">
-                    <a
-                      href={request.proofOfPaymentURL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500"
-                    >
-                      View
-                    </a>
+                    {request.amount !== "n/a" && (
+                      <a
+                        href={request.proofOfPaymentURL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500"
+                      >
+                        View
+                      </a>
+                    )}
                   </td>
                   <td className="py-2 px-4 border-b text-left text-xs font-semibold">
                     <a
