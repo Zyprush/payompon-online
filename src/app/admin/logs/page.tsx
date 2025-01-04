@@ -150,9 +150,6 @@ const ActivityLog = () => {
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Date
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -174,23 +171,6 @@ const ActivityLog = () => {
                                 new Date(log.date),
                                 "MMM dd, yyyy : hh:mm a"
                               )}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">
-                              <button
-                                onClick={() => handleDelete(log.id)}
-                                disabled={deleteLoading === log.id}
-                                className={`btn btn-sm btn-error text-white rounded-none ${
-                                  deleteLoading === log.id
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : ""
-                                }`}
-                              >
-                                {deleteLoading === log.id ? (
-                                  <span className="loading loading-spinner loading-xs"></span>
-                                ) : (
-                                  "Delete"
-                                )}
-                              </button>
                             </td>
                           </tr>
                         ))}
