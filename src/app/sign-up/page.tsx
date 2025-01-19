@@ -179,7 +179,7 @@ export default function Page() {
       <div className="flex h-screen w-screen custom-bg items-start md:items-center justify-center">
         <Link
           href="/sign-in"
-          className="absolute top-0 left-0 m-4 btn btn-sm btn-outline font-bold border-2"
+          className="absolute top-0 left-0 m-4 btn btn-sm text-white btn-primary font-bold border-2"
         >
           Back
         </Link>
