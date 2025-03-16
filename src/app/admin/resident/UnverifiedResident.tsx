@@ -23,6 +23,7 @@ interface User {
   civilStatus: string;
   verified: boolean;
   validID: string;
+  validIDBack: string;
   validIDType: string;
   selfie: string;
   infoErrors?: string;

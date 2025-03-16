@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 
 interface User {
@@ -12,6 +13,7 @@ interface User {
   civilStatus: string;
   verified: boolean;
   validID: string;
+  validIDBack: string;
   validIDType: string;
   selfie: string;
   infoErrors?: string;
@@ -61,34 +63,47 @@ const ViewResident: React.FC<ViewResidentProps> = ({ user, onClose }) => {
             </div>
           ))}
 
-          <div className="mt-4">
-            {user.validID ? (
-              <a
-                href={user.validID}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white btn-xs btn-primary rounded btn"
-              >
-                View ID
-              </a>
-            ) : (
-              "No ID Uploaded"
-            )}
-          </div>
-
-          <div className="mt-4">
+          {/* Valid ID and Selfie Section */}
+          <div className="col-span-2 mt-4">
+            <div className="flex gap-4">
             {user.selfie ? (
-              <a
-                href={user.selfie}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white btn-xs btn-primary rounded btn"
-              >
-                View Selfie
-              </a>
-            ) : (
-              "No Selfie Uploaded"
-            )}
+            <a href={user.selfie} target="_blank" rel="noopener noreferrer">
+              <img
+                src={user.selfie}
+                alt="Selfie"
+                className="w-28 h-28 object-cover border shadow-sm rounded-full"
+              />
+            </a>
+          ) : (
+            <p className="text-sm text-zinc-600">No Selfie Uploaded</p>
+          )}
+              {user.validID && (
+                <a
+                  href={user.validID}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={user.validID}
+                    alt="Valid ID"
+                    className="w-full h-28 object-cover rounded cursor-pointer border border-dashed border-slate-600"
+                  />
+                </a>
+              )}
+              {user.validIDBack && (
+                <a
+                  href={user.validIDBack}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={user.validIDBack}
+                    alt="Valid ID Back"
+                    className="w-full h-28 object-cover rounded cursor-pointer border border-dashed border-slate-600"
+                  />
+                </a>
+              )}
+            </div>
           </div>
         </div>
 

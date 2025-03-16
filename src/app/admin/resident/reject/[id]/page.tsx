@@ -25,6 +25,7 @@ export default function RejectPage({ params }: InfoProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
+  const [customReason, setCustomReason] = useState(""); // State for custom reason input
   const { addLog } = useLogs();
   const { userRole, name } = useUserData();
   const { addMessage } = useMessageStore();
@@ -51,8 +52,11 @@ export default function RejectPage({ params }: InfoProps) {
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!declineReason) {
-      toast.error("Please select a reason for rejection.");
+    // Use custom reason if selected, otherwise use the selected reason
+    const finalReason = declineReason === "Custom Reason" ? customReason : declineReason;
+
+    if (!finalReason) {
+      toast.error("Please provide a reason for rejection.");
       return;
     }
 
@@ -78,12 +82,11 @@ export default function RejectPage({ params }: InfoProps) {
 
     await addNotif({
       for: id,
-      message: "Your account verification was rejected. Reason: " + declineReason,
+      message: "Your account verification was rejected. Reason: " + finalReason,
       time: currentTime,
       type: "user",
       read: false,
     });
-
 
     setLoading(true);
     try {
@@ -94,7 +97,7 @@ export default function RejectPage({ params }: InfoProps) {
 
       const userDocRef = doc(db, "users", id);
       await updateDoc(userDocRef, {
-        infoErrors: declineReason,
+        infoErrors: finalReason,
         submitted: false,
       });
 
@@ -118,7 +121,7 @@ export default function RejectPage({ params }: InfoProps) {
             </h2>
             <form className="mt-8" method="POST" onSubmit={onSubmit}>
               <div className="flex flex-col">
-                <div className="mt-2 flex gap-2">
+                <div className="mt-2 flex flex-col gap-2">
                   <select
                     onChange={(e) => setDeclineReason(e.target.value)}
                     value={declineReason}
@@ -129,7 +132,17 @@ export default function RejectPage({ params }: InfoProps) {
                     <option value="Details don&apos;t match your ID">Details don&apos;t match your ID</option>
                     <option value="Selfie is unclear or doesn&apos;t match your ID">Selfie is unclear or doesn&apos;t match your ID</option>
                     <option value="Address doesn&apos;t match your documents">Address doesn&apos;t match your documents</option>
+                    <option value="Custom Reason">Custom Reason</option> {/* New option */}
                   </select>
+                  {declineReason === "Custom Reason" && ( // Show input if "Custom Reason" is selected
+                    <textarea
+                      value={customReason}
+                      onChange={(e) => setCustomReason(e.target.value)}
+                      placeholder="Enter custom reason..."
+                      className="sn-input mt-2"
+                      rows={3}
+                    />
+                  )}
                 </div>
                 <div className="flex gap-2 pt-10 ml-auto justify-end">
                   <Link
