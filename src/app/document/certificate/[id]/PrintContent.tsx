@@ -7,7 +7,6 @@ import { useRequestStore } from "@/state/request";
 import UnknownDoc from "@/components/UnknownDoc";
 import { getCaptain } from "@/helper/getOfficials";
 import GetImage from "@/components/GetImage";
-import useGetFinger from "@/hooks/useGetFinger";
 import GetText from "@/app/admin/settings/GetText";
 import CertificateQrCode from "./CertificateQrCode";
 
@@ -20,7 +19,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     const [request, setRequest] = useState<any>();
     const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
-    const [age, setAge] = useState<number>(0); // Add age state
+    const [age, setAge] = useState<number>(0);
     const { id } = useRequestStore();
 
     useEffect(() => {
@@ -36,19 +35,27 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
               const data = requestSnapshot.data();
               setRequest(data);
               
-              // Calculate age if birthdate exists
-              if (data.birthdate) {
-                const birthDate = new Date(data.birthdate);
-                const today = new Date();
-                let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-                
-                // Adjust age if birthday hasn't occurred this year
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                  calculatedAge--;
+              // Fetch user data from users collection
+              if (data.submittedBy) {
+                const userDoc = doc(db, "users", data.submittedBy);
+                const userSnapshot = await getDoc(userDoc);
+                if (userSnapshot.exists()) {
+                  const userData = userSnapshot.data();
+                  // Calculate age if birthdate exists in user data
+                  if (userData.birthdate) {
+                    const birthDate = new Date(userData.birthdate);
+                    const today = new Date();
+                    let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    
+                    // Adjust age if birthday hasn't occurred this year
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                      calculatedAge--;
+                    }
+                    
+                    setAge(calculatedAge);
+                  }
                 }
-                
-                setAge(calculatedAge);
               }
             } else {
               console.log("Request not found.");
