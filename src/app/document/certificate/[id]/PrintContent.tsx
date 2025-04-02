@@ -20,6 +20,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
     const [request, setRequest] = useState<any>();
     const [captain, setCaptain] = useState<string>();
     const [loading, setLoading] = useState(false);
+    const [age, setAge] = useState<number>(0); // Add age state
     const { id } = useRequestStore();
 
     useEffect(() => {
@@ -32,7 +33,23 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
             const requestDoc = doc(db, "requests", id);
             const requestSnapshot = await getDoc(requestDoc);
             if (requestSnapshot.exists()) {
-              setRequest(requestSnapshot.data());
+              const data = requestSnapshot.data();
+              setRequest(data);
+              
+              // Calculate age if birthdate exists
+              if (data.birthdate) {
+                const birthDate = new Date(data.birthdate);
+                const today = new Date();
+                let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                // Adjust age if birthday hasn't occurred this year
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                  calculatedAge--;
+                }
+                
+                setAge(calculatedAge);
+              }
             } else {
               console.log("Request not found.");
             }
@@ -45,7 +62,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
       };
 
       fetchRequest();
-    }, [id, setRequest]);
+    }, [id]);
 
     if (!loading && !request) {
       return <UnknownDoc />;
@@ -80,7 +97,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
                 </span>
                 <span className="indent-8 text-gray-600 text-justify mt-8">
                   This is to certify that MR./MS.{" "}
-                  <b className="text-green-800">{request?.submittedName}</b> is
+                  <b className="text-green-800">{request?.submittedName}</b>, {age} years of age, is
                   a bonafide resident of Purok/Sitio {request?.sitio}, Brgy.
                   Payompon, Mamburao, Occidental Mindoro.
                 </span>
@@ -119,7 +136,7 @@ const PrintContent = forwardRef<HTMLDivElement, PrintContentProps>(
             </div>
           </div>
           <span className=" courier-prime text-green-800 font-bold mx-16 text-center">
-            Address: National Road Barangay Payompon Mamburao, Occidental
+            National Road Barangay Payompon Mamburao, Occidental
             Mindoro, Philippines 5106
           </span>
           <span className=" courier-prime text-green-800 font-bold mx-16 text-center">
