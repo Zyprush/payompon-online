@@ -29,6 +29,7 @@ export default function Page() {
   const [lastname, setLastname] = useState("");
   const [middlename, setMiddlename] = useState("");
   const [address, setAddress] = useState("");
+  const [birthdate, setBirtdate] = useState("");
   const [number, setNumber] = useState("");
   const [gender, setGender] = useState("");
   const [sitio, setSitio] = useState("");
@@ -57,6 +58,7 @@ export default function Page() {
       !lastname ||
       !middlename ||
       !address ||
+      !birthdate ||
       !email ||
       !number ||
       !gender ||
@@ -143,6 +145,7 @@ export default function Page() {
         lastname,
         middlename,
         address,
+        birthdate,
         number,
         gender,
         sitio,
@@ -273,6 +276,19 @@ export default function Page() {
                     type="text"
                     onChange={(e) => setAddress(e.target.value)}
                     value={address}
+                    className="sn-input"
+                  />
+                </div>
+
+                <div className="mt-2">
+                  <label className="text-sm text-primary">
+                    Birthday
+                  </label>
+                  <input
+                    placeholder="Birthdate"
+                    type="date"
+                    onChange={(e) => setBirtdate(e.target.value)}
+                    value={birthdate}
                     className="sn-input"
                   />
                 </div>
