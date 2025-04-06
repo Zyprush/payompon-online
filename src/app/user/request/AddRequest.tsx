@@ -120,6 +120,12 @@ const AddRequest: React.FC<AddRequestProps> = ({
       alert("All fields are required.");
       return;
     }
+    
+    //check if amount is greater than 0 and proofOfPayment is not null
+    if (amount > 0 && !proofOfPayment) {
+      alert("Proof of payment is required for this request.");
+      return;
+    }
 
     if (!confirm("Notice: Review before submitting. \n\n Your request will be process in 6 minutes. Ensure all details are correct, as cancellation are not allowed once submitted. \n\n Are you sure you want to proceed?")) {
       return;
